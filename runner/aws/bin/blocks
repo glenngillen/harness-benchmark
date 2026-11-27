@@ -1,0 +1,98 @@
+#!/bin/bash
+# Run the whole scored campaign (blocks 1-10) on the runner, unattended.
+#
+#   runner/aws/bin/blocks start     publish + install the FROZEN revision, then run blocks 1..10
+#   runner/aws/bin/blocks status    driver progress plus the usual runner status
+#   runner/aws/bin/blocks stop      stop the driver after the current block (the block itself keeps running)
+#
+# The frozen revision is the last commit that changed records/freeze/<cohort>.json (the cohort in
+# config/matrix.json), never HEAD, so
+# later commits (article drafts, tooling) cannot leak into scored runs. The driver runs on the
+# instance as a transient systemd unit, so your machine can sleep or disconnect. It launches each
+# block with the same `harness-bootstrap launch --block N` that bin/start uses and waits for it.
+# A finished block exits 0 immediately on relaunch (finished slots are skipped), so `start` is safe
+# to rerun at any time. On a quota or provider-outage pause it waits 30 minutes and relaunches the
+# same block (up to 48 times, about a day); any other pause stops the driver for you to read.
+source "$(dirname "$0")/_common.sh"
+need git
+need node
+load_target
+require_instance
+
+UNIT=harness-blocks
+DRIVER_LOG=/var/log/harness-blocks.log
+COHORT="$(node -p "require('$BENCH_ROOT/config/matrix.json').cohort")" || die "cannot read the cohort from config/matrix.json"
+MANIFEST="records/freeze/$COHORT.json"
+
+driver_script() {
+cat <<'EOF'
+#!/bin/bash
+set -uo pipefail
+WORK=/opt/harness/work
+log() { echo "$(date -u +%FT%TZ) $*"; }
+alive() { sudo -u bench -H tmux has-session -t harness 2>/dev/null; }
+last_exit() { jq -r '.exit' "$WORK/.runs/runner/last-exit.json" 2>/dev/null || echo unknown; }
+pause_reason() {
+  local f; f="$(ls -t "$WORK"/records/*/campaign-log.jsonl 2>/dev/null | head -n 1)"
+  [ -n "$f" ] && grep '"type":"campaign-paused"' "$f" | tail -n 1 | jq -r '.reason // "unknown"' || echo unknown
+}
+while alive; do log "waiting for the running campaign to finish"; sleep 60; done
+for n in 1 2 3 4 5 6 7 8 9 10; do
+  tries=0
+  while :; do
+    [ -f /run/harness-blocks.stop ] && { log "stop requested; not starting block $n"; exit 0; }
+    log "block $n: launch (try $((tries + 1)))"
+    /usr/local/sbin/harness-bootstrap launch --block "$n" || { log "block $n: launch refused; stopping"; exit 1; }
+    sleep 10
+    while alive; do sleep 60; done
+    code="$(last_exit)"
+    if [ "$code" = 0 ]; then log "block $n: complete"; break; fi
+    if [ "$code" = 78 ]; then log "block $n: not started, the shell preflight failed; stopping. Read the campaign log (bin/status)"; exit 78; fi
+    reason="$(pause_reason)"
+    log "block $n: exit $code, pause reason $reason"
+    case "$reason" in
+      quota-exhausted|provider-outage)
+        tries=$((tries + 1))
+        [ "$tries" -ge 48 ] && { log "block $n: still paused after 48 waits; stopping"; exit 75; }
+        log "block $n: waiting 30 minutes for the allowance/service to recover"; sleep 1800 ;;
+      *) log "block $n: not an automatic-retry reason; stopping. Read the log, fix, then run bin/blocks start again"; exit 75 ;;
+    esac
+  done
+done
+log "all 10 blocks complete. Next: runner/aws/bin/fetch"
+EOF
+}
+
+case "${1:-}" in
+  start)
+    sha="$(git -C "$BENCH_ROOT" log -1 --format=%H -- "$MANIFEST")"
+    [ -n "$sha" ] || die "no commit has $MANIFEST; the campaign must be frozen first"
+    prefix="$(git -C "$BENCH_ROOT" rev-parse --show-prefix)"
+    git -C "$BENCH_ROOT" cat-file -e "$sha:$prefix$MANIFEST" 2>/dev/null \
+      || die "$MANIFEST is not present at $sha (was it deleted?)"
+    echo "cohort: $COHORT, frozen revision: $sha"
+    if aws s3api head-object --bucket "$HARNESS_BUCKET" --key "bundles/$sha.json" >/dev/null 2>&1; then
+      echo "bundle already published"
+    else
+      "$AWS_DIR/bin/publish" "$sha"
+    fi
+    payload="$(driver_script | gzip -c | base64 | tr -d '\n')"
+    ssm_run 3600 "set -e
+/usr/local/sbin/harness-bootstrap release $sha
+if systemctl is-active --quiet $UNIT; then echo 'driver already running; see bin/blocks status'; exit 0; fi
+rm -f /run/harness-blocks.stop
+echo $payload | base64 -d | gunzip > /usr/local/sbin/harness-blocks
+chmod 755 /usr/local/sbin/harness-blocks
+systemctl reset-failed $UNIT 2>/dev/null || true
+systemd-run --unit=$UNIT --property=StandardOutput=append:$DRIVER_LOG --property=StandardError=append:$DRIVER_LOG /usr/local/sbin/harness-blocks
+echo 'driver started'"
+    echo "Running unattended. Check progress with: runner/aws/bin/blocks status"
+    ;;
+  status)
+    ssm_run 120 "echo \"driver: \$(systemctl is-active $UNIT 2>/dev/null || true)\"; tail -n 15 $DRIVER_LOG 2>/dev/null || echo 'no driver log yet'; echo; /usr/local/sbin/harness-bootstrap status"
+    ;;
+  stop)
+    ssm_run 60 "touch /run/harness-blocks.stop; echo 'driver will stop before the next block; the current block keeps running'"
+    ;;
+  *) die "usage: blocks start | status | stop" ;;
+esac

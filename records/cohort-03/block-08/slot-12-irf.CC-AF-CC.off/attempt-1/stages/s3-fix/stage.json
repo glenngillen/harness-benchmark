@@ -1,0 +1,129 @@
+{
+  "stageId": "cohort-03-b08-s12-a1--s3-fix",
+  "role": "CC",
+  "provider": "openai",
+  "tool": "codex",
+  "toolVersion": "0.169.0",
+  "mode": "resume",
+  "requestedModel": "gpt-6-luna",
+  "resolvedModel": "gpt-6-luna",
+  "resolvedModelSource": "session rollout turn_context",
+  "requestedEffort": "high",
+  "appliedEffort": "high",
+  "sessionId": "01a21152-fd00-71a0-a451-90386e4e3b72",
+  "termination": "completed",
+  "terminationDetail": null,
+  "exitCode": 0,
+  "signal": null,
+  "startedAt": "2026-11-25T06:14:16.258Z",
+  "endedAt": "2026-11-25T06:15:55.645Z",
+  "durationMs": 99387,
+  "finalMessage": "Addressed all six findings: invalid form values now reach the API, job elements persist across polls, worker recovery caps attempts and retries after loop errors, body-read failures return `invalid_request`, and the server listens on all interfaces.\n\n`npm run build` passes, and the worker starts. I couldn’t verify server startup or run the smoke/contract checks because this environment blocks socket binding (`listen EPERM`).",
+  "usage": {
+    "source": "codex exec --json turn.completed.usage",
+    "semantics": "turn.completed usage summed within this invocation; per-turn vs session-cumulative on resume is unverified until the pilot (methodology 9)",
+    "completeness": "complete",
+    "raw": [
+      {
+        "input_tokens": 1056356,
+        "cached_input_tokens": 978176,
+        "cache_write_input_tokens": 0,
+        "output_tokens": 14891,
+        "reasoning_output_tokens": 5352
+      }
+    ],
+    "supplementary": {
+      "rolloutCumulativeBefore": {
+        "input_tokens": 735772,
+        "cached_input_tokens": 672512,
+        "cache_write_input_tokens": 0,
+        "output_tokens": 10304,
+        "reasoning_output_tokens": 2724,
+        "total_tokens": 746076
+      },
+      "rolloutCumulativeAfter": {
+        "input_tokens": 1056356,
+        "cached_input_tokens": 978176,
+        "cache_write_input_tokens": 0,
+        "output_tokens": 14891,
+        "reasoning_output_tokens": 5352,
+        "total_tokens": 1071247
+      },
+      "rolloutFound": true,
+      "malformedEventLines": 0,
+      "turnsStarted": 1,
+      "turnsCompleted": 1,
+      "signalsSent": []
+    }
+  },
+  "recordFiles": [
+    "prompt.md",
+    "events.jsonl",
+    "stderr.txt",
+    "last-message.md",
+    "stage.json"
+  ],
+  "settings": {
+    "model": "gpt-6-luna",
+    "model_reasoning_effort": "high",
+    "approval_policy": "never",
+    "sandbox_mode": "workspace-write",
+    "stage_permission": "workspace-write",
+    "outer_isolation": "bwrap",
+    "sandbox_workspace_write.network_access": "false",
+    "ignoreUserConfig": true,
+    "ignoreRules": true,
+    "ephemeral": false,
+    "resumeLatest": "never",
+    "fallbackModel": "none (Codex has no fallback option)",
+    "env": [
+      "CODEX_HOME",
+      "HOME",
+      "LANG",
+      "NO_COLOR",
+      "PATH",
+      "TMPDIR",
+      "npm_config_audit",
+      "npm_config_cache",
+      "npm_config_fund",
+      "npm_config_update_notifier"
+    ],
+    "isolation": {
+      "mechanism": "bwrap",
+      "hidden": [
+        ".",
+        "~"
+      ],
+      "writable": [
+        ".runs/campaign/cohort-03/block-08/slot-12-irf.CC-AF-CC.off/attempt-1/homes/s1-implement",
+        ".runs/campaign/cohort-03/block-08/slot-12-irf.CC-AF-CC.off/attempt-1/workspace"
+      ],
+      "readable": [
+        "node_modules",
+        "../../node-v22.23.4"
+      ],
+      "network": "shared host network namespace (provider API)"
+    },
+    "argv": [
+      "exec",
+      "resume",
+      "--json",
+      "--ignore-user-config",
+      "--ignore-rules",
+      "-m",
+      "gpt-6-luna",
+      "-c",
+      "model_reasoning_effort=\"high\"",
+      "-c",
+      "approval_policy=\"never\"",
+      "-c",
+      "sandbox_workspace_write.network_access=false",
+      "-o",
+      "<capture>/last-message.md",
+      "-c",
+      "sandbox_mode=\"workspace-write\"",
+      "01a21152-fd00-71a0-a451-90386e4e3b72",
+      "-"
+    ]
+  }
+}

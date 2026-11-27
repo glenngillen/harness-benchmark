@@ -1,0 +1,122 @@
+{
+  "stageId": "cohort-03-b10-s02-a1--s2-review",
+  "role": "CF",
+  "provider": "openai",
+  "tool": "codex",
+  "toolVersion": "0.169.0",
+  "mode": "fresh",
+  "requestedModel": "gpt-6-astra",
+  "resolvedModel": "gpt-6-astra",
+  "resolvedModelSource": "session rollout turn_context",
+  "requestedEffort": "low",
+  "appliedEffort": "low",
+  "sessionId": "01a21202-4f46-79f3-80fd-86c8e55f8a87",
+  "termination": "completed",
+  "terminationDetail": null,
+  "exitCode": 0,
+  "signal": null,
+  "startedAt": "2026-11-25T09:21:10.618Z",
+  "endedAt": "2026-11-25T09:22:08.639Z",
+  "durationMs": 58021,
+  "finalMessage": "# Review findings\n\n1. [major] src/worker.ts:40 — Restart recovery erases processing attempts that already started.\n   Evidence: An in-memory check of the worker functions showed a running job with `attempts: 1` becoming queued with `attempts: 0`, then reporting `attempts: 1` when its second attempt started. Graceful shutdown does the same at line 93. This violates the defined attempt count and allows interruptions to repeatedly reuse an attempt number.\n   Fix: Preserve the attempt count during recovery and shutdown. Increment it when another attempt starts, and apply the retry limit consistently to interrupted jobs.\n\n2. [major] src/server.ts:124 — Creating a job can return `running` instead of the required `queued` representation.\n   Evidence: `createJob()` commits the insertion before calling `getJobRow(id)`. The separate worker can claim the job between those operations, so the `201` response can contain `status: \"running\"` and `attempts: 1`.\n   Fix: Read and retain the newly inserted job inside the transaction, before committing, then return that snapshot after the commit succeeds.",
+  "usage": {
+    "source": "codex exec --json turn.completed.usage",
+    "semantics": "turn.completed usage summed within this invocation; per-turn vs session-cumulative on resume is unverified until the pilot (methodology 9)",
+    "completeness": "complete",
+    "raw": [
+      {
+        "input_tokens": 121195,
+        "cached_input_tokens": 83200,
+        "cache_write_input_tokens": 0,
+        "output_tokens": 1325,
+        "reasoning_output_tokens": 335
+      }
+    ],
+    "supplementary": {
+      "rolloutCumulativeBefore": null,
+      "rolloutCumulativeAfter": {
+        "input_tokens": 121195,
+        "cached_input_tokens": 83200,
+        "cache_write_input_tokens": 0,
+        "output_tokens": 1325,
+        "reasoning_output_tokens": 335,
+        "total_tokens": 122520
+      },
+      "rolloutFound": true,
+      "malformedEventLines": 0,
+      "turnsStarted": 1,
+      "turnsCompleted": 1,
+      "signalsSent": []
+    }
+  },
+  "recordFiles": [
+    "prompt.md",
+    "events.jsonl",
+    "stderr.txt",
+    "last-message.md",
+    "stage.json"
+  ],
+  "settings": {
+    "model": "gpt-6-astra",
+    "model_reasoning_effort": "low",
+    "approval_policy": "never",
+    "sandbox_mode": "read-only",
+    "stage_permission": "read-only",
+    "outer_isolation": "bwrap",
+    "sandbox_workspace_write.network_access": "false",
+    "ignoreUserConfig": true,
+    "ignoreRules": true,
+    "ephemeral": false,
+    "resumeLatest": "never",
+    "fallbackModel": "none (Codex has no fallback option)",
+    "env": [
+      "CODEX_HOME",
+      "HOME",
+      "LANG",
+      "NO_COLOR",
+      "PATH",
+      "TMPDIR",
+      "npm_config_audit",
+      "npm_config_cache",
+      "npm_config_fund",
+      "npm_config_update_notifier"
+    ],
+    "isolation": {
+      "mechanism": "bwrap",
+      "hidden": [
+        ".",
+        "~"
+      ],
+      "writable": [
+        ".runs/campaign/cohort-03/block-10/slot-02-irf.AC-CF-AC.off/attempt-1/homes/s2-review"
+      ],
+      "readable": [
+        "node_modules",
+        "../../node-v22.23.4",
+        ".runs/campaign/cohort-03/block-10/slot-02-irf.AC-CF-AC.off/attempt-1/snapshots/s2-review"
+      ],
+      "network": "shared host network namespace (provider API)"
+    },
+    "argv": [
+      "exec",
+      "--json",
+      "--ignore-user-config",
+      "--ignore-rules",
+      "-m",
+      "gpt-6-astra",
+      "-c",
+      "model_reasoning_effort=\"low\"",
+      "-c",
+      "approval_policy=\"never\"",
+      "-c",
+      "sandbox_workspace_write.network_access=false",
+      "-o",
+      "<capture>/last-message.md",
+      "--sandbox",
+      "read-only",
+      "-C",
+      "<workspace>",
+      "-"
+    ]
+  }
+}

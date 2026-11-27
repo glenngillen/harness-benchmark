@@ -1,0 +1,3 @@
+Addressed all three findings: recovered jobs replay their interrupted attempt, SQLite stores input and output losslessly, and the form now sends invalid submissions to API validation.
+
+The build and a targeted recovery/string-preservation check pass; the worker starts and shuts down cleanly. The server and smoke/contract checks remain unverified because this environment rejects local socket binding with `EPERM`.

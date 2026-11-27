@@ -1,0 +1,5 @@
+Implemented the SQLite-backed HTTP API, separate worker process, retries and recovery, and polling browser UI.
+
+`npm run build` passes. The worker starts and shuts down cleanly. The smoke and contract checks, and the server startup attempt, could not bind a loopback listener because this environment returns `listen EPERM`.
+
+Changed [src/server.ts](/opt/harness/work/.runs/campaign/cohort-03/block-04/slot-20-irf.CC-AF-CC.on/attempt-1/workspace/src/server.ts), [src/worker.ts](/opt/harness/work/.runs/campaign/cohort-03/block-04/slot-20-irf.CC-AF-CC.on/attempt-1/workspace/src/worker.ts), [src/db.ts](/opt/harness/work/.runs/campaign/cohort-03/block-04/slot-20-irf.CC-AF-CC.on/attempt-1/workspace/src/db.ts), and [ui/index.html](/opt/harness/work/.runs/campaign/cohort-03/block-04/slot-20-irf.CC-AF-CC.on/attempt-1/workspace/ui/index.html).

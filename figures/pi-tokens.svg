@@ -1,0 +1,82 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 760 752" width="760" height="752" role="img" aria-labelledby="pi-tokens-title pi-tokens-desc" font-family="system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif" font-size="12">
+<title id="pi-tokens-title">Plan → implement: tokens per scored workflow</title>
+<desc id="pi-tokens-desc">Mean tokens per scored workflow by billing category, across all roles, over workflows whose counts are exact; n is shown and inexact workflows are counted separately. Token counts are per vendor and not comparable across tokenisers. Data table: pi-tokens.csv.</desc>
+<style>
+  .bg { fill: #fcfcfb; }
+  .t1 { fill: #0b0b0b; } .t2 { fill: #52514e; } .t3 { fill: #6f6e69; }
+  .grid { stroke: #e4e3de; stroke-width: 1; } .axis { stroke: #b9b8b2; stroke-width: 1; }
+  .ref { stroke: #6f6e69; stroke-width: 1.5; stroke-dasharray: 4 3; }
+  .off { fill: #2a78d6; stroke: #2a78d6; } .on { fill: #eb6834; stroke: #eb6834; }
+  .hollow { fill: #fcfcfb; stroke-width: 2; }
+  .ci { stroke-width: 2; fill: none; stroke-linecap: round; }
+  .med { stroke: #0b0b0b; stroke-width: 2; }
+  .k1 { fill: #2a78d6; } .k2 { fill: #eb6834; } .k3 { fill: #1baf7a; } .k4 { fill: #eda100; }
+  .seg { stroke: #fcfcfb; stroke-width: 2; }
+  .band { fill: #f3f2ee; }
+  @media (prefers-color-scheme: dark) {
+    .bg { fill: #1a1a19; } .hollow { fill: #1a1a19; } .seg { stroke: #1a1a19; }
+    .t1 { fill: #f0efec; } .t2 { fill: #c3c2b7; } .t3 { fill: #9d9c94; }
+    .grid { stroke: #33332f; } .axis { stroke: #5a5953; } .ref { stroke: #9d9c94; }
+    .off { fill: #3987e5; stroke: #3987e5; } .on { fill: #d95926; stroke: #d95926; }
+    .med { stroke: #f0efec; } .band { fill: #232321; }
+    .k1 { fill: #3987e5; } .k2 { fill: #d95926; } .k3 { fill: #199e70; } .k4 { fill: #c98500; }
+  }</style>
+<rect class="bg" width="760" height="752"/>
+<text class="t1" x="16" y="26" font-size="16" font-weight="600">Plan → implement: tokens per scored workflow</text>
+<text class="t2" x="16" y="46">cohort-03 · 240 scored workflows · cost.dev prices 2026-11-13</text>
+<g transform="translate(0 0)"><rect class="k1" x="16" y="64" width="12" height="12" rx="2"/><text class="t2" x="32" y="74">uncached input</text><rect class="k2" x="131.60000000000002" y="64" width="12" height="12" rx="2"/><text class="t2" x="147.60000000000002" y="74">cached input</text><rect class="k3" x="234.40000000000003" y="64" width="12" height="12" rx="2"/><text class="t2" x="250.40000000000003" y="74">cache writes</text><rect class="k4" x="337.20000000000005" y="64" width="12" height="12" rx="2"/><text class="t2" x="353.20000000000005" y="74">output (incl. reasoning)</text></g>
+<rect class="band" x="8" y="116" width="744" height="34" rx="3"/><rect class="band" x="8" y="184" width="744" height="34" rx="3"/><rect class="band" x="8" y="252" width="744" height="34" rx="3"/><rect class="band" x="8" y="320" width="744" height="34" rx="3"/><rect class="band" x="8" y="422" width="744" height="34" rx="3"/><rect class="band" x="8" y="490" width="744" height="34" rx="3"/><rect class="band" x="8" y="558" width="744" height="34" rx="3"/><rect class="band" x="8" y="626" width="744" height="34" rx="3"/>
+<line class="grid" x1="272" x2="272" y1="92" y2="704"/><text class="t2" x="272" y="720" text-anchor="middle">0</text><line class="grid" x1="344.8" x2="344.8" y1="92" y2="704"/><text class="t2" x="344.8" y="720" text-anchor="middle">250k</text><line class="grid" x1="417.6" x2="417.6" y1="92" y2="704"/><text class="t2" x="417.6" y="720" text-anchor="middle">500k</text><line class="grid" x1="490.4" x2="490.4" y1="92" y2="704"/><text class="t2" x="490.4" y="720" text-anchor="middle">750k</text><line class="grid" x1="563.2" x2="563.2" y1="92" y2="704"/><text class="t2" x="563.2" y="720" text-anchor="middle">1.0M</text><line class="grid" x1="636" x2="636" y1="92" y2="704"/><text class="t2" x="636" y="720" text-anchor="middle">1.3M</text><line class="axis" x1="272" x2="272" y1="92" y2="704"/>
+
+<text class="t1" x="16" y="107" font-weight="600">Plan → implement</text>
+<text class="t1" x="16" y="131">GPT-6 Astra → GPT-6 Luna</text>
+<text class="t3" x="16" y="145" font-size="11">checks off</text>
+<text class="t2" x="280" y="137">token counts not exact in all 10 workflows</text>
+<text class="t1" x="16" y="165">GPT-6 Astra → GPT-6 Luna</text>
+<text class="t3" x="16" y="179" font-size="11">checks on</text>
+<text class="t2" x="280" y="171">token counts not exact in all 10 workflows</text>
+<text class="t1" x="16" y="199">GPT-6 Astra → Haiku 5.5</text>
+<text class="t3" x="16" y="213" font-size="11">checks off</text>
+<text class="t2" x="280" y="205">token counts not exact in all 10 workflows</text>
+<text class="t1" x="16" y="233">GPT-6 Astra → Haiku 5.5</text>
+<text class="t3" x="16" y="247" font-size="11">checks on</text>
+<text class="t2" x="280" y="239">token counts not exact in all 10 workflows</text>
+<text class="t1" x="16" y="267">Opus 5.5 → GPT-6 Luna</text>
+<text class="t3" x="16" y="281" font-size="11">checks off</text>
+<text class="t2" x="280" y="273">token counts not exact in all 10 workflows</text>
+<text class="t1" x="16" y="301">Opus 5.5 → GPT-6 Luna</text>
+<text class="t3" x="16" y="315" font-size="11">checks on</text>
+<text class="t2" x="280" y="307">token counts not exact in all 10 workflows</text>
+<text class="t1" x="16" y="335">Opus 5.5 → Haiku 5.5</text>
+<text class="t3" x="16" y="349" font-size="11">checks off</text>
+<g><title>Claude frontier → Claude cheaper, checks off: uncached input 41 tokens per scored workflow (mean of 10)</title><rect class="k1 seg" x="272" y="330" width="1" height="14" rx="2"/></g><g><title>Claude frontier → Claude cheaper, checks off: cached input 817,033 tokens per scored workflow (mean of 10)</title><rect class="k2 seg" x="272.01" y="330" width="237.92000000000002" height="14" rx="2"/></g><g><title>Claude frontier → Claude cheaper, checks off: cache writes 69,162 tokens per scored workflow (mean of 10)</title><rect class="k3 seg" x="509.93" y="330" width="20.140000000000043" height="14" rx="2"/></g><g><title>Claude frontier → Claude cheaper, checks off: output (incl. reasoning) 40,964 tokens per scored workflow (mean of 10)</title><rect class="k4 seg" x="530.07" y="330" width="11.92999999999995" height="14" rx="2"/></g><text class="t1" x="648" y="341">927k · n=10</text>
+<text class="t1" x="16" y="369">Opus 5.5 → Haiku 5.5</text>
+<text class="t3" x="16" y="383" font-size="11">checks on</text>
+<g><title>Claude frontier → Claude cheaper, checks on: uncached input 43 tokens per scored workflow (mean of 10)</title><rect class="k1 seg" x="272" y="364" width="1" height="14" rx="2"/></g><g><title>Claude frontier → Claude cheaper, checks on: cached input 909,530 tokens per scored workflow (mean of 10)</title><rect class="k2 seg" x="272.01" y="364" width="264.86" height="14" rx="2"/></g><g><title>Claude frontier → Claude cheaper, checks on: cache writes 77,685 tokens per scored workflow (mean of 10)</title><rect class="k3 seg" x="536.87" y="364" width="22.620000000000005" height="14" rx="2"/></g><g><title>Claude frontier → Claude cheaper, checks on: output (incl. reasoning) 43,806 tokens per scored workflow (mean of 10)</title><rect class="k4 seg" x="559.49" y="364" width="12.759999999999991" height="14" rx="2"/></g><text class="t1" x="648" y="375">1.0M · n=10</text>
+<text class="t1" x="16" y="413" font-weight="600">Solo controls (same observations as the solo figure)</text>
+<text class="t1" x="16" y="437">GPT-6 Astra</text>
+<text class="t3" x="16" y="451" font-size="11">checks off</text>
+<text class="t2" x="280" y="443">token counts not exact in all 10 workflows</text>
+<text class="t1" x="16" y="471">GPT-6 Astra</text>
+<text class="t3" x="16" y="485" font-size="11">checks on</text>
+<text class="t2" x="280" y="477">token counts not exact in all 10 workflows</text>
+<text class="t1" x="16" y="505">GPT-6 Luna</text>
+<text class="t3" x="16" y="519" font-size="11">checks off</text>
+<text class="t2" x="280" y="511">token counts not exact in all 10 workflows</text>
+<text class="t1" x="16" y="539">GPT-6 Luna</text>
+<text class="t3" x="16" y="553" font-size="11">checks on</text>
+<text class="t2" x="280" y="545">token counts not exact in all 10 workflows</text>
+<text class="t1" x="16" y="573">Opus 5.5</text>
+<text class="t3" x="16" y="587" font-size="11">checks off</text>
+<g><title>Claude frontier, checks off: uncached input 19 tokens per scored workflow (mean of 10)</title><rect class="k1 seg" x="272" y="568" width="1" height="14" rx="2"/></g><g><title>Claude frontier, checks off: cached input 221,249 tokens per scored workflow (mean of 10)</title><rect class="k2 seg" x="272.01" y="568" width="64.42000000000002" height="14" rx="2"/></g><g><title>Claude frontier, checks off: cache writes 29,971 tokens per scored workflow (mean of 10)</title><rect class="k3 seg" x="336.43" y="568" width="8.730000000000018" height="14" rx="2"/></g><g><title>Claude frontier, checks off: output (incl. reasoning) 14,134 tokens per scored workflow (mean of 10)</title><rect class="k4 seg" x="345.16" y="568" width="4.119999999999948" height="14" rx="2"/></g><text class="t1" x="648" y="579">265k · n=10</text>
+<text class="t1" x="16" y="607">Opus 5.5</text>
+<text class="t3" x="16" y="621" font-size="11">checks on</text>
+<g><title>Claude frontier, checks on: uncached input 19 tokens per scored workflow (mean of 10)</title><rect class="k1 seg" x="272" y="602" width="1" height="14" rx="2"/></g><g><title>Claude frontier, checks on: cached input 215,541 tokens per scored workflow (mean of 10)</title><rect class="k2 seg" x="272.01" y="602" width="62.75999999999999" height="14" rx="2"/></g><g><title>Claude frontier, checks on: cache writes 28,139 tokens per scored workflow (mean of 10)</title><rect class="k3 seg" x="334.77" y="602" width="8.200000000000045" height="14" rx="2"/></g><g><title>Claude frontier, checks on: output (incl. reasoning) 13,861 tokens per scored workflow (mean of 10)</title><rect class="k4 seg" x="342.97" y="602" width="4.029999999999973" height="14" rx="2"/></g><text class="t1" x="648" y="613">258k · n=10</text>
+<text class="t1" x="16" y="641">Haiku 5.5</text>
+<text class="t3" x="16" y="655" font-size="11">checks off</text>
+<g><title>Claude cheaper, checks off: uncached input 32 tokens per scored workflow (mean of 10)</title><rect class="k1 seg" x="272" y="636" width="1" height="14" rx="2"/></g><g><title>Claude cheaper, checks off: cached input 779,117 tokens per scored workflow (mean of 10)</title><rect class="k2 seg" x="272.01" y="636" width="226.88" height="14" rx="2"/></g><g><title>Claude cheaper, checks off: cache writes 68,020 tokens per scored workflow (mean of 10)</title><rect class="k3 seg" x="498.89" y="636" width="19.81000000000006" height="14" rx="2"/></g><g><title>Claude cheaper, checks off: output (incl. reasoning) 43,328 tokens per scored workflow (mean of 10)</title><rect class="k4 seg" x="518.7" y="636" width="12.6099999999999" height="14" rx="2"/></g><text class="t1" x="648" y="647">890k · n=10</text>
+<text class="t1" x="16" y="675">Haiku 5.5</text>
+<text class="t3" x="16" y="689" font-size="11">checks on</text>
+<g><title>Claude cheaper, checks on: uncached input 30 tokens per scored workflow (mean of 10)</title><rect class="k1 seg" x="272" y="670" width="1" height="14" rx="2"/></g><g><title>Claude cheaper, checks on: cached input 732,952 tokens per scored workflow (mean of 10)</title><rect class="k2 seg" x="272.01" y="670" width="213.43" height="14" rx="2"/></g><g><title>Claude cheaper, checks on: cache writes 69,282 tokens per scored workflow (mean of 10)</title><rect class="k3 seg" x="485.44" y="670" width="20.180000000000007" height="14" rx="2"/></g><g><title>Claude cheaper, checks on: output (incl. reasoning) 42,863 tokens per scored workflow (mean of 10)</title><rect class="k4 seg" x="505.62" y="670" width="12.480000000000018" height="14" rx="2"/></g><text class="t1" x="648" y="681">845k · n=10</text>
+<text class="t2" x="454" y="740" text-anchor="middle">Mean tokens per scored workflow, stacked by billing category</text>
+</svg>

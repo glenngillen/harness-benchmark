@@ -1,0 +1,31 @@
+{
+  "safeguards": [
+    {
+      "id": "paid-overflow-guard",
+      "kind": "human-attestation",
+      "statement": "Neither the ChatGPT account used for Codex nor the Claude subscription can buy paid overflow, and no paid overflow was used: no extra Codex usage can be purchased and Claude extra usage is not enabled. First attested by Glenn Gillen on 2026-11-21, when the subscription logins were made on the runner; re-confirmed for cohort-03 in the working session on 2026-11-25, after the cohort-03 pilots (including the retry of irf.AC-AF-AC.on) and before the cohort-03 freeze.",
+      "refs": [
+        "records/cohort-03-pilots/README.md"
+      ],
+      "attestedBy": "Glenn Gillen",
+      "attestedAt": "2026-11-25"
+    },
+    {
+      "id": "quota-pausing",
+      "kind": "record",
+      "statement": "No quota exhaustion or access failure occurred during the cohort-03 pilots (all 24 first attempts and the retry of irf.AC-AF-AC.on completed; campaign-log.jsonl has no pause). The pause path was exercised by a pilot run on 2026-11-20 on the same runner code (src/orchestrator/campaign.ts and run.ts unchanged): slot 01's first attempt ended auth-missing (operational) and the campaign paused with exit 75 instead of scoring it. Accepted for the pause path on 2026-11-21 (methodology section 15), with the per-block quota audit of scored failures (methodology section 8). The log lines are restated in records/cohort-03-pilots/README.md.",
+      "refs": [
+        "records/cohort-03-pilots/campaign-log.jsonl",
+        "records/cohort-03-pilots/README.md"
+      ]
+    },
+    {
+      "id": "recovery",
+      "kind": "record",
+      "statement": "No attempt needed replacement in the cohort-03 pilots; the second irf.AC-AF-AC.on pilot was a --retry-unexercised re-pilot after a stage timeout, not an operational replacement. The replacement path was exercised by the same 2026-11-20 pilot run on the same runner code: after the access pause, slot 01's attempt 2 replaced attempt 1 from a fresh workspace (replaces: 1), waited 909,019 ms for access to recover, completed and was evaluated, and the campaign finished all 24 slots. The log lines are restated in records/cohort-03-pilots/README.md.",
+      "refs": [
+        "records/cohort-03-pilots/README.md"
+      ]
+    }
+  ]
+}

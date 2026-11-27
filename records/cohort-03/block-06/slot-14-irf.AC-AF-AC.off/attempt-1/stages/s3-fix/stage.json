@@ -1,0 +1,325 @@
+{
+  "stageId": "cohort-03-b06-s14-a1--s3-fix",
+  "role": "AC",
+  "provider": "anthropic",
+  "tool": "claude-code",
+  "toolVersion": "2.1.323",
+  "mode": "resume",
+  "requestedModel": "claude-haiku-5-5",
+  "requestedEffort": "medium",
+  "appliedEffort": null,
+  "resolvedModel": "claude-haiku-5-5",
+  "resolvedModelSource": "stream-json assistant message.model",
+  "sessionId": "20cb0475-9127-40c9-9398-2a21cc023c80",
+  "termination": "completed",
+  "terminationDetail": null,
+  "exitCode": 0,
+  "signal": null,
+  "startedAt": "2026-11-25T02:14:17.370Z",
+  "endedAt": "2026-11-25T02:15:07.972Z",
+  "durationMs": 50602,
+  "finalMessage": "All three findings were correct, and all three are fixed. The build passes, `check:smoke` is 2/2, and `check:contract` is 5/5. The crash test on attempt 3 completed the job.\n\n**What changed**\n\n1. **`attempts` is monotonic (`src/worker.ts`, `src/db.ts`, `src/jobs.ts`).** Interrupted attempts (crash or graceful stop) no longer decrement `attempts`. They increment a new `interrupted_attempts` column. The retry logic uses the logical attempt number `attempts - interrupted_attempts`, so an interrupted attempt is rerun under the same number and does not use up the 3-attempt budget. A job interrupted during attempt 3 is therefore not failed. In the test it finished as `completed`, with `attempts=4` because it counts all started attempts.\n2. **Blank optional fields are omitted (`ui/index.html`).** A blank Steps or Fail attempts field is left out of the body so the API applies its default. Non-numeric text is still sent as typed, so the API's validation still shows the error.\n3. **Claim and failure are atomic (`src/worker.ts`).** `claimNext()` selects the oldest due job, then either starts the attempt or records a simulated failure (requeue with delay, or mark `failed`) in one `BEGIN IMMEDIATE` transaction. The recovery and interruption writes also run in transactions. A crash can no longer leave a job half-updated.\n\n**Trade-off to be aware of:** a job that was interrupted and then completes shows `attempts` higher than 2 or 3. That follows the spec's definition (\"attempts started so far\"). The `failed` case still shows `attempts: 3` when there were no interruptions.",
+  "usage": {
+    "source": "claude -p --output-format stream-json: assistant message.usage, result.model_usage_since_last_result, result.modelUsage",
+    "semantics": "requests: assistant message usage per API request (deduplicated by message id); sinceLastResult: result.model_usage_since_last_result per model, incremental, summed across results; cumulative: result.modelUsage per model, session-cumulative (continues across resume), never summed",
+    "completeness": "complete",
+    "raw": [
+      {
+        "kind": "request",
+        "messageId": "msg_011ChNqcYdy4X1r6DtKJpktC",
+        "model": "claude-haiku-5-5",
+        "usage": {
+          "input_tokens": 2,
+          "cache_creation_input_tokens": 2246,
+          "cache_read_input_tokens": 72636,
+          "cache_creation": {
+            "ephemeral_5m_input_tokens": 0,
+            "ephemeral_1h_input_tokens": 2246
+          },
+          "output_tokens": 3,
+          "service_tier": "standard",
+          "inference_geo": "global",
+          "speed": "standard"
+        }
+      },
+      {
+        "kind": "request",
+        "messageId": "msg_011ChNqe3RNPwNKUir5BkEgZ",
+        "model": "claude-haiku-5-5",
+        "usage": {
+          "input_tokens": 2,
+          "cache_creation_input_tokens": 4866,
+          "cache_read_input_tokens": 74882,
+          "cache_creation": {
+            "ephemeral_5m_input_tokens": 0,
+            "ephemeral_1h_input_tokens": 4866
+          },
+          "output_tokens": 8,
+          "service_tier": "standard",
+          "inference_geo": "global",
+          "speed": "standard"
+        }
+      },
+      {
+        "kind": "request",
+        "messageId": "msg_011ChNqebJWj8rEzLJm1YvgW",
+        "model": "claude-haiku-5-5",
+        "usage": {
+          "input_tokens": 2,
+          "cache_creation_input_tokens": 2322,
+          "cache_read_input_tokens": 79748,
+          "cache_creation": {
+            "ephemeral_5m_input_tokens": 0,
+            "ephemeral_1h_input_tokens": 2322
+          },
+          "output_tokens": 3,
+          "service_tier": "standard",
+          "inference_geo": "global",
+          "speed": "standard"
+        }
+      },
+      {
+        "kind": "request",
+        "messageId": "msg_011ChNqfsW7vuVeiLzAPL8gi",
+        "model": "claude-haiku-5-5",
+        "usage": {
+          "input_tokens": 2,
+          "cache_creation_input_tokens": 1365,
+          "cache_read_input_tokens": 82070,
+          "cache_creation": {
+            "ephemeral_5m_input_tokens": 0,
+            "ephemeral_1h_input_tokens": 1365
+          },
+          "output_tokens": 8,
+          "service_tier": "standard",
+          "inference_geo": "global",
+          "speed": "standard"
+        }
+      },
+      {
+        "kind": "result",
+        "index": 0,
+        "usage": {
+          "input_tokens": 8,
+          "cache_creation_input_tokens": 10799,
+          "cache_read_input_tokens": 309336,
+          "output_tokens": 8697,
+          "output_tokens_details": {
+            "thinking_tokens": 4012
+          },
+          "server_tool_use": {
+            "web_search_requests": 0,
+            "web_fetch_requests": 0
+          },
+          "service_tier": "standard",
+          "cache_creation": {
+            "ephemeral_1h_input_tokens": 10799,
+            "ephemeral_5m_input_tokens": 0
+          },
+          "inference_geo": "global",
+          "iterations": [],
+          "speed": "standard",
+          "fallback_credit": null
+        },
+        "sinceLastResult": {
+          "claude-haiku-5-5": {
+            "inputTokens": 8,
+            "outputTokens": 8697,
+            "cacheReadInputTokens": 309336,
+            "cacheCreationInputTokens": 10799,
+            "webSearchRequests": 0,
+            "costUSD": 0.00960246,
+            "contextWindow": 1000000,
+            "maxOutputTokens": 128000,
+            "thinkingTokens": 4012,
+            "cacheCreationEphemeral5mInputTokens": 0,
+            "cacheCreationEphemeral1hInputTokens": 10799,
+            "canonicalModel": "claude-haiku-5-5",
+            "provider": "firstParty",
+            "costBasis": "list"
+          }
+        },
+        "modelUsage": {
+          "claude-haiku-5-5": {
+            "inputTokens": 38,
+            "outputTokens": 49126,
+            "thinkingTokens": 27483,
+            "cacheReadInputTokens": 1050721,
+            "cacheCreationInputTokens": 73393,
+            "cacheCreationEphemeral5mInputTokens": 0,
+            "cacheCreationEphemeral1hInputTokens": 73393,
+            "webSearchRequests": 0,
+            "costUSD": 0.04975261,
+            "contextWindow": 1000000,
+            "maxOutputTokens": 128000,
+            "canonicalModel": "claude-haiku-5-5",
+            "provider": "firstParty",
+            "costBasis": "list"
+          }
+        },
+        "nativeCostEstimateUsd": 0.04975261
+      }
+    ],
+    "supplementary": {
+      "cumulativeBefore": {
+        "claude-haiku-5-5": {
+          "inputTokens": 30,
+          "outputTokens": 40429,
+          "cacheReadInputTokens": 741385,
+          "cacheCreationInputTokens": 62594,
+          "webSearchRequests": 0,
+          "costUSD": 0.04015015,
+          "contextWindow": 1000000,
+          "maxOutputTokens": 128000,
+          "thinkingTokens": 23471,
+          "cacheCreationEphemeral5mInputTokens": 0,
+          "cacheCreationEphemeral1hInputTokens": 62594,
+          "canonicalModel": "claude-haiku-5-5",
+          "provider": "firstParty",
+          "costBasis": "list"
+        }
+      },
+      "cumulativeAfter": {
+        "claude-haiku-5-5": {
+          "inputTokens": 38,
+          "outputTokens": 49126,
+          "thinkingTokens": 27483,
+          "cacheReadInputTokens": 1050721,
+          "cacheCreationInputTokens": 73393,
+          "cacheCreationEphemeral5mInputTokens": 0,
+          "cacheCreationEphemeral1hInputTokens": 73393,
+          "webSearchRequests": 0,
+          "costUSD": 0.04975261,
+          "contextWindow": 1000000,
+          "maxOutputTokens": 128000,
+          "canonicalModel": "claude-haiku-5-5",
+          "provider": "firstParty",
+          "costBasis": "list"
+        }
+      },
+      "auxiliaryModels": [],
+      "resultCount": 1,
+      "resultsMissingSinceLastResult": 0,
+      "numTurns": 6,
+      "permissionDenials": 0,
+      "apiRetries": 0,
+      "malformedEventLines": 0,
+      "signalsSent": [],
+      "init": {
+        "model": "claude-haiku-5-5",
+        "apiKeySource": "none",
+        "tools": [
+          "Bash",
+          "Edit",
+          "Glob",
+          "Grep",
+          "Read",
+          "Write"
+        ],
+        "permissionMode": "default",
+        "version": "2.1.323",
+        "mcpServers": []
+      }
+    }
+  },
+  "recordFiles": [
+    "prompt.md",
+    "events.jsonl",
+    "stderr.txt",
+    "last-message.md",
+    "stage.json"
+  ],
+  "settings": {
+    "model": "claude-haiku-5-5",
+    "effort": "medium",
+    "tools": [
+      "Read",
+      "Grep",
+      "Glob",
+      "Edit",
+      "Write",
+      "Bash"
+    ],
+    "allowedTools": [
+      "Read",
+      "Grep",
+      "Glob",
+      "Edit",
+      "Write",
+      "Bash"
+    ],
+    "disallowedTools": [
+      "mcp__*"
+    ],
+    "permissionMode": "default",
+    "permissionPrompts": "none",
+    "settingSources": "none",
+    "promptSuggestions": false,
+    "slashCommands": "disabled",
+    "fallbackModel": "unset",
+    "bare": false,
+    "sessionPersistence": true,
+    "env": [
+      "CLAUDE_CODE_DISABLE_AUTO_MEMORY",
+      "CLAUDE_CODE_DISABLE_NONESSENTIAL_TRAFFIC",
+      "CLAUDE_CODE_OAUTH_TOKEN",
+      "CLAUDE_CODE_SUBPROCESS_ENV_SCRUB",
+      "CLAUDE_CONFIG_DIR",
+      "DISABLE_AUTOUPDATER",
+      "HOME",
+      "LANG",
+      "NO_COLOR",
+      "PATH",
+      "TMPDIR",
+      "npm_config_audit",
+      "npm_config_cache",
+      "npm_config_fund",
+      "npm_config_update_notifier"
+    ],
+    "tmpdir": "/tmp (private tmpfs of the stage sandbox)",
+    "managedPolicy": [],
+    "isolation": {
+      "mechanism": "bwrap",
+      "hidden": [
+        ".",
+        "~"
+      ],
+      "writable": [
+        ".runs/campaign/cohort-03/block-06/slot-14-irf.AC-AF-AC.off/attempt-1/homes/s1-implement",
+        ".runs/campaign/cohort-03/block-06/slot-14-irf.AC-AF-AC.off/attempt-1/workspace"
+      ],
+      "readable": [
+        "node_modules",
+        "../../node-v22.23.4"
+      ],
+      "network": "shared host network namespace (provider API)"
+    },
+    "argv": [
+      "-p",
+      "--output-format",
+      "stream-json",
+      "--verbose",
+      "--model",
+      "claude-haiku-5-5",
+      "--effort",
+      "medium",
+      "--setting-sources",
+      "",
+      "--prompt-suggestions",
+      "false",
+      "--disable-slash-commands",
+      "--permission-prompts",
+      "none",
+      "--permission-mode",
+      "default",
+      "--tools",
+      "Read,Grep,Glob,Edit,Write,Bash",
+      "--allowedTools",
+      "Read,Grep,Glob,Edit,Write,Bash",
+      "--disallowedTools",
+      "mcp__*",
+      "--resume",
+      "20cb0475-9127-40c9-9398-2a21cc023c80"
+    ]
+  }
+}

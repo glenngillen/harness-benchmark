@@ -1,0 +1,3 @@
+Addressed all four findings: recovery preserves the three-attempt limit, request bodies preserve split UTF-8 characters, the form allows API validation to run, and unknown nested paths return 404.
+
+`npm run build` passes. I also confirmed a recovered job at attempt 3 with `failAttempts: 3` becomes failed with attempts still at 3, and the worker exits cleanly on `SIGTERM`. Smoke and contract checks remain blocked by the environment’s `127.0.0.1` bind restriction.

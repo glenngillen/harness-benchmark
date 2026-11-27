@@ -1,0 +1,5 @@
+Implemented the SQLite-backed job API, retrying worker, and polling browser UI. The server and worker share durable job and idempotency state in SQLite.
+
+`npm run build` passes, and the worker starts. The smoke and contract checks could not run because this environment blocks binding to `127.0.0.1` (`listen EPERM`).
+
+Changed [src/db.ts](/opt/harness/work/.runs/campaign/cohort-03/block-02/slot-21-solo.CC.off/attempt-1/workspace/src/db.ts), [src/server.ts](/opt/harness/work/.runs/campaign/cohort-03/block-02/slot-21-solo.CC.off/attempt-1/workspace/src/server.ts), [src/worker.ts](/opt/harness/work/.runs/campaign/cohort-03/block-02/slot-21-solo.CC.off/attempt-1/workspace/src/worker.ts), and [ui/index.html](/opt/harness/work/.runs/campaign/cohort-03/block-02/slot-21-solo.CC.off/attempt-1/workspace/ui/index.html).

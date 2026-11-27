@@ -1,0 +1,11 @@
+I've built the job tracker: the HTTP API, the browser page, the worker and the shared SQLite storage. The build passes, and so do both fixed check suites (smoke 2/2, contract 5/5). I also ran a manual test against a temporary database. I killed the worker with `SIGKILL` partway through a 20-step job; after restarting it, the job completed with output `LONG`. A job with `failAttempts: 3` ended `failed` with `"transient failure"` after 3 attempts. Bad requests got the right errors (wrong content type, a body that isn't an object, a bad `Idempotency-Key`, whitespace-only input, non-integer steps), as did a wrong method (405) and an unknown path (404). Both processes shut down cleanly on `SIGTERM`.
+
+The UI itself hasn't been tested in a browser. Nothing is committed yet.
+
+**What changed:**
+- **`src/db.ts`**: creates the database folder if needed, then sets up a `jobs` table and a `heartbeat` table. Each idempotency key can belong to only one job, which the database enforces, so a key can't create a second job even after a restart.
+- **`src/server.ts`**: implements every endpoint and validation rule in the task. Every problem in a request is reported together in `fields`, and a missing or non-JSON `Content-Type` is reported as `"body"`. Idempotent replays compare the payload after defaults are filled in. `/health` reports the worker as up if its heartbeat is less than 3 seconds old.
+- **`src/worker.ts`**: writes a heartbeat every 500 ms and checks for queued jobs every 200 ms, taking the oldest first. Each step takes 100 ms and progress is saved after every step. A failed attempt goes back to the queue for 500 ms before it is retried, up to 3 attempts.
+- **`ui/index.html`**: the form and job list with all the required `data-testid` elements. It refreshes every 700 ms and lists each rejected field's name in the `form-error` alert. The form turns off the browser's own input checks so that the API does the rejecting.
+
+**One choice you may want to change:** when the worker restarts after a crash, an interrupted job reruns the same attempt number rather than counting a new one. A job with `failAttempts: 0` that was cut off therefore still finishes with `attempts: 1`, as if the crash never happened. The catch is that `attempts` doesn't record the interrupted run.

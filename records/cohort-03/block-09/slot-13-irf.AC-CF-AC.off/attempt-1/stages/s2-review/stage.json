@@ -1,0 +1,122 @@
+{
+  "stageId": "cohort-03-b09-s13-a1--s2-review",
+  "role": "CF",
+  "provider": "openai",
+  "tool": "codex",
+  "toolVersion": "0.169.0",
+  "mode": "fresh",
+  "requestedModel": "gpt-6-astra",
+  "resolvedModel": "gpt-6-astra",
+  "resolvedModelSource": "session rollout turn_context",
+  "requestedEffort": "low",
+  "appliedEffort": "low",
+  "sessionId": "01a211ca-8fa6-7f92-870d-7ae557fb1a12",
+  "termination": "completed",
+  "terminationDetail": null,
+  "exitCode": 0,
+  "signal": null,
+  "startedAt": "2026-11-25T08:20:16.982Z",
+  "endedAt": "2026-11-25T08:21:38.231Z",
+  "durationMs": 81249,
+  "finalMessage": "# Review findings\n\n1. [major] src/worker.ts:27 — Crash recovery can exceed the three-attempt limit and incorrectly complete jobs that should fail.\n   Evidence: In an in-memory reproduction, recovering a `running` job with `attempts: 3` and `failAttempts: 3` caused `claimNext` to start attempt 4. The job then completed with output because attempt 4 bypassed the simulated failure condition.\n   Fix: Make recovery enforce the attempt budget and preserve the required terminal outcome. Add coverage for interruption during the third attempt with `failAttempts: 3` and higher.\n\n2. [major] src/worker.ts:53 — Graceful shutdown erases an attempt that already started.\n   Evidence: `revertAttempt` decrements `attempts`. Claiming a new job and invoking this shutdown path changes its count from 1 back to 0, although the contract defines `attempts` as the number of processing attempts started. Restarting therefore repeats the same attempt number.\n   Fix: Preserve the count of started attempts when requeuing interrupted work, and coordinate recovery with the three-attempt limit.\n\n3. [minor] src/server.ts:166 — Unsupported HEAD requests return success instead of 405.\n   Evidence: The handler rewrites `HEAD` to `GET`. Direct handler checks returned 200 for `HEAD /health`, `HEAD /api/jobs`, and `HEAD /`, whereas the task requires `405 method_not_allowed` for wrong methods on known paths.\n   Fix: Route using the original request method and reject methods other than those specified.\n\n4. [minor] src/server.ts:85 — Early validation returns omit independently invalid fields.\n   Evidence: A malformed JSON body with `Idempotency-Key: bad key` reports only `\"body\"`, omitting `\"Idempotency-Key\"`. A non-JSON content type likewise bypasses header validation. The contract requires each offending field in `fields`.\n   Fix: Validate the idempotency header independently and accumulate its error alongside body errors before returning the rejection.",
+  "usage": {
+    "source": "codex exec --json turn.completed.usage",
+    "semantics": "turn.completed usage summed within this invocation; per-turn vs session-cumulative on resume is unverified until the pilot (methodology 9)",
+    "completeness": "complete",
+    "raw": [
+      {
+        "input_tokens": 179534,
+        "cached_input_tokens": 148736,
+        "cache_write_input_tokens": 0,
+        "output_tokens": 2053,
+        "reasoning_output_tokens": 258
+      }
+    ],
+    "supplementary": {
+      "rolloutCumulativeBefore": null,
+      "rolloutCumulativeAfter": {
+        "input_tokens": 179534,
+        "cached_input_tokens": 148736,
+        "cache_write_input_tokens": 0,
+        "output_tokens": 2053,
+        "reasoning_output_tokens": 258,
+        "total_tokens": 181587
+      },
+      "rolloutFound": true,
+      "malformedEventLines": 0,
+      "turnsStarted": 1,
+      "turnsCompleted": 1,
+      "signalsSent": []
+    }
+  },
+  "recordFiles": [
+    "prompt.md",
+    "events.jsonl",
+    "stderr.txt",
+    "last-message.md",
+    "stage.json"
+  ],
+  "settings": {
+    "model": "gpt-6-astra",
+    "model_reasoning_effort": "low",
+    "approval_policy": "never",
+    "sandbox_mode": "read-only",
+    "stage_permission": "read-only",
+    "outer_isolation": "bwrap",
+    "sandbox_workspace_write.network_access": "false",
+    "ignoreUserConfig": true,
+    "ignoreRules": true,
+    "ephemeral": false,
+    "resumeLatest": "never",
+    "fallbackModel": "none (Codex has no fallback option)",
+    "env": [
+      "CODEX_HOME",
+      "HOME",
+      "LANG",
+      "NO_COLOR",
+      "PATH",
+      "TMPDIR",
+      "npm_config_audit",
+      "npm_config_cache",
+      "npm_config_fund",
+      "npm_config_update_notifier"
+    ],
+    "isolation": {
+      "mechanism": "bwrap",
+      "hidden": [
+        ".",
+        "~"
+      ],
+      "writable": [
+        ".runs/campaign/cohort-03/block-09/slot-13-irf.AC-CF-AC.off/attempt-1/homes/s2-review"
+      ],
+      "readable": [
+        "node_modules",
+        "../../node-v22.23.4",
+        ".runs/campaign/cohort-03/block-09/slot-13-irf.AC-CF-AC.off/attempt-1/snapshots/s2-review"
+      ],
+      "network": "shared host network namespace (provider API)"
+    },
+    "argv": [
+      "exec",
+      "--json",
+      "--ignore-user-config",
+      "--ignore-rules",
+      "-m",
+      "gpt-6-astra",
+      "-c",
+      "model_reasoning_effort=\"low\"",
+      "-c",
+      "approval_policy=\"never\"",
+      "-c",
+      "sandbox_workspace_write.network_access=false",
+      "-o",
+      "<capture>/last-message.md",
+      "--sandbox",
+      "read-only",
+      "-C",
+      "<workspace>",
+      "-"
+    ]
+  }
+}

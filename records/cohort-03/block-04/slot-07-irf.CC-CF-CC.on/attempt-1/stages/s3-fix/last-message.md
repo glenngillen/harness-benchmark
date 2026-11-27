@@ -1,0 +1,3 @@
+Addressed both findings: recovered processing starts now increment `attempts`, and interrupted jobs at the three-attempt limit become failed. Added `novalidate` so invalid numeric values reach API validation and appear in the form error.
+
+`npm run build` and `git diff --check` pass, and the worker starts and shuts down cleanly. HTTP startup remains unverified here because the sandbox blocks local port binding (`listen EPERM`).

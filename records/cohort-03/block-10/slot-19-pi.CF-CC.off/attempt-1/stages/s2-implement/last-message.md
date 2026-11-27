@@ -1,0 +1,3 @@
+Implemented the SQLite-backed job tracker: API and validation in [server.ts](/opt/harness/work/.runs/campaign/cohort-03/block-10/slot-19-pi.CF-CC.off/attempt-1/workspace/src/server.ts), shared persistence in [db.ts](/opt/harness/work/.runs/campaign/cohort-03/block-10/slot-19-pi.CF-CC.off/attempt-1/workspace/src/db.ts), processing and retries in [worker.ts](/opt/harness/work/.runs/campaign/cohort-03/block-10/slot-19-pi.CF-CC.off/attempt-1/workspace/src/worker.ts), plus request validation and the browser UI.
+
+`npm run build` passes. The smoke check and direct server startup both hit `listen EPERM` because this environment blocks loopback listeners, so I couldn’t verify runtime behavior here.

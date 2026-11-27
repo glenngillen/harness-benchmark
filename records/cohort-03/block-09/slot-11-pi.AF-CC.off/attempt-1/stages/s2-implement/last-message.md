@@ -1,0 +1,5 @@
+Implemented the SQLite-backed job tracker: HTTP API, separate worker with progress, retries and restart recovery, persisted idempotency, and a polling browser UI.
+
+`npm run build` passes. The worker started and shut down on `SIGTERM`. The smoke and contract checks could not run because the sandbox rejected loopback binding with `listen EPERM`.
+
+Changed [src/db.ts](/opt/harness/work/.runs/campaign/cohort-03/block-09/slot-11-pi.AF-CC.off/attempt-1/workspace/src/db.ts), [src/server.ts](/opt/harness/work/.runs/campaign/cohort-03/block-09/slot-11-pi.AF-CC.off/attempt-1/workspace/src/server.ts), [src/worker.ts](/opt/harness/work/.runs/campaign/cohort-03/block-09/slot-11-pi.AF-CC.off/attempt-1/workspace/src/worker.ts), and [ui/index.html](/opt/harness/work/.runs/campaign/cohort-03/block-09/slot-11-pi.AF-CC.off/attempt-1/workspace/ui/index.html).

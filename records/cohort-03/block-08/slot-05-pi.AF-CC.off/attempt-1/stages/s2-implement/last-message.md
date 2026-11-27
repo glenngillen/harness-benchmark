@@ -1,0 +1,3 @@
+Implemented the SQLite-backed HTTP API and worker, including validation, durable idempotency, retries, crash recovery, and heartbeat health reporting. Added the browser form and live job list in [ui/index.html](/opt/harness/work/.runs/campaign/cohort-03/block-08/slot-05-pi.AF-CC.off/attempt-1/workspace/ui/index.html).
+
+`npm run build` passes, and the worker starts. The smoke and contract checks could not run because this environment denies local socket binding (`listen EPERM`); the server hit the same restriction when started.

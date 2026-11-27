@@ -1,0 +1,488 @@
+{
+  "stageId": "cohort-03-b01-s10-a1--s2-implement",
+  "role": "AC",
+  "provider": "anthropic",
+  "tool": "claude-code",
+  "toolVersion": "2.1.323",
+  "mode": "fresh",
+  "requestedModel": "claude-haiku-5-5",
+  "requestedEffort": "medium",
+  "appliedEffort": null,
+  "resolvedModel": "claude-haiku-5-5",
+  "resolvedModelSource": "stream-json assistant message.model",
+  "sessionId": "50dc0a64-f7ab-4daf-82dd-476d9755b27a",
+  "termination": "completed",
+  "terminationDetail": null,
+  "exitCode": 0,
+  "signal": null,
+  "startedAt": "2026-11-24T15:43:26.918Z",
+  "endedAt": "2026-11-24T15:46:54.982Z",
+  "durationMs": 208064,
+  "finalMessage": "The job tracker is implemented in `src/` and `ui/`. `npm run build`, `npm run check:smoke` (2/2), and `npm run check:contract` (5/5) all pass. I did not commit anything.\n\n**What changed**\n- `src/jobs.ts` (new): the job type, validation that collects every bad field, the `Idempotency-Key` check, and processing constants.\n- `src/db.ts`: schema created with `IF NOT EXISTS` from either process, a row-to-job mapper, a store with prepared statements, `BEGIN IMMEDIATE` submission and claim transactions, and a separate heartbeat table.\n- `src/server.ts`: routing with 404/405 JSON envelopes, byte-level body reading, idempotent submission (201/200/409), `/health` based on the heartbeat, and graceful SIGTERM/SIGINT shutdown.\n- `src/worker.ts`: heartbeat every 500 ms, sequential processing with 100 ms steps, retries with a 500 ms persisted deadline, failure at attempt 3, and resume of a `running` row after a crash without incrementing attempts.\n- `ui/index.html`: the form and list with every required `data-testid`, DOM-only rendering with `textContent`, 500 ms polling without overlap, and field-level error display.\n\n**Checked by hand (against fresh databases on a free port)**\n- Validation: unknown fields, numeric strings, fractions, nulls, whitespace-only input, non-JSON content type, malformed JSON, non-object bodies, and a bad key all return 400 with the right fields.\n- Idempotency: the same key with defaults omitted or explicit returns 201, then 200, 200; a different payload returns 409.\n- Retries: `failAttempts` 0, 1, and 2 complete on attempts 1, 2, and 3; 3 and 5 end `failed` with `transient failure` after 3 attempts.\n- Health: `worker` goes from `up` to `down` about 3 s after SIGKILL and returns to `up` on restart.\n- Recovery: a worker SIGKILLed while on attempt 3 resumed with `attempts` still 3 and completed the job.\n- Non-ASCII input preserves whitespace and uppercases correctly (`ß` becomes `SS`).\n\n**Not verified**\n- The browser page was not run in a real browser; I checked it only by reading it.\n- I did not test a SIGKILL during step progress for a job that succeeds on its first attempt. The probe landed on a failing attempt, so that path rests on code reading.\n- I did not run concurrent same-key requests.\n\n**Things to know**\n- Port 3917 was already held by a process I did not start, and it answered my first test run. I left it alone and used port 4817.\n- Some files in the repo root (`.bashrc`, `.zshrc`, `.idea/`, and others) were already untracked before I started. I did not touch them.",
+  "usage": {
+    "source": "claude -p --output-format stream-json: assistant message.usage, result.model_usage_since_last_result, result.modelUsage",
+    "semantics": "requests: assistant message usage per API request (deduplicated by message id); sinceLastResult: result.model_usage_since_last_result per model, incremental, summed across results; cumulative: result.modelUsage per model, session-cumulative (continues across resume), never summed",
+    "completeness": "complete",
+    "raw": [
+      {
+        "kind": "request",
+        "messageId": "msg_011ChN1WShmtEDneChwaxrLw",
+        "model": "claude-haiku-5-5",
+        "usage": {
+          "input_tokens": 2,
+          "cache_creation_input_tokens": 13162,
+          "cache_read_input_tokens": 6420,
+          "cache_creation": {
+            "ephemeral_5m_input_tokens": 0,
+            "ephemeral_1h_input_tokens": 13162
+          },
+          "output_tokens": 8,
+          "service_tier": "standard",
+          "inference_geo": "global",
+          "speed": "standard"
+        }
+      },
+      {
+        "kind": "request",
+        "messageId": "msg_011ChN1WcDmwxM7fBDbxNSLx",
+        "model": "claude-haiku-5-5",
+        "usage": {
+          "input_tokens": 2,
+          "cache_creation_input_tokens": 1973,
+          "cache_read_input_tokens": 19582,
+          "cache_creation": {
+            "ephemeral_5m_input_tokens": 0,
+            "ephemeral_1h_input_tokens": 1973
+          },
+          "output_tokens": 3,
+          "service_tier": "standard",
+          "inference_geo": "global",
+          "speed": "standard"
+        }
+      },
+      {
+        "kind": "request",
+        "messageId": "msg_011ChN1WkqgyxsTSbNbV7WV5",
+        "model": "claude-haiku-5-5",
+        "usage": {
+          "input_tokens": 2,
+          "cache_creation_input_tokens": 2380,
+          "cache_read_input_tokens": 21555,
+          "cache_creation": {
+            "ephemeral_5m_input_tokens": 0,
+            "ephemeral_1h_input_tokens": 2380
+          },
+          "output_tokens": 4,
+          "service_tier": "standard",
+          "inference_geo": "global",
+          "speed": "standard"
+        }
+      },
+      {
+        "kind": "request",
+        "messageId": "msg_011ChN1dPN4cB6fE8CWH8kWs",
+        "model": "claude-haiku-5-5",
+        "usage": {
+          "input_tokens": 2,
+          "cache_creation_input_tokens": 23753,
+          "cache_read_input_tokens": 23935,
+          "cache_creation": {
+            "ephemeral_5m_input_tokens": 0,
+            "ephemeral_1h_input_tokens": 23753
+          },
+          "output_tokens": 8,
+          "service_tier": "standard",
+          "inference_geo": "global",
+          "speed": "standard"
+        }
+      },
+      {
+        "kind": "request",
+        "messageId": "msg_011ChN1e5cF9GxrNEdSCR3Ez",
+        "model": "claude-haiku-5-5",
+        "usage": {
+          "input_tokens": 2,
+          "cache_creation_input_tokens": 3060,
+          "cache_read_input_tokens": 47688,
+          "cache_creation": {
+            "ephemeral_5m_input_tokens": 0,
+            "ephemeral_1h_input_tokens": 3060
+          },
+          "output_tokens": 3,
+          "service_tier": "standard",
+          "inference_geo": "global",
+          "speed": "standard"
+        }
+      },
+      {
+        "kind": "request",
+        "messageId": "msg_011ChN1eT55nHLD957RRHAQb",
+        "model": "claude-haiku-5-5",
+        "usage": {
+          "input_tokens": 2,
+          "cache_creation_input_tokens": 1456,
+          "cache_read_input_tokens": 50748,
+          "cache_creation": {
+            "ephemeral_5m_input_tokens": 0,
+            "ephemeral_1h_input_tokens": 1456
+          },
+          "output_tokens": 6,
+          "service_tier": "standard",
+          "inference_geo": "global",
+          "speed": "standard"
+        }
+      },
+      {
+        "kind": "request",
+        "messageId": "msg_011ChN1f98bhMG195NoAi9kh",
+        "model": "claude-haiku-5-5",
+        "usage": {
+          "input_tokens": 2,
+          "cache_creation_input_tokens": 2843,
+          "cache_read_input_tokens": 52204,
+          "cache_creation": {
+            "ephemeral_5m_input_tokens": 0,
+            "ephemeral_1h_input_tokens": 2843
+          },
+          "output_tokens": 8,
+          "service_tier": "standard",
+          "inference_geo": "global",
+          "speed": "standard"
+        }
+      },
+      {
+        "kind": "request",
+        "messageId": "msg_011ChN1fikvmeGADew7yigyT",
+        "model": "claude-haiku-5-5",
+        "usage": {
+          "input_tokens": 2,
+          "cache_creation_input_tokens": 828,
+          "cache_read_input_tokens": 55047,
+          "cache_creation": {
+            "ephemeral_5m_input_tokens": 0,
+            "ephemeral_1h_input_tokens": 828
+          },
+          "output_tokens": 3,
+          "service_tier": "standard",
+          "inference_geo": "global",
+          "speed": "standard"
+        }
+      },
+      {
+        "kind": "request",
+        "messageId": "msg_011ChN1hBtbxUnirmBYiXZuj",
+        "model": "claude-haiku-5-5",
+        "usage": {
+          "input_tokens": 2,
+          "cache_creation_input_tokens": 2689,
+          "cache_read_input_tokens": 55875,
+          "cache_creation": {
+            "ephemeral_5m_input_tokens": 0,
+            "ephemeral_1h_input_tokens": 2689
+          },
+          "output_tokens": 3,
+          "service_tier": "standard",
+          "inference_geo": "global",
+          "speed": "standard"
+        }
+      },
+      {
+        "kind": "request",
+        "messageId": "msg_011ChN1heCPfUi2V4mqnMWmi",
+        "model": "claude-haiku-5-5",
+        "usage": {
+          "input_tokens": 2,
+          "cache_creation_input_tokens": 2026,
+          "cache_read_input_tokens": 58564,
+          "cache_creation": {
+            "ephemeral_5m_input_tokens": 0,
+            "ephemeral_1h_input_tokens": 2026
+          },
+          "output_tokens": 3,
+          "service_tier": "standard",
+          "inference_geo": "global",
+          "speed": "standard"
+        }
+      },
+      {
+        "kind": "request",
+        "messageId": "msg_011ChN1hvpGMdEymFDAsrnQw",
+        "model": "claude-haiku-5-5",
+        "usage": {
+          "input_tokens": 2,
+          "cache_creation_input_tokens": 733,
+          "cache_read_input_tokens": 60590,
+          "cache_creation": {
+            "ephemeral_5m_input_tokens": 0,
+            "ephemeral_1h_input_tokens": 733
+          },
+          "output_tokens": 8,
+          "service_tier": "standard",
+          "inference_geo": "global",
+          "speed": "standard"
+        }
+      },
+      {
+        "kind": "request",
+        "messageId": "msg_011ChN1jd3zQ4EVWqh7iimb2",
+        "model": "claude-haiku-5-5",
+        "usage": {
+          "input_tokens": 2,
+          "cache_creation_input_tokens": 3205,
+          "cache_read_input_tokens": 61323,
+          "cache_creation": {
+            "ephemeral_5m_input_tokens": 0,
+            "ephemeral_1h_input_tokens": 3205
+          },
+          "output_tokens": 3,
+          "service_tier": "standard",
+          "inference_geo": "global",
+          "speed": "standard"
+        }
+      },
+      {
+        "kind": "request",
+        "messageId": "msg_011ChN1kserW1UzjFuHg4iTd",
+        "model": "claude-haiku-5-5",
+        "usage": {
+          "input_tokens": 2,
+          "cache_creation_input_tokens": 1570,
+          "cache_read_input_tokens": 64528,
+          "cache_creation": {
+            "ephemeral_5m_input_tokens": 0,
+            "ephemeral_1h_input_tokens": 1570
+          },
+          "output_tokens": 2,
+          "service_tier": "standard",
+          "inference_geo": "global",
+          "speed": "standard"
+        }
+      },
+      {
+        "kind": "request",
+        "messageId": "msg_011ChN1mETVhCkbtyCAPM4m8",
+        "model": "claude-haiku-5-5",
+        "usage": {
+          "input_tokens": 2,
+          "cache_creation_input_tokens": 982,
+          "cache_read_input_tokens": 66098,
+          "cache_creation": {
+            "ephemeral_5m_input_tokens": 0,
+            "ephemeral_1h_input_tokens": 982
+          },
+          "output_tokens": 8,
+          "service_tier": "standard",
+          "inference_geo": "global",
+          "speed": "standard"
+        }
+      },
+      {
+        "kind": "result",
+        "index": 0,
+        "usage": {
+          "input_tokens": 28,
+          "cache_creation_input_tokens": 60660,
+          "cache_read_input_tokens": 644157,
+          "output_tokens": 40401,
+          "output_tokens_details": {
+            "thinking_tokens": 21002
+          },
+          "server_tool_use": {
+            "web_search_requests": 0,
+            "web_fetch_requests": 0
+          },
+          "service_tier": "standard",
+          "cache_creation": {
+            "ephemeral_1h_input_tokens": 60660,
+            "ephemeral_5m_input_tokens": 0
+          },
+          "inference_geo": "global",
+          "iterations": [],
+          "speed": "standard",
+          "fallback_credit": null
+        },
+        "sinceLastResult": {
+          "claude-haiku-5-5": {
+            "inputTokens": 28,
+            "outputTokens": 40401,
+            "cacheReadInputTokens": 644157,
+            "cacheCreationInputTokens": 60660,
+            "webSearchRequests": 0,
+            "costUSD": 0.038776870000000005,
+            "contextWindow": 1000000,
+            "maxOutputTokens": 128000,
+            "thinkingTokens": 21002,
+            "cacheCreationEphemeral5mInputTokens": 0,
+            "cacheCreationEphemeral1hInputTokens": 60660,
+            "canonicalModel": "claude-haiku-5-5",
+            "provider": "firstParty",
+            "costBasis": "list"
+          }
+        },
+        "modelUsage": {
+          "claude-haiku-5-5": {
+            "inputTokens": 28,
+            "outputTokens": 40401,
+            "cacheReadInputTokens": 644157,
+            "cacheCreationInputTokens": 60660,
+            "webSearchRequests": 0,
+            "costUSD": 0.038776870000000005,
+            "contextWindow": 1000000,
+            "maxOutputTokens": 128000,
+            "thinkingTokens": 21002,
+            "cacheCreationEphemeral5mInputTokens": 0,
+            "cacheCreationEphemeral1hInputTokens": 60660,
+            "canonicalModel": "claude-haiku-5-5",
+            "provider": "firstParty",
+            "costBasis": "list"
+          }
+        },
+        "nativeCostEstimateUsd": 0.038776870000000005
+      }
+    ],
+    "supplementary": {
+      "cumulativeBefore": null,
+      "cumulativeAfter": {
+        "claude-haiku-5-5": {
+          "inputTokens": 28,
+          "outputTokens": 40401,
+          "cacheReadInputTokens": 644157,
+          "cacheCreationInputTokens": 60660,
+          "webSearchRequests": 0,
+          "costUSD": 0.038776870000000005,
+          "contextWindow": 1000000,
+          "maxOutputTokens": 128000,
+          "thinkingTokens": 21002,
+          "cacheCreationEphemeral5mInputTokens": 0,
+          "cacheCreationEphemeral1hInputTokens": 60660,
+          "canonicalModel": "claude-haiku-5-5",
+          "provider": "firstParty",
+          "costBasis": "list"
+        }
+      },
+      "auxiliaryModels": [],
+      "resultCount": 1,
+      "resultsMissingSinceLastResult": 0,
+      "numTurns": 15,
+      "permissionDenials": 0,
+      "apiRetries": 0,
+      "malformedEventLines": 0,
+      "signalsSent": [],
+      "init": {
+        "model": "claude-haiku-5-5",
+        "apiKeySource": "none",
+        "tools": [
+          "Bash",
+          "Edit",
+          "Glob",
+          "Grep",
+          "Read",
+          "Write"
+        ],
+        "permissionMode": "default",
+        "version": "2.1.323",
+        "mcpServers": []
+      }
+    }
+  },
+  "recordFiles": [
+    "prompt.md",
+    "events.jsonl",
+    "stderr.txt",
+    "last-message.md",
+    "stage.json"
+  ],
+  "settings": {
+    "model": "claude-haiku-5-5",
+    "effort": "medium",
+    "tools": [
+      "Read",
+      "Grep",
+      "Glob",
+      "Edit",
+      "Write",
+      "Bash"
+    ],
+    "allowedTools": [
+      "Read",
+      "Grep",
+      "Glob",
+      "Edit",
+      "Write",
+      "Bash"
+    ],
+    "disallowedTools": [
+      "mcp__*"
+    ],
+    "permissionMode": "default",
+    "permissionPrompts": "none",
+    "settingSources": "none",
+    "promptSuggestions": false,
+    "slashCommands": "disabled",
+    "fallbackModel": "unset",
+    "bare": false,
+    "sessionPersistence": true,
+    "env": [
+      "CLAUDE_CODE_DISABLE_AUTO_MEMORY",
+      "CLAUDE_CODE_DISABLE_NONESSENTIAL_TRAFFIC",
+      "CLAUDE_CODE_OAUTH_TOKEN",
+      "CLAUDE_CODE_SUBPROCESS_ENV_SCRUB",
+      "CLAUDE_CONFIG_DIR",
+      "DISABLE_AUTOUPDATER",
+      "HOME",
+      "LANG",
+      "NO_COLOR",
+      "PATH",
+      "TMPDIR",
+      "npm_config_audit",
+      "npm_config_cache",
+      "npm_config_fund",
+      "npm_config_update_notifier"
+    ],
+    "tmpdir": "/tmp (private tmpfs of the stage sandbox)",
+    "managedPolicy": [],
+    "isolation": {
+      "mechanism": "bwrap",
+      "hidden": [
+        ".",
+        "~"
+      ],
+      "writable": [
+        ".runs/campaign/cohort-03/block-01/slot-10-pi.CF-AC.off/attempt-1/homes/s2-implement",
+        ".runs/campaign/cohort-03/block-01/slot-10-pi.CF-AC.off/attempt-1/workspace"
+      ],
+      "readable": [
+        "node_modules",
+        "../../node-v22.23.4"
+      ],
+      "network": "shared host network namespace (provider API)"
+    },
+    "argv": [
+      "-p",
+      "--output-format",
+      "stream-json",
+      "--verbose",
+      "--model",
+      "claude-haiku-5-5",
+      "--effort",
+      "medium",
+      "--setting-sources",
+      "",
+      "--prompt-suggestions",
+      "false",
+      "--disable-slash-commands",
+      "--permission-prompts",
+      "none",
+      "--permission-mode",
+      "default",
+      "--tools",
+      "Read,Grep,Glob,Edit,Write,Bash",
+      "--allowedTools",
+      "Read,Grep,Glob,Edit,Write,Bash",
+      "--disallowedTools",
+      "mcp__*",
+      "--session-id",
+      "50dc0a64-f7ab-4daf-82dd-476d9755b27a"
+    ]
+  }
+}

@@ -1,0 +1,5 @@
+Implemented the SQLite-backed job API, sequential worker with persisted retries and recovery, and polling browser UI.
+
+`npm run build` passes. The worker processed a retry test successfully, completing on attempt 3. The smoke and contract checks, and a direct server startup, were blocked because this environment rejects loopback binding with `listen EPERM`.
+
+Changed [db.ts](/opt/harness/work/.runs/campaign/cohort-03/block-06/slot-06-pi.CF-CC.on/attempt-1/workspace/src/db.ts), [jobs.ts](/opt/harness/work/.runs/campaign/cohort-03/block-06/slot-06-pi.CF-CC.on/attempt-1/workspace/src/jobs.ts), [server.ts](/opt/harness/work/.runs/campaign/cohort-03/block-06/slot-06-pi.CF-CC.on/attempt-1/workspace/src/server.ts), [worker.ts](/opt/harness/work/.runs/campaign/cohort-03/block-06/slot-06-pi.CF-CC.on/attempt-1/workspace/src/worker.ts), and [index.html](/opt/harness/work/.runs/campaign/cohort-03/block-06/slot-06-pi.CF-CC.on/attempt-1/workspace/ui/index.html).

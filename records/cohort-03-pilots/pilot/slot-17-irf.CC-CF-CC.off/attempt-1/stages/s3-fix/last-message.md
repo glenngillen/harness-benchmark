@@ -1,0 +1,3 @@
+Addressed all five findings: request bodies are decoded after buffering, unusual paths return JSON instead of crashing, recovered work counts as a new attempt within the three-attempt limit, the form bypasses native validation, and queued jobs use insertion order to break timestamp ties.
+
+`npm run build` passes, and the worker starts and shuts down on `SIGTERM`. The fixed HTTP checks remain unverified because localhost binding is blocked in this environment (`listen EPERM`).

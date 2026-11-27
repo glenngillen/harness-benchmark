@@ -1,0 +1,96 @@
+{
+  "schema": "harness-benchmark/check-run@1",
+  "status": "passed",
+  "reason": null,
+  "startedAt": "2026-11-24T20:52:34.397Z",
+  "durationMs": 5174,
+  "ceilingMs": 120000,
+  "snapshotHash": "e55da49990e178a0a15e6f672a2ada4f4287e2bb85bfd8b48be132a308c62a5e",
+  "fixedFileChanges": [],
+  "suites": [
+    {
+      "suite": "build",
+      "status": "passed",
+      "checks": [
+        {
+          "name": "build.compile",
+          "title": "npm run build compiles src/ to dist/",
+          "passed": true,
+          "detail": ""
+        }
+      ],
+      "output": [],
+      "stderr": {
+        "server": [],
+        "worker": []
+      },
+      "durationMs": 2470
+    },
+    {
+      "suite": "smoke",
+      "status": "passed",
+      "checks": [
+        {
+          "name": "smoke.health",
+          "title": "npm run start:server starts and GET /health returns 200 {\"status\":\"ok\"} within 10 s",
+          "passed": true,
+          "detail": ""
+        },
+        {
+          "name": "smoke.worker-up",
+          "title": "npm run start:worker starts and GET /health reports \"worker\":\"up\" within 10 s",
+          "passed": true,
+          "detail": ""
+        }
+      ],
+      "output": [],
+      "stderr": {
+        "server": [],
+        "worker": []
+      },
+      "durationMs": 699
+    },
+    {
+      "suite": "contract",
+      "status": "passed",
+      "checks": [
+        {
+          "name": "contract.submit-job",
+          "title": "POST /api/jobs creates a queued job that GET /api/jobs/:id and GET /api/jobs return",
+          "passed": true,
+          "detail": ""
+        },
+        {
+          "name": "contract.reject-invalid",
+          "title": "Invalid submissions return 400 invalid_request naming the field, and create no job",
+          "passed": true,
+          "detail": ""
+        },
+        {
+          "name": "contract.complete-job",
+          "title": "A job completes with result.output equal to the upper-cased input",
+          "passed": true,
+          "detail": ""
+        },
+        {
+          "name": "contract.retry-transient",
+          "title": "failAttempts 1 fails the first attempt, then completes on attempt 2 without a duplicate job",
+          "passed": true,
+          "detail": ""
+        },
+        {
+          "name": "contract.idempotent-replay",
+          "title": "A reused Idempotency-Key replays the same job (200), or returns 409 for a different payload",
+          "passed": true,
+          "detail": ""
+        }
+      ],
+      "output": [],
+      "stderr": {
+        "server": [],
+        "worker": []
+      },
+      "durationMs": 1955
+    }
+  ]
+}

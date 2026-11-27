@@ -1,0 +1,542 @@
+{
+  "schema": "harness-benchmark/evaluation-verdict@1",
+  "cases": [
+    {
+      "id": "A1.starts-and-answers-health",
+      "behaviour": "A1",
+      "title": "npm run start:server and start:worker start; GET /health answers 200 {\"status\":\"ok\"} within 10 s",
+      "passed": true,
+      "durationMs": 461.4028159999998,
+      "detail": ""
+    },
+    {
+      "id": "A1.reports-worker-up",
+      "behaviour": "A1",
+      "title": "GET /health reports the running worker as \"up\"",
+      "passed": true,
+      "durationMs": 2.7793209999999817,
+      "detail": ""
+    },
+    {
+      "id": "A2.create-returns-queued-job",
+      "behaviour": "A2",
+      "title": "A valid submission returns 201 with a complete queued job and creates exactly one job, listed first",
+      "passed": true,
+      "durationMs": 66.7618849999999,
+      "detail": ""
+    },
+    {
+      "id": "A2.defaults-and-exact-input",
+      "behaviour": "A2",
+      "title": "Omitted steps and failAttempts default to 5 and 0; input is stored exactly as sent",
+      "passed": true,
+      "durationMs": 51.14014199999974,
+      "detail": ""
+    },
+    {
+      "id": "A3.unknown-id-not-found",
+      "behaviour": "A3",
+      "title": "GET /api/jobs/:id for an unknown id returns 404 not_found",
+      "passed": true,
+      "durationMs": 41.70943500000021,
+      "detail": ""
+    },
+    {
+      "id": "A3.completes-with-uppercase-output",
+      "behaviour": "A3",
+      "title": "A job completes with result.output equal to input.toUpperCase(), full progress, and one attempt",
+      "passed": true,
+      "durationMs": 1121.9598529999998,
+      "detail": ""
+    },
+    {
+      "id": "A3.progress-observable",
+      "behaviour": "A3",
+      "title": "An idle worker starts a job within 1 s; progress is visible while running and steps take 50-500 ms",
+      "passed": true,
+      "durationMs": 1152.140727,
+      "detail": ""
+    },
+    {
+      "id": "A4.missing-input",
+      "behaviour": "A4",
+      "title": "Missing input is rejected",
+      "passed": true,
+      "durationMs": 6.693441999999777,
+      "detail": ""
+    },
+    {
+      "id": "A4.empty-input",
+      "behaviour": "A4",
+      "title": "Empty input is rejected",
+      "passed": true,
+      "durationMs": 4.343781999999919,
+      "detail": ""
+    },
+    {
+      "id": "A4.whitespace-input",
+      "behaviour": "A4",
+      "title": "Whitespace-only input is rejected",
+      "passed": true,
+      "durationMs": 4.152438000000075,
+      "detail": ""
+    },
+    {
+      "id": "A4.input-too-long",
+      "behaviour": "A4",
+      "title": "Input longer than 1000 characters is rejected",
+      "passed": true,
+      "durationMs": 5.485566999999719,
+      "detail": ""
+    },
+    {
+      "id": "A4.input-not-string",
+      "behaviour": "A4",
+      "title": "Non-string input is rejected",
+      "passed": true,
+      "durationMs": 4.605803999999807,
+      "detail": ""
+    },
+    {
+      "id": "A4.steps-above-max",
+      "behaviour": "A4",
+      "title": "steps above 20 is rejected",
+      "passed": true,
+      "durationMs": 4.208683000000747,
+      "detail": ""
+    },
+    {
+      "id": "A4.steps-zero",
+      "behaviour": "A4",
+      "title": "steps of 0 is rejected",
+      "passed": true,
+      "durationMs": 4.264782000000196,
+      "detail": ""
+    },
+    {
+      "id": "A4.steps-fraction",
+      "behaviour": "A4",
+      "title": "Non-integer steps is rejected",
+      "passed": true,
+      "durationMs": 3.8659920000000056,
+      "detail": ""
+    },
+    {
+      "id": "A4.steps-numeric-string",
+      "behaviour": "A4",
+      "title": "Numeric-string steps is rejected",
+      "passed": true,
+      "durationMs": 3.706666000000041,
+      "detail": ""
+    },
+    {
+      "id": "A4.fail-attempts-negative",
+      "behaviour": "A4",
+      "title": "Negative failAttempts is rejected",
+      "passed": true,
+      "durationMs": 3.766417000000729,
+      "detail": ""
+    },
+    {
+      "id": "A4.fail-attempts-above-max",
+      "behaviour": "A4",
+      "title": "failAttempts above 5 is rejected",
+      "passed": true,
+      "durationMs": 3.756586000000425,
+      "detail": ""
+    },
+    {
+      "id": "A4.fail-attempts-string",
+      "behaviour": "A4",
+      "title": "Numeric-string failAttempts is rejected",
+      "passed": true,
+      "durationMs": 3.9839560000000347,
+      "detail": ""
+    },
+    {
+      "id": "A4.unknown-field",
+      "behaviour": "A4",
+      "title": "Unknown fields are rejected and named",
+      "passed": true,
+      "durationMs": 3.7304119999998875,
+      "detail": ""
+    },
+    {
+      "id": "A4.every-offending-field",
+      "behaviour": "A4",
+      "title": "Every offending field is listed",
+      "passed": true,
+      "durationMs": 4.529782999999952,
+      "detail": ""
+    },
+    {
+      "id": "A4.malformed-json",
+      "behaviour": "A4",
+      "title": "Malformed JSON is rejected as \"body\"",
+      "passed": true,
+      "durationMs": 3.689806999999746,
+      "detail": ""
+    },
+    {
+      "id": "A4.array-body",
+      "behaviour": "A4",
+      "title": "An array body is rejected as \"body\"",
+      "passed": true,
+      "durationMs": 3.479682999999568,
+      "detail": ""
+    },
+    {
+      "id": "A4.null-body",
+      "behaviour": "A4",
+      "title": "A null body is rejected as \"body\"",
+      "passed": true,
+      "durationMs": 4.2674419999993916,
+      "detail": ""
+    },
+    {
+      "id": "A4.missing-content-type",
+      "behaviour": "A4",
+      "title": "A submission without Content-Type is rejected",
+      "passed": true,
+      "durationMs": 4.260236999999506,
+      "detail": ""
+    },
+    {
+      "id": "A4.non-json-content-type",
+      "behaviour": "A4",
+      "title": "A text/plain submission is rejected",
+      "passed": true,
+      "durationMs": 4.506079000000682,
+      "detail": ""
+    },
+    {
+      "id": "A4.idempotency-key-charset",
+      "behaviour": "A4",
+      "title": "An Idempotency-Key with invalid characters is rejected",
+      "passed": true,
+      "durationMs": 4.388024000000769,
+      "detail": ""
+    },
+    {
+      "id": "A4.idempotency-key-length",
+      "behaviour": "A4",
+      "title": "An Idempotency-Key longer than 128 characters is rejected",
+      "passed": true,
+      "durationMs": 4.225835000000188,
+      "detail": ""
+    },
+    {
+      "id": "A4.boundaries-accepted",
+      "behaviour": "A4",
+      "title": "Boundary values (1000-character input, steps 1 and 20, failAttempts 0 and 5) are accepted",
+      "passed": true,
+      "durationMs": 10.831921999999395,
+      "detail": ""
+    },
+    {
+      "id": "A5.replay-same-payload",
+      "behaviour": "A5",
+      "title": "Same key and same payload (explicit defaults, different key order) returns 200 with the original job",
+      "passed": true,
+      "durationMs": 13.713662000000113,
+      "detail": ""
+    },
+    {
+      "id": "A5.conflict-different-input",
+      "behaviour": "A5",
+      "title": "Same key with a different input returns 409 idempotency_conflict and creates no job",
+      "passed": true,
+      "durationMs": 4.208588999999847,
+      "detail": ""
+    },
+    {
+      "id": "A5.conflict-different-steps",
+      "behaviour": "A5",
+      "title": "Same key with different steps returns 409 and creates no job",
+      "passed": true,
+      "durationMs": 4.1705879999999524,
+      "detail": ""
+    },
+    {
+      "id": "A5.defaults-equivalent",
+      "behaviour": "A5",
+      "title": "A payload relying on defaults and one stating them are the same payload",
+      "passed": true,
+      "durationMs": 7.630200999999943,
+      "detail": ""
+    },
+    {
+      "id": "A5.concurrent-same-key",
+      "behaviour": "A5",
+      "title": "Five concurrent submissions with one new key create exactly one job",
+      "passed": true,
+      "durationMs": 12.531048999999257,
+      "detail": ""
+    },
+    {
+      "id": "A5.no-key-always-creates",
+      "behaviour": "A5",
+      "title": "Identical submissions without a key create two jobs",
+      "passed": true,
+      "durationMs": 13.668666999999914,
+      "detail": ""
+    },
+    {
+      "id": "A6.retried-to-completion",
+      "behaviour": "A6",
+      "title": "failAttempts 2 completes on attempt 3, returns to queued between attempts, with one job and one result",
+      "passed": true,
+      "durationMs": 3198.5813500000004,
+      "detail": ""
+    },
+    {
+      "id": "A6.exhausted-fails",
+      "behaviour": "A6",
+      "title": "failAttempts 3 ends failed with error \"transient failure\", null result, attempts 3, and is not reprocessed",
+      "passed": true,
+      "durationMs": 3410.304931999999,
+      "detail": ""
+    },
+    {
+      "id": "A8.page-structure",
+      "behaviour": "A8",
+      "title": "GET / serves HTML with every required data-testid; form-error has role=\"alert\" and starts empty",
+      "passed": true,
+      "durationMs": 1015.7868319999998,
+      "detail": ""
+    },
+    {
+      "id": "A8.submit-through-form",
+      "behaviour": "A8",
+      "title": "Submitting the form creates exactly one job with numeric steps and failAttempts",
+      "passed": false,
+      "durationMs": 5183.040701000002,
+      "detail": "timed out after 5000 ms waiting for the submitted job to appear in GET /api/jobs"
+    },
+    {
+      "id": "A3.ui-shows-result",
+      "behaviour": "A3",
+      "title": "The UI shows a completed job's status, progress and output without a reload",
+      "passed": false,
+      "durationMs": 0.16581399999995483,
+      "detail": "prerequisite failed: no job was submitted through the UI"
+    },
+    {
+      "id": "A8.live-updates",
+      "behaviour": "A8",
+      "title": "A job created elsewhere appears in the UI and its completion is reflected within 2 s, without a reload",
+      "passed": false,
+      "durationMs": 3010.238108999998,
+      "detail": "timed out after 3000 ms waiting for job-item a1e67a69-8477-4441-ab99-d5dfbcd79cc2 to appear"
+    },
+    {
+      "id": "A8.list-newest-first",
+      "behaviour": "A8",
+      "title": "The UI lists jobs newest first, matching GET /api/jobs",
+      "passed": false,
+      "durationMs": 3007.496352000002,
+      "detail": "timed out after 3000 ms waiting for job-list order [\"a1e67a69-8477-4441-ab99-d5dfbcd79cc2\",\"f1619b4f-5b84-47e3-a00f-b3025c420d49\",\"2f94aa7e-58d1-425a-8f4e-6d4bb3d73cdf\",\"81fe16a8-4113-49b7-b409-6187db9d7a4a\",\"b18615de-ae4f-4d18-b536-383acb4277e4\"]"
+    },
+    {
+      "id": "A8.validation-error-shown",
+      "behaviour": "A8",
+      "title": "A rejected submission shows the offending field in form-error and creates no job",
+      "passed": false,
+      "durationMs": 3160.667203000001,
+      "detail": "timed out after 3000 ms waiting for form-error to name the \"input\" field"
+    },
+    {
+      "id": "A8.error-cleared-after-success",
+      "behaviour": "A8",
+      "title": "form-error is empty again after a later successful submission",
+      "passed": false,
+      "durationMs": 5148.541042000004,
+      "detail": "timed out after 5000 ms waiting for the job to be created"
+    },
+    {
+      "id": "A7.kill-during-processing",
+      "behaviour": "A7",
+      "title": "Setup: a job is running when the worker is killed with SIGKILL, with another job queued behind it",
+      "passed": true,
+      "durationMs": 331.27214000000095,
+      "detail": ""
+    },
+    {
+      "id": "A1.reports-worker-down",
+      "behaviour": "A1",
+      "title": "GET /health reports the worker \"down\" within 3 s of it dying",
+      "passed": true,
+      "durationMs": 2886.4028259999977,
+      "detail": ""
+    },
+    {
+      "id": "A7.restart-after-sigkill",
+      "behaviour": "A7",
+      "title": "After SIGKILL of the server, both processes restart on the same DATABASE_PATH and the server answers GET /health",
+      "passed": true,
+      "durationMs": 654.202744999995,
+      "detail": ""
+    },
+    {
+      "id": "A7.jobs-persist",
+      "behaviour": "A7",
+      "title": "Every job from before the crash is still listed after the restart",
+      "passed": true,
+      "durationMs": 4.731762000003073,
+      "detail": ""
+    },
+    {
+      "id": "A7.inflight-resumed",
+      "behaviour": "A7",
+      "title": "The job running at the crash is processed again and completes within 10 s plus its processing time",
+      "passed": true,
+      "durationMs": 1322.3398680000028,
+      "detail": ""
+    },
+    {
+      "id": "A7.queued-processed-after-restart",
+      "behaviour": "A7",
+      "title": "A job still queued at the crash is processed after the restart",
+      "passed": true,
+      "durationMs": 108.09439399999974,
+      "detail": ""
+    },
+    {
+      "id": "A7.finished-jobs-not-reprocessed",
+      "behaviour": "A7",
+      "title": "Completed and failed jobs keep their status, attempts, result and updatedAt across the restart",
+      "passed": true,
+      "durationMs": 3.8127200000017183,
+      "detail": ""
+    },
+    {
+      "id": "A5.key-survives-restart",
+      "behaviour": "A5",
+      "title": "An idempotency key used before the restart still replays the same job afterwards",
+      "passed": true,
+      "durationMs": 9.828877999992983,
+      "detail": ""
+    },
+    {
+      "id": "A1.clean-sigterm-shutdown",
+      "behaviour": "A1",
+      "title": "Server and worker exit within 5 s of SIGTERM",
+      "passed": true,
+      "durationMs": 3.5816699999995762,
+      "detail": ""
+    }
+  ],
+  "behaviours": {
+    "A1": {
+      "passed": true,
+      "cases": 4,
+      "passedCases": 4
+    },
+    "A2": {
+      "passed": true,
+      "cases": 2,
+      "passedCases": 2
+    },
+    "A3": {
+      "passed": false,
+      "cases": 4,
+      "passedCases": 3
+    },
+    "A4": {
+      "passed": true,
+      "cases": 22,
+      "passedCases": 22
+    },
+    "A5": {
+      "passed": true,
+      "cases": 7,
+      "passedCases": 7
+    },
+    "A6": {
+      "passed": true,
+      "cases": 2,
+      "passedCases": 2
+    },
+    "A7": {
+      "passed": true,
+      "cases": 6,
+      "passedCases": 6
+    },
+    "A8": {
+      "passed": false,
+      "cases": 6,
+      "passedCases": 1
+    }
+  },
+  "passedCases": 47,
+  "totalCases": 53,
+  "status": "failed",
+  "reason": "cases-failed",
+  "startedAt": "2026-11-24T16:47:58.292Z",
+  "finishedAt": "2026-11-24T16:48:36.424Z",
+  "durationMs": 38133,
+  "ceilingMs": 120000,
+  "nonce": "9a1c796b",
+  "evaluator": {
+    "sourceHash": "42a87947e9899a48fa0aaea413c56a5625fcba97b791abd5a54821c2c0519d90",
+    "node": "v22.23.4",
+    "platform": "linux"
+  },
+  "snapshot": {
+    "path": ".runs/campaign/cohort-03/block-01/slot-23-pi.CF-CC.off/attempt-1/final",
+    "hash": "8af5a46854b63ed4daccd0351230bf3be17f37ead06b4daef73ca29f58a8c619",
+    "files": 14,
+    "bytes": 49691,
+    "ignored": [],
+    "fixedFileChanges": []
+  },
+  "isolation": {
+    "mechanism": "bwrap",
+    "hidden": [
+      ".",
+      "~"
+    ],
+    "writable": [
+      ".runs/campaign/cohort-03/block-01/slot-23-pi.CF-CC.off/attempt-1/eval-1"
+    ],
+    "network": "shared host network namespace (loopback required by the evaluator)"
+  },
+  "build": {
+    "ok": true,
+    "exitCode": 0,
+    "timedOut": false,
+    "durationMs": 2451,
+    "output": [
+      "",
+      "> job-tracker@0.0.0 build",
+      "> tsc -p tsconfig.json",
+      ""
+    ]
+  },
+  "appOutput": {
+    "server": [
+      "",
+      "> job-tracker@0.0.0 start:server",
+      "> node --disable-warning=ExperimentalWarning dist/server.js",
+      "",
+      "server listening on 37371",
+      "",
+      "> job-tracker@0.0.0 start:server",
+      "> node --disable-warning=ExperimentalWarning dist/server.js",
+      "",
+      "server listening on 36713"
+    ],
+    "worker": [
+      "",
+      "> job-tracker@0.0.0 start:worker",
+      "> node --disable-warning=ExperimentalWarning dist/worker.js",
+      "",
+      "worker started",
+      "",
+      "> job-tracker@0.0.0 start:worker",
+      "> node --disable-warning=ExperimentalWarning dist/worker.js",
+      "",
+      "worker started"
+    ]
+  }
+}

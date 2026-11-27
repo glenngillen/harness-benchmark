@@ -1,0 +1,43 @@
+{
+  "schema": "harness-benchmark/host-evidence@1",
+  "checkedAt": "2026-11-24T23:02:06.137Z",
+  "phase": "before-campaign",
+  "runner": "aws-ec2/ap-southeast-2/t3.medium",
+  "hostId": "9073d9a2d96e7acdfe5e9acce87e8bc009a06e154b675d021381d15737ce0448",
+  "os": {
+    "type": "Linux",
+    "platform": "linux",
+    "release": "7.0.0-1018-aws",
+    "arch": "x64",
+    "distribution": "Ubuntu 24.04.5 LTS"
+  },
+  "node": "v22.23.4",
+  "benchmarkRevision": {
+    "commit": "5c5cbeaabffb2c3eef9d2a9d776897dbe2f0467d",
+    "source": "bundle"
+  },
+  "preflight": {
+    "codex": {
+      "ok": true,
+      "toolVersion": "0.169.0",
+      "termination": null,
+      "detail": null
+    },
+    "claude": {
+      "ok": true,
+      "toolVersion": "2.1.323",
+      "termination": null,
+      "detail": null
+    }
+  },
+  "isolation": {
+    "sandboxTool": "/usr/bin/bwrap",
+    "mechanism": "bwrap",
+    "toolVersion": "bubblewrap 0.9.0",
+    "kernel": {
+      "maxUserNamespaces": "12495",
+      "apparmorRestrictUnprivilegedUserns": "1",
+      "unprivilegedUsernsClone": "1"
+    }
+  }
+}

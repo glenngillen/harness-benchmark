@@ -1,0 +1,3 @@
+Addressed all four findings: fixed the UI script syntax, disabled native validation so submissions reach the API, preserved split UTF-8 characters, and updated recovery to respect the three-attempt limit without counting a restart as a new attempt.
+
+`npm run build` passes. The worker starts cleanly, and a recovery check confirmed a third simulated failure ends as `failed` with `attempts: 3`. The inline UI script passes a syntax check. I couldn’t run the browser or HTTP checks here because this environment rejects loopback binds with `listen EPERM`.

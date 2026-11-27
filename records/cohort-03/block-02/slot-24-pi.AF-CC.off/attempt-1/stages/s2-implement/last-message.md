@@ -1,0 +1,5 @@
+Implemented the SQLite-backed job tracker: API validation and idempotency, worker retries and crash recovery, and a browser UI that polls for progress.
+
+`npm run build` passes. The worker completed a direct SQLite job check with the expected `HELLO` output. The smoke and contract checks, and the server launch, were blocked because this environment rejects local socket binding (`listen EPERM`).
+
+Changes are in [src/db.ts](/opt/harness/work/.runs/campaign/cohort-03/block-02/slot-24-pi.AF-CC.off/attempt-1/workspace/src/db.ts), [src/server.ts](/opt/harness/work/.runs/campaign/cohort-03/block-02/slot-24-pi.AF-CC.off/attempt-1/workspace/src/server.ts), [src/worker.ts](/opt/harness/work/.runs/campaign/cohort-03/block-02/slot-24-pi.AF-CC.off/attempt-1/workspace/src/worker.ts), and [ui/index.html](/opt/harness/work/.runs/campaign/cohort-03/block-02/slot-24-pi.AF-CC.off/attempt-1/workspace/ui/index.html).

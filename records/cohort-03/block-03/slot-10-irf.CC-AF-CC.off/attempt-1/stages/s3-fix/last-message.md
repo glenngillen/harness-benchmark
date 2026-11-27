@@ -1,0 +1,3 @@
+Addressed all six findings: the form now sends invalid values to the API, server request errors return JSON and malformed IDs return 404, oversized bodies stop accumulating, worker retries stay within three attempts with a periodic heartbeat, and SIGTERM closes idle connections with a fallback.
+
+The build passed and the worker started and shut down cleanly. I couldn’t verify the server or HTTP checks in this environment because binding a port fails with `listen EPERM`.

@@ -1,0 +1,8 @@
+# Terraform working files and local state (keep the state until `terraform destroy` finishes).
+terraform/.terraform/
+terraform/*.tfstate
+terraform/*.tfstate.*
+terraform/*.tfplan
+terraform/crash.log
+terraform/override.tf
+terraform/*_override.tf

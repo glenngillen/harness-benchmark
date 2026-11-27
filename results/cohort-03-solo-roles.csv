@@ -1,0 +1,9 @@
+cohort,dataset,condition,stage_role,stages,cost_status,cost_usd,cost_lower_usd,cost_upper_usd,input_tokens_lower,input_tokens_upper,cached_input_tokens_lower,cached_input_tokens_upper,cache_write_5m_tokens_lower,cache_write_5m_tokens_upper,cache_write_1h_tokens_lower,cache_write_1h_tokens_upper,output_tokens_lower,output_tokens_upper,cache_write_unsplit_tokens_lower,cache_write_unsplit_tokens_upper
+cohort-03,observed,solo.CF.off,implement:CF,10,lower-bound,,7.07552,,159211,159211,2050560,2050560,0,unbounded,0,0,68657,68657,0,0
+cohort-03,observed,solo.CF.on,implement:CF,10,lower-bound,,7.224998,,158691,158691,2274688,2274688,0,unbounded,0,0,67268,67268,0,0
+cohort-03,observed,solo.CC.off,implement:CC,10,lower-bound,,0.12844228,,345922,345922,4612608,4612608,0,unbounded,0,0,95448,95448,0,0
+cohort-03,observed,solo.CC.on,implement:CC,10,lower-bound,,0.13235506,,374924,374924,4694016,4694016,0,unbounded,0,0,95845,95845,0,0
+cohort-03,observed,solo.AF.off,implement:AF,10,exact,5.6676538,5.6676538,5.6676538,192,192,2212489,2212489,0,0,299706,299706,141337,141337,0,0
+cohort-03,observed,solo.AF.on,implement:AF,10,exact,5.455093,5.455093,5.455093,192,192,2155405,2155405,0,0,281393,281393,138605,138605,0,0
+cohort-03,observed,solo.AC.off,implement:AC,10,exact,0.43062332,0.43062332,0.43062332,320,320,7791172,7791172,0,0,680203,680203,433278,433278,0,0
+cohort-03,observed,solo.AC.on,implement:AC,10,exact,0.42620208,0.42620208,0.42620208,296,296,7329518,7329518,0,0,692819,692819,428627,428627,0,0

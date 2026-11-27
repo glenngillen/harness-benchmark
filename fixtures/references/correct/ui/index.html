@@ -1,0 +1,98 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Job tracker</title>
+  <style>
+    body { font-family: system-ui, sans-serif; margin: 2rem auto; max-width: 40rem; padding: 0 1rem; }
+    label { display: block; margin-top: .75rem; }
+    textarea, input { width: 100%; box-sizing: border-box; }
+    [data-testid="form-error"]:empty { display: none; }
+    [data-testid="form-error"] { color: #a00; margin-top: .75rem; }
+    li { margin: .5rem 0; }
+  </style>
+</head>
+<body>
+  <h1>Job tracker</h1>
+  <form data-testid="job-form" novalidate>
+    <label for="job-input">Input</label>
+    <textarea id="job-input" data-testid="job-input" rows="3"></textarea>
+    <label for="job-steps">Steps</label>
+    <input id="job-steps" data-testid="job-steps" type="number" value="5">
+    <label for="job-fail-attempts">Simulated failures</label>
+    <input id="job-fail-attempts" data-testid="job-fail-attempts" type="number" value="0">
+    <div data-testid="form-error" role="alert"></div>
+    <button type="submit" data-testid="job-submit">Submit job</button>
+  </form>
+  <h2>Jobs</h2>
+  <ul data-testid="job-list"></ul>
+  <script>
+    const form = document.querySelector('[data-testid="job-form"]');
+    const errorBox = document.querySelector('[data-testid="form-error"]');
+    const list = document.querySelector('[data-testid="job-list"]');
+    const field = (id) => document.querySelector(`[data-testid="${id}"]`);
+
+    function numberOrRaw(value) {
+      return value.trim() !== '' && !Number.isNaN(Number(value)) ? Number(value) : value;
+    }
+
+    form.addEventListener('submit', async (event) => {
+      event.preventDefault();
+      errorBox.textContent = '';
+      const body = {
+        input: field('job-input').value,
+        steps: numberOrRaw(field('job-steps').value),
+        failAttempts: numberOrRaw(field('job-fail-attempts').value),
+      };
+      try {
+        const res = await fetch('/api/jobs', {
+          method: 'POST',
+          headers: { 'content-type': 'application/json' },
+          body: JSON.stringify(body),
+        });
+        const data = await res.json();
+        if (!res.ok) {
+          const fields = (data.error && data.error.fields) || [];
+          errorBox.textContent = fields.length
+            ? fields.map((f) => `${f.field}: ${f.message}`).join('; ')
+            : (data.error && data.error.message) || 'Request failed';
+          return;
+        }
+        field('job-input').value = '';
+        refresh();
+      } catch (err) {
+        errorBox.textContent = 'Could not reach the server.';
+      }
+    });
+
+    function render(jobs) {
+      list.replaceChildren(...jobs.map((job) => {
+        const li = document.createElement('li');
+        li.dataset.testid = 'job-item';
+        li.dataset.jobId = job.id;
+        const status = document.createElement('span');
+        status.dataset.testid = 'job-status';
+        status.textContent = job.status;
+        const progress = document.createElement('span');
+        progress.dataset.testid = 'job-progress';
+        progress.textContent = `${job.progress.completed}/${job.progress.total}`;
+        const result = document.createElement('span');
+        result.dataset.testid = 'job-result';
+        result.textContent = job.result ? job.result.output : (job.error || '');
+        li.append(job.input + ' — ', status, ' ', progress, ' ', result);
+        return li;
+      }));
+    }
+
+    async function refresh() {
+      try {
+        const res = await fetch('/api/jobs');
+        if (res.ok) render((await res.json()).jobs);
+      } catch {}
+    }
+    refresh();
+    setInterval(refresh, 500);
+  </script>
+</body>
+</html>

@@ -1,0 +1,72 @@
+{
+  "$comment": "Intended native-tool settings. Exact flags are confirmed by the adapter slices and the effective values are recorded in the freeze manifest; any setting a client cannot apply is recorded as a difference, not silently dropped.",
+  "cohort": "cohort-03",
+  "common": {
+    "session": "fresh per stage, except fix and sensor repairs which resume their own implementer session by explicit session id",
+    "resumeLatest": "forbidden (--last / --continue)",
+    "workspace": "fresh Git repository per workflow copied from the frozen scaffold; dependencies preinstalled",
+    "home": "isolated per-workflow tool home inside the worktree; no personal settings, skills, memory, hooks, MCP servers, or CLAUDE.md/AGENTS.md beyond the scaffold's own",
+    "network": "not required by the task; denied where the tool or OS isolation supports it, otherwise recorded",
+    "output": "structured JSON events/results captured verbatim",
+    "autoUpdate": "disabled",
+    "telemetryAffectingBehaviour": "none enabled",
+    "cachePolicy": "no pre-warming; provider prompt caching is not controllable and is observed, not assumed; no run is labelled cold",
+    "osIsolation": "every CLI stage launched inside src/orchestrator/isolation.ts: sandbox-exec (macOS) or bwrap (Linux); hidden: worktree, main checkout, home; readable: pinned CLI packages, Node.js; writable: tool home (+ workspace for implementing stages); outbound network open for the provider API"
+  },
+  "permissions": {
+    "plan": "read-only workspace; writes only the plan artifact via stdout capture",
+    "review": "read-only workspace; writes only the findings artifact via stdout capture",
+    "implement": "workspace-write inside the workflow workspace; may run local commands; no access to evaluator or other workflows",
+    "fix": "same as implement",
+    "sensorRepair": "same as implement"
+  },
+  "codex": {
+    "pin": "npm devDependency @openai/codex@0.169.0, run as node_modules/.bin/codex; `codex --version` must equal `codex-cli 0.169.0`",
+    "invocation": "codex exec --json --ignore-user-config --ignore-rules -o <capture>/last-message.md - (prompt on stdin)",
+    "modelFlag": "-m <requestedModel>",
+    "effortConfig": "-c model_reasoning_effort=\"<effort>\"",
+    "approval": "-c approval_policy=\"never\"",
+    "network": "-c sandbox_workspace_write.network_access=false",
+    "sandbox": {
+      "fresh": "--sandbox <mode> -C <workspace>",
+      "resume": "-c sandbox_mode=\"<mode>\" (exec resume has no --sandbox/-C; process cwd is the workspace)",
+      "plan": "read-only",
+      "review": "read-only",
+      "implement": "workspace-write",
+      "fix": "workspace-write",
+      "underOuterSandboxExec": "danger-full-access (Seatbelt cannot nest; the orchestrator's outer sandbox-exec enforces read-only/workspace-write and hides the worktree and home). Under bwrap or no outer sandbox the native mode above applies."
+    },
+    "resume": "codex exec resume [same flags] <SESSION_UUID> -; --last/--all never used; non-UUID ids rejected",
+    "sessions": "persisted (no --ephemeral) in the per-session CODEX_HOME so fixes can resume",
+    "environment": "built from scratch: PATH (must include node), HOME/CODEX_HOME/TMPDIR inside the tool home, LANG, NO_COLOR, npm cache/notifier settings; no OPENAI_API_KEY/CODEX_API_KEY",
+    "auth": "copy of auth.json from isolated .runs/auth/codex; refreshed token written back; `codex login status` must report ChatGPT; API-key login refused",
+    "fallbackModel": "not applicable (no Codex fallback option)"
+  },
+  "claudeCode": {
+    "pin": "npm devDependency @anthropic-ai/claude-code@2.1.323, run as node_modules/.bin/claude; `claude --version` must equal `2.1.323 (Claude Code)`",
+    "invocation": "claude -p --output-format stream-json --verbose (prompt on stdin); stream-json rather than json so a killed stage keeps what it emitted and results carry model_usage_since_last_result",
+    "modelFlag": "--model <requestedModel>",
+    "effortFlag": "--effort <effort>",
+    "settingSources": "--setting-sources \"\" (no user/project/local settings); managed policy still applies and is recorded by sha256 and top-level keys",
+    "tools": {
+      "read-only": "--tools Read,Grep,Glob --allowedTools Read,Grep,Glob",
+      "workspace-write": "--tools Read,Grep,Glob,Edit,Write,Bash --allowedTools Read,Grep,Glob,Edit,Write,Bash",
+      "denied": "--disallowedTools mcp__* (an explicit --tools list does not remove enterprise-managed MCP tools; --strict-mcp-config is refused when managed MCP config exists)",
+      "excluded": "Task/subagents, web, scheduling, worktree and workflow tools"
+    },
+    "permissionMode": "--permission-mode default for every stage (CLAUDE_CODE_SUBPROCESS_ENV_SCRUB=1 forces default; acceptEdits is overridden with a warning) plus --permission-prompts none; allowedTools pre-approves the stage's tools",
+    "session": {
+      "fresh": "--session-id <adapter-generated UUID>",
+      "resume": "--resume <session UUID>; --continue, --fork-session and --no-session-persistence never used"
+    },
+    "slashCommands": "--disable-slash-commands (no skills)",
+    "promptSuggestions": "--prompt-suggestions false",
+    "fallbackModel": "unset (--fallback-model never passed)",
+    "bare": "never (abandons subscription login, S12)",
+    "maxEffortLevelCap": "managed settings searched for maxEffortLevel before every stage; present → runner-infrastructure-failure (effort-cap-present). Applied effort is not exposed in stream-json and is recorded as null",
+    "environment": "built from scratch: PATH, HOME/CLAUDE_CONFIG_DIR/TMPDIR inside the tool home, LANG, NO_COLOR, DISABLE_AUTOUPDATER=1, CLAUDE_CODE_DISABLE_NONESSENTIAL_TRAFFIC=1, CLAUDE_CODE_DISABLE_AUTO_MEMORY=1, CLAUDE_CODE_SUBPROCESS_ENV_SCRUB=1, npm cache/notifier settings, CLAUDE_CODE_OAUTH_TOKEN; no ANTHROPIC_API_KEY/ANTHROPIC_AUTH_TOKEN/base URL/3P provider variables",
+    "auth": "subscription OAuth token from `claude setup-token` stored alone in isolated .runs/auth/claude/oauth-token (0600); `claude auth status --json` must report authMethod oauth_token with no apiKeySource; API keys refused; no keychain or personal config fallback",
+    "isolationChecks": "init event tools must be a subset of the launched toolset and permissionMode must equal the launched mode; apiKeySource must be none",
+    "bashSandbox": "CLAUDE_CODE_SUBPROCESS_ENV_SCRUB=1 makes Claude Code's own Bash sandbox mandatory (sandbox required, no unsandboxed fallback). On Linux that sandbox runs nested inside the stage bwrap and needs bwrap and socat; the runner bootstrap installs socat. Its network bridge binds Unix sockets in TMPDIR (108-byte path limit), so under bwrap TMPDIR is the stage sandbox's private /tmp tmpfs rather than the deep tool-home temp directory, where binding fails with 'Failed to create bridge sockets'. npm run shell-preflight proves a Bash command succeeds before every campaign."
+  }
+}

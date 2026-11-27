@@ -1,0 +1,5 @@
+# Review findings
+
+1. [major] src/worker.ts:47 — Restart recovery can bypass the three-attempt limit and complete a job that must fail.
+   Evidence: Startup requeues every running job, and `claim()` unconditionally increments its attempts. An in-memory reproduction seeded a running job with `attempts: 3` and `failAttempts: 3`, representing interruption after claiming attempt 3. Recovery produced `status: "completed"`, `attempts: 4`, and output `"HELLO"` because attempt 4 bypasses the simulated failure condition. The contract requires this job to end failed with `"transient failure"` and exactly 3 attempts.
+   Fix: Handle exhausted transient-failure attempts during recovery before requeuing or claiming them. Persist the required failed state with a null result, and ensure restarting cannot advance these jobs beyond attempt 3.

@@ -1,0 +1,122 @@
+{
+  "stageId": "cohort-03-b09-s12-a1--s2-review",
+  "role": "CF",
+  "provider": "openai",
+  "tool": "codex",
+  "toolVersion": "0.169.0",
+  "mode": "fresh",
+  "requestedModel": "gpt-6-astra",
+  "resolvedModel": "gpt-6-astra",
+  "resolvedModelSource": "session rollout turn_context",
+  "requestedEffort": "low",
+  "appliedEffort": "low",
+  "sessionId": "01a211c3-b5e9-7a71-96ec-e1727c219ede",
+  "termination": "completed",
+  "terminationDetail": null,
+  "exitCode": 0,
+  "signal": null,
+  "startedAt": "2026-11-25T08:12:48.132Z",
+  "endedAt": "2026-11-25T08:14:07.089Z",
+  "durationMs": 78957,
+  "finalMessage": "# Review findings\n\n1. [major] src/worker.ts:32 — Restart recovery can exceed the three-attempt limit and incorrectly complete a job that should fail.\n   Evidence: Recovery requeues every running job, and `claimNext()` unconditionally increments `attempts`. Running the worker logic against an in-memory interrupted job with `attempts: 3` and `failAttempts: 3` produced `status: \"completed\"`, `attempts: 4`, and output `\"HELLO\"`. This state can arise when the worker receives SIGKILL during the third attempt’s initial delay; SIGTERM also requeues that attempt.\n   Fix: Handle exhausted transient-failure attempts during recovery and shutdown instead of starting attempt four. An interrupted third attempt with `failAttempts >= 3` should become failed with `\"transient failure\"` and `attempts: 3`. Preserve recovery for interrupted successful processing, and verify both SIGTERM and SIGKILL scenarios.",
+  "usage": {
+    "source": "codex exec --json turn.completed.usage",
+    "semantics": "turn.completed usage summed within this invocation; per-turn vs session-cumulative on resume is unverified until the pilot (methodology 9)",
+    "completeness": "complete",
+    "raw": [
+      {
+        "input_tokens": 145771,
+        "cached_input_tokens": 128000,
+        "cache_write_input_tokens": 0,
+        "output_tokens": 1474,
+        "reasoning_output_tokens": 607
+      }
+    ],
+    "supplementary": {
+      "rolloutCumulativeBefore": null,
+      "rolloutCumulativeAfter": {
+        "input_tokens": 145771,
+        "cached_input_tokens": 128000,
+        "cache_write_input_tokens": 0,
+        "output_tokens": 1474,
+        "reasoning_output_tokens": 607,
+        "total_tokens": 147245
+      },
+      "rolloutFound": true,
+      "malformedEventLines": 0,
+      "turnsStarted": 1,
+      "turnsCompleted": 1,
+      "signalsSent": []
+    }
+  },
+  "recordFiles": [
+    "prompt.md",
+    "events.jsonl",
+    "stderr.txt",
+    "last-message.md",
+    "stage.json"
+  ],
+  "settings": {
+    "model": "gpt-6-astra",
+    "model_reasoning_effort": "low",
+    "approval_policy": "never",
+    "sandbox_mode": "read-only",
+    "stage_permission": "read-only",
+    "outer_isolation": "bwrap",
+    "sandbox_workspace_write.network_access": "false",
+    "ignoreUserConfig": true,
+    "ignoreRules": true,
+    "ephemeral": false,
+    "resumeLatest": "never",
+    "fallbackModel": "none (Codex has no fallback option)",
+    "env": [
+      "CODEX_HOME",
+      "HOME",
+      "LANG",
+      "NO_COLOR",
+      "PATH",
+      "TMPDIR",
+      "npm_config_audit",
+      "npm_config_cache",
+      "npm_config_fund",
+      "npm_config_update_notifier"
+    ],
+    "isolation": {
+      "mechanism": "bwrap",
+      "hidden": [
+        ".",
+        "~"
+      ],
+      "writable": [
+        ".runs/campaign/cohort-03/block-09/slot-12-irf.AC-CF-AC.on/attempt-1/homes/s2-review"
+      ],
+      "readable": [
+        "node_modules",
+        "../../node-v22.23.4",
+        ".runs/campaign/cohort-03/block-09/slot-12-irf.AC-CF-AC.on/attempt-1/snapshots/s2-review"
+      ],
+      "network": "shared host network namespace (provider API)"
+    },
+    "argv": [
+      "exec",
+      "--json",
+      "--ignore-user-config",
+      "--ignore-rules",
+      "-m",
+      "gpt-6-astra",
+      "-c",
+      "model_reasoning_effort=\"low\"",
+      "-c",
+      "approval_policy=\"never\"",
+      "-c",
+      "sandbox_workspace_write.network_access=false",
+      "-o",
+      "<capture>/last-message.md",
+      "--sandbox",
+      "read-only",
+      "-C",
+      "<workspace>",
+      "-"
+    ]
+  }
+}

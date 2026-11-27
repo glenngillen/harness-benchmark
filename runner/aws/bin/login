@@ -1,0 +1,62 @@
+#!/bin/bash
+# Create the isolated Codex and Claude subscription logins on the runner, in one step.
+#
+#   runner/aws/bin/login
+#
+# Opens the Codex login callback tunnel (local port 1455 → runner) in the background, then an
+# interactive session on the runner that runs remote/login.sh as `bench`. The remote script is sent
+# inline, so this works without publishing a new revision and while a campaign is running. Logins
+# that already pass their preflight are skipped, so it is safe to rerun. Needs the Session Manager
+# plugin. On a fresh runner it first publishes and installs this branch's HEAD. Afterwards it offers
+# to (re)start the pilots.
+source "$(dirname "$0")/_common.sh"
+load_target
+require_instance
+if ! command -v session-manager-plugin >/dev/null 2>&1; then
+  echo "The AWS Session Manager plugin is not installed (needed for the tunnel and the runner session)."
+  command -v brew >/dev/null 2>&1 || die "install it: https://docs.aws.amazon.com/systems-manager/latest/userguide/session-manager-working-with-install-plugin.html"
+  read -r -p "Install it now with 'brew install --cask session-manager-plugin'? [Y/n] " a
+  case "$a" in n|N) die "session-manager-plugin is required" ;; esac
+  brew install --cask session-manager-plugin
+  command -v session-manager-plugin >/dev/null 2>&1 || die "session-manager-plugin still not on PATH; open a new terminal and rerun"
+fi
+need node
+need git
+
+# A fresh runner has no release yet, and the logins need one (they run the pinned CLIs). Install this
+# branch's HEAD first, so `terraform apply` then `bin/login` is the whole setup.
+echo "Checking the runner is ready..."
+if ! state="$(ssm_run 120 "if [ -f /opt/harness/work/.runner-release.json ]; then echo installed; elif [ -f /var/lib/harness/system-ready ]; then echo empty; else echo booting; fi" 2>/dev/null)"; then
+  die "could not reach the runner over SSM. If you just ran terraform apply, wait 5 minutes for it to boot, then rerun runner/aws/bin/login"
+fi
+case "$state" in
+  *booting*) die "the runner is still setting itself up. Wait 5 minutes, then rerun runner/aws/bin/login" ;;
+  *empty*)
+    echo "No code is installed on the runner yet: publishing this branch's HEAD and installing it (about 5-10 minutes)."
+    "$AWS_DIR/bin/publish"
+    rev="$(git -C "$BENCH_ROOT" rev-parse HEAD)"
+    ssm_run 3600 "/usr/local/sbin/harness-bootstrap release $rev" >/dev/null || die "installing revision $rev on the runner failed; see the output above"
+    echo "Installed $rev." ;;
+esac
+
+mkdir -p "$BENCH_ROOT/.runs"
+fwd_log="$BENCH_ROOT/.runs/login-forward.log"
+aws ssm start-session --target "$HARNESS_INSTANCE_ID" --document-name AWS-StartPortForwardingSession \
+  --parameters '{"portNumber":["1455"],"localPortNumber":["1455"]}' </dev/null >"$fwd_log" 2>&1 &
+fwd=$!
+trap 'kill "$fwd" 2>/dev/null || true' EXIT
+sleep 3
+kill -0 "$fwd" 2>/dev/null || die "could not open the login tunnel on port 1455 (is something else using it?); see $fwd_log"
+
+payload="$(gzip -c "$AWS_DIR/remote/login.sh" | base64 | tr -d '\n')"
+remote="f=\$(mktemp) && echo $payload | base64 -d | gunzip > \$f && chmod 644 \$f && sudo -u bench -H bash \$f; rc=\$?; rm -f \$f; exit \$rc"
+params="$(node -e 'process.stdout.write(JSON.stringify({command:[process.argv[1]]}))' "$remote")"
+aws ssm start-session --target "$HARNESS_INSTANCE_ID" --document-name AWS-StartInteractiveCommand --parameters "$params" || true
+
+kill "$fwd" 2>/dev/null || true
+echo
+read -r -p "Restart the pilots now (runner/aws/bin/start --pilots)? [Y/n] " a
+case "$a" in
+  n|N) echo "Later: runner/aws/bin/start --pilots" ;;
+  *) "$AWS_DIR/bin/start" --pilots || echo "start refused (a campaign may still be running); check runner/aws/bin/status" ;;
+esac

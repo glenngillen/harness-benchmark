@@ -1,0 +1,72 @@
+{
+  "schema": "harness-benchmark/attempt@1",
+  "campaign": "cohort-03",
+  "block": 1,
+  "slot": 21,
+  "conditionId": "solo.AF.off",
+  "attempt": 1,
+  "replaces": null,
+  "phase": "finished",
+  "startedAt": "2026-11-24T16:34:04.446Z",
+  "endedAt": "2026-11-24T16:36:28.278Z",
+  "activeMs": 143832,
+  "waitBeforeMs": 0,
+  "waitReason": null,
+  "termination": "completed",
+  "terminationDetail": null,
+  "outcome": "completed",
+  "accepted": false,
+  "evaluation": {
+    "status": "failed",
+    "verdictFile": "verdict.json",
+    "durationMs": 20807,
+    "snapshotHash": "8a102c6d9148fbab21da63c45874d5f07c2c3c773938ea384dfd962277c85cc8",
+    "reason": null
+  },
+  "sensorRepairs": 0,
+  "stages": [
+    {
+      "id": "s1-implement",
+      "kind": "implement",
+      "role": "AF",
+      "mode": "fresh",
+      "resumedSession": null,
+      "sessionId": "c270eaa9-b7d1-4e7c-8c41-f755f70c1507",
+      "requestedModel": "claude-opus-5-5",
+      "resolvedModel": "claude-opus-5-5",
+      "termination": "completed",
+      "terminationDetail": null,
+      "startedAt": "2026-11-24T16:34:04.818Z",
+      "endedAt": "2026-11-24T16:36:28.261Z",
+      "durationMs": 143443,
+      "promptSha256": "f5c89407f79ff9027c4166bd4fe4308e695e03102c448cb4453d13763b625418",
+      "workspaceHashBefore": "5d6bfabe6baefcc875f20a06ff37597b966e13c3745b24bdc73801b1dc434fe2",
+      "workspaceHashAfter": "8a102c6d9148fbab21da63c45874d5f07c2c3c773938ea384dfd962277c85cc8",
+      "handoff": null,
+      "usageCompleteness": "complete",
+      "recordDir": "stages/s1-implement"
+    }
+  ],
+  "finalSnapshotHash": "8a102c6d9148fbab21da63c45874d5f07c2c3c773938ea384dfd962277c85cc8",
+  "manualHandling": null,
+  "environment": {
+    "os": {
+      "type": "Linux",
+      "platform": "linux",
+      "release": "7.0.0-1018-aws",
+      "arch": "x64"
+    },
+    "cpu": {
+      "model": "Intel(R) Xeon(R) Platinum 8259CL CPU @ 2.50GHz",
+      "count": 2
+    },
+    "memoryBytes": 4018356224,
+    "node": "v22.23.4",
+    "hostId": "9073d9a2d96e7acdfe5e9acce87e8bc009a06e154b675d021381d15737ce0448",
+    "benchmarkRevision": {
+      "commit": "5c5cbeaabffb2c3eef9d2a9d776897dbe2f0467d",
+      "dirty": null,
+      "source": "bundle"
+    }
+  }
+}

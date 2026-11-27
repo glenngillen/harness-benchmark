@@ -1,0 +1,289 @@
+{
+  "stageId": "cohort-03-b10-s12-a1--s3-fix",
+  "role": "AC",
+  "provider": "anthropic",
+  "tool": "claude-code",
+  "toolVersion": "2.1.323",
+  "mode": "resume",
+  "requestedModel": "claude-haiku-5-5",
+  "requestedEffort": "medium",
+  "appliedEffort": null,
+  "resolvedModel": "claude-haiku-5-5",
+  "resolvedModelSource": "stream-json assistant message.model",
+  "sessionId": "5e2d63d6-b70a-494d-ac4d-11b14eedcc8d",
+  "termination": "completed",
+  "terminationDetail": null,
+  "exitCode": 0,
+  "signal": null,
+  "startedAt": "2026-11-25T10:14:01.397Z",
+  "endedAt": "2026-11-25T10:14:44.295Z",
+  "durationMs": 42898,
+  "finalMessage": "Both findings are fixed. The build is clean, `check:smoke` passes 2/2, and `check:contract` passes 5/5.\n\n**Changes (all in `src/worker.ts`)**\n- **Finding 1 (attempt over-count): fixed.** An interrupted succeeding attempt is now requeued with `attempts - 1`, so its retry reuses the same attempt number. This covers a SIGKILL, a graceful stop, and a DB error. I tested it: `failAttempts: 2` killed during attempt 3 completed with `attempts: 3`, not 4. An interrupted *failing* attempt is still recorded as failed, as before.\n- **Finding 2 (job stuck `running` after a DB error): fixed.** Any failed loop iteration sets a flag. The next iteration runs recovery before picking up work, and retries until the database accepts it. Recovery also runs once after the loop exits, so a SIGTERM releases the running job right away.\n\n**Note:** `attempts` now means \"attempts that finished or were started and not interrupted.\" An interrupted attempt is undone rather than counted, so a crash does not use up the retry budget. This is a deliberate interpretation of the spec, and the summary to the user should say so.",
+  "usage": {
+    "source": "claude -p --output-format stream-json: assistant message.usage, result.model_usage_since_last_result, result.modelUsage",
+    "semantics": "requests: assistant message usage per API request (deduplicated by message id); sinceLastResult: result.model_usage_since_last_result per model, incremental, summed across results; cumulative: result.modelUsage per model, session-cumulative (continues across resume), never summed",
+    "completeness": "complete",
+    "raw": [
+      {
+        "kind": "request",
+        "messageId": "msg_011ChPUCQYCHXBffyGyVE9Fd",
+        "model": "claude-haiku-5-5",
+        "usage": {
+          "input_tokens": 2,
+          "cache_creation_input_tokens": 2013,
+          "cache_read_input_tokens": 69595,
+          "cache_creation": {
+            "ephemeral_5m_input_tokens": 0,
+            "ephemeral_1h_input_tokens": 2013
+          },
+          "output_tokens": 7,
+          "service_tier": "standard",
+          "inference_geo": "global",
+          "speed": "standard"
+        }
+      },
+      {
+        "kind": "request",
+        "messageId": "msg_011ChPUFD9BmiwViAFdfWB9e",
+        "model": "claude-haiku-5-5",
+        "usage": {
+          "input_tokens": 2,
+          "cache_creation_input_tokens": 5520,
+          "cache_read_input_tokens": 71608,
+          "cache_creation": {
+            "ephemeral_5m_input_tokens": 0,
+            "ephemeral_1h_input_tokens": 5520
+          },
+          "output_tokens": 6,
+          "service_tier": "standard",
+          "inference_geo": "global",
+          "speed": "standard"
+        }
+      },
+      {
+        "kind": "result",
+        "index": 0,
+        "usage": {
+          "input_tokens": 4,
+          "cache_creation_input_tokens": 7533,
+          "cache_read_input_tokens": 141203,
+          "output_tokens": 4975,
+          "output_tokens_details": {
+            "thinking_tokens": 2016
+          },
+          "server_tool_use": {
+            "web_search_requests": 0,
+            "web_fetch_requests": 0
+          },
+          "service_tier": "standard",
+          "cache_creation": {
+            "ephemeral_1h_input_tokens": 7533,
+            "ephemeral_5m_input_tokens": 0
+          },
+          "inference_geo": "global",
+          "iterations": [],
+          "speed": "standard",
+          "fallback_credit": null
+        },
+        "sinceLastResult": {
+          "claude-haiku-5-5": {
+            "inputTokens": 4,
+            "outputTokens": 4975,
+            "cacheReadInputTokens": 141203,
+            "cacheCreationInputTokens": 7533,
+            "webSearchRequests": 0,
+            "costUSD": 0.0054065300000000005,
+            "contextWindow": 1000000,
+            "maxOutputTokens": 128000,
+            "thinkingTokens": 2016,
+            "cacheCreationEphemeral5mInputTokens": 0,
+            "cacheCreationEphemeral1hInputTokens": 7533,
+            "canonicalModel": "claude-haiku-5-5",
+            "provider": "firstParty",
+            "costBasis": "list"
+          }
+        },
+        "modelUsage": {
+          "claude-haiku-5-5": {
+            "inputTokens": 26,
+            "outputTokens": 42083,
+            "thinkingTokens": 23636,
+            "cacheReadInputTokens": 657002,
+            "cacheCreationInputTokens": 67086,
+            "cacheCreationEphemeral5mInputTokens": 0,
+            "cacheCreationEphemeral1hInputTokens": 67086,
+            "webSearchRequests": 0,
+            "costUSD": 0.041031319999999996,
+            "contextWindow": 1000000,
+            "maxOutputTokens": 128000,
+            "canonicalModel": "claude-haiku-5-5",
+            "provider": "firstParty",
+            "costBasis": "list"
+          }
+        },
+        "nativeCostEstimateUsd": 0.041031319999999996
+      }
+    ],
+    "supplementary": {
+      "cumulativeBefore": {
+        "claude-haiku-5-5": {
+          "inputTokens": 22,
+          "outputTokens": 37108,
+          "cacheReadInputTokens": 515799,
+          "cacheCreationInputTokens": 59553,
+          "webSearchRequests": 0,
+          "costUSD": 0.035624789999999996,
+          "contextWindow": 1000000,
+          "maxOutputTokens": 128000,
+          "thinkingTokens": 21620,
+          "cacheCreationEphemeral5mInputTokens": 0,
+          "cacheCreationEphemeral1hInputTokens": 59553,
+          "canonicalModel": "claude-haiku-5-5",
+          "provider": "firstParty",
+          "costBasis": "list"
+        }
+      },
+      "cumulativeAfter": {
+        "claude-haiku-5-5": {
+          "inputTokens": 26,
+          "outputTokens": 42083,
+          "thinkingTokens": 23636,
+          "cacheReadInputTokens": 657002,
+          "cacheCreationInputTokens": 67086,
+          "cacheCreationEphemeral5mInputTokens": 0,
+          "cacheCreationEphemeral1hInputTokens": 67086,
+          "webSearchRequests": 0,
+          "costUSD": 0.041031319999999996,
+          "contextWindow": 1000000,
+          "maxOutputTokens": 128000,
+          "canonicalModel": "claude-haiku-5-5",
+          "provider": "firstParty",
+          "costBasis": "list"
+        }
+      },
+      "auxiliaryModels": [],
+      "resultCount": 1,
+      "resultsMissingSinceLastResult": 0,
+      "numTurns": 5,
+      "permissionDenials": 0,
+      "apiRetries": 0,
+      "malformedEventLines": 0,
+      "signalsSent": [],
+      "init": {
+        "model": "claude-haiku-5-5",
+        "apiKeySource": "none",
+        "tools": [
+          "Bash",
+          "Edit",
+          "Glob",
+          "Grep",
+          "Read",
+          "Write"
+        ],
+        "permissionMode": "default",
+        "version": "2.1.323",
+        "mcpServers": []
+      }
+    }
+  },
+  "recordFiles": [
+    "prompt.md",
+    "events.jsonl",
+    "stderr.txt",
+    "last-message.md",
+    "stage.json"
+  ],
+  "settings": {
+    "model": "claude-haiku-5-5",
+    "effort": "medium",
+    "tools": [
+      "Read",
+      "Grep",
+      "Glob",
+      "Edit",
+      "Write",
+      "Bash"
+    ],
+    "allowedTools": [
+      "Read",
+      "Grep",
+      "Glob",
+      "Edit",
+      "Write",
+      "Bash"
+    ],
+    "disallowedTools": [
+      "mcp__*"
+    ],
+    "permissionMode": "default",
+    "permissionPrompts": "none",
+    "settingSources": "none",
+    "promptSuggestions": false,
+    "slashCommands": "disabled",
+    "fallbackModel": "unset",
+    "bare": false,
+    "sessionPersistence": true,
+    "env": [
+      "CLAUDE_CODE_DISABLE_AUTO_MEMORY",
+      "CLAUDE_CODE_DISABLE_NONESSENTIAL_TRAFFIC",
+      "CLAUDE_CODE_OAUTH_TOKEN",
+      "CLAUDE_CODE_SUBPROCESS_ENV_SCRUB",
+      "CLAUDE_CONFIG_DIR",
+      "DISABLE_AUTOUPDATER",
+      "HOME",
+      "LANG",
+      "NO_COLOR",
+      "PATH",
+      "TMPDIR",
+      "npm_config_audit",
+      "npm_config_cache",
+      "npm_config_fund",
+      "npm_config_update_notifier"
+    ],
+    "tmpdir": "/tmp (private tmpfs of the stage sandbox)",
+    "managedPolicy": [],
+    "isolation": {
+      "mechanism": "bwrap",
+      "hidden": [
+        ".",
+        "~"
+      ],
+      "writable": [
+        ".runs/campaign/cohort-03/block-10/slot-12-irf.AC-AF-AC.off/attempt-1/homes/s1-implement",
+        ".runs/campaign/cohort-03/block-10/slot-12-irf.AC-AF-AC.off/attempt-1/workspace"
+      ],
+      "readable": [
+        "node_modules",
+        "../../node-v22.23.4"
+      ],
+      "network": "shared host network namespace (provider API)"
+    },
+    "argv": [
+      "-p",
+      "--output-format",
+      "stream-json",
+      "--verbose",
+      "--model",
+      "claude-haiku-5-5",
+      "--effort",
+      "medium",
+      "--setting-sources",
+      "",
+      "--prompt-suggestions",
+      "false",
+      "--disable-slash-commands",
+      "--permission-prompts",
+      "none",
+      "--permission-mode",
+      "default",
+      "--tools",
+      "Read,Grep,Glob,Edit,Write,Bash",
+      "--allowedTools",
+      "Read,Grep,Glob,Edit,Write,Bash",
+      "--disallowedTools",
+      "mcp__*",
+      "--resume",
+      "5e2d63d6-b70a-494d-ac4d-11b14eedcc8d"
+    ]
+  }
+}

@@ -1,0 +1,9 @@
+I addressed all five findings. I confirmed each one against the code and the spec, and none was wrong. Build passes, `check:smoke` passes 2/2, and `check:contract` passes 5/5.
+
+1. **Input `maxlength` (fixed):** removed `maxlength` from `job-input`. The browser no longer truncates input, so the server validates it and `form-error` shows its `input` field error.
+2. **Attempts after crash recovery (fixed):** startup recovery now sets `attempts = MAX(attempts - 1, 0)` for interrupted jobs. The rerun uses the same attempt number, so a job never exceeds 3 attempts. The runtime test showed a job killed mid-run finishing with `attempts=1`.
+3. **Failing attempts never set `running` (fixed):** every attempt is now claimed as `running` with `attempts` incremented and progress reset. Failing attempts are then resolved in a separate update: requeued with a retry delay, or marked `failed` on the third attempt. The retry test shows `failAttempts: 2` completing with `attempts=3`, and `failAttempts: 3` ending `failed` with `transient failure`.
+4. **Worker crashes on SQLite errors (fixed):** the main loop catches errors per iteration, logs them, releases any claimed job back to `queued`, and retries after 500 ms. The heartbeat interval is wrapped the same way, so a transient error no longer stops the worker or turns `/health` to `down`.
+5. **Misleading too-large message (fixed):** a body over 64 KB now returns `400 invalid_request` with field `body` and the message "Request body too large."
+
+I also checked a worker SIGKILL mid-job followed by a restart, which completed the job. I did not test the worker-down `/health` path or open the page in a browser.

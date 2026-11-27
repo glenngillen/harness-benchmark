@@ -1,0 +1,9 @@
+cohort,dataset,group,condition,assignment,checks,scored,n,missing,median_min,q1_min,q3_min,min_min,max_min,observations_min_in_block_order
+cohort-03,observed,condition,solo.CF.off,Codex frontier,off,10,10,0,3.028,2.897,3.115,2.647,3.42,3.011; 3.138; 2.992; 3.42; 2.817; 3.047; 3.233; 3.045; 2.866; 2.647
+cohort-03,observed,condition,solo.CF.on,Codex frontier,on,10,10,0,3.036,2.913,3.262,2.525,3.942,3.942; 2.978; 2.892; 3.281; 2.982; 2.525; 2.727; 3.412; 3.09; 3.204
+cohort-03,observed,condition,solo.CC.off,Codex cheaper,off,10,10,0,3.407,3.307,3.549,3.094,4.09,3.094; 3.452; 3.361; 3.362; 3.82; 3.547; 3.289; 3.549; 3.203; 4.09
+cohort-03,observed,condition,solo.CC.on,Codex cheaper,on,10,10,0,3.616,3.391,3.725,3.095,4.056,4.006; 3.688; 3.666; 3.737; 3.095; 3.428; 3.566; 4.056; 3.228; 3.379
+cohort-03,observed,condition,solo.AF.off,Claude frontier,off,10,10,0,2.388,2.344,2.46,2.185,2.536,2.397; 2.378; 2.185; 2.536; 2.341; 2.456; 2.462; 2.505; 2.248; 2.354
+cohort-03,observed,condition,solo.AF.on,Claude frontier,on,10,10,0,2.366,2.289,2.552,2.223,2.754,2.314; 2.754; 2.28; 2.38; 2.703; 2.568; 2.506; 2.245; 2.223; 2.352
+cohort-03,observed,condition,solo.AC.off,Claude cheaper,off,10,10,0,3.732,3.492,3.967,2.79,4.357,3.75; 3.796; 3.43; 2.79; 4.357; 3.715; 3.491; 4.263; 4.024; 3.497
+cohort-03,observed,condition,solo.AC.on,Claude cheaper,on,10,10,0,3.781,3.467,3.981,3.182,4.823,3.678; 4.008; 4.064; 3.556; 3.438; 3.899; 4.823; 3.884; 3.182; 3.281

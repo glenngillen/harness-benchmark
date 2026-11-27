@@ -1,0 +1,17 @@
+cohort,dataset,group,condition,assignment,checks,scored,n,missing,median_min,q1_min,q3_min,min_min,max_min,observations_min_in_block_order
+cohort-03,observed,condition,pi.CF-CC.off,Codex frontier → Codex cheaper,off,10,10,0,5.614,5.152,5.739,4.347,6.013,5.247; 5.536; 5.889; 6.013; 4.347; 5.74; 5.12; 5.736; 4.672; 5.692
+cohort-03,observed,condition,pi.CF-CC.on,Codex frontier → Codex cheaper,on,10,10,0,5.136,4.884,5.437,4.6,6.006,5.141; 5.034; 4.6; 4.834; 5.447; 6.006; 4.765; 5.704; 5.13; 5.406
+cohort-03,observed,condition,pi.CF-AC.off,Codex frontier → Claude cheaper,off,10,10,0,5.244,4.809,5.711,4.63,6.517,5.181; 5.485; 4.63; 4.633; 5.18; 5.308; 5.787; 4.685; 6.517; 5.882
+cohort-03,observed,condition,pi.CF-AC.on,Codex frontier → Claude cheaper,on,10,10,0,5.895,5.419,5.949,4.643,16.513,5.354; 5.025; 5.96; 4.643; 5.976; 16.513; 5.878; 5.614; 5.912; 5.915
+cohort-03,observed,condition,pi.AF-CC.off,Claude frontier → Codex cheaper,off,10,10,0,4.617,4.357,4.823,3.813,5.571,4.335; 4.709; 5.427; 4.685; 5.571; 4.861; 3.813; 4.424; 4.548; 3.952
+cohort-03,observed,condition,pi.AF-CC.on,Claude frontier → Codex cheaper,on,10,10,0,4.852,4.262,5.019,3.985,5.341,3.985; 4.574; 5.341; 5.275; 5.002; 4.158; 5.024; 4.033; 4.936; 4.767
+cohort-03,observed,condition,pi.AF-AC.off,Claude frontier → Claude cheaper,off,10,10,0,4.121,4.029,4.685,3.244,5.815,5.815; 4.57; 4.723; 4.133; 4.815; 3.767; 4.086; 4.11; 3.244; 4.01
+cohort-03,observed,condition,pi.AF-AC.on,Claude frontier → Claude cheaper,on,10,10,0,4.738,4.44,5.061,3.988,5.681,3.988; 4.437; 4.812; 4.448; 5.224; 4.99; 5.681; 4.664; 4.158; 5.084
+cohort-03,observed,solo-control,solo.CF.off,Codex frontier,off,10,10,0,3.028,2.897,3.115,2.647,3.42,3.011; 3.138; 2.992; 3.42; 2.817; 3.047; 3.233; 3.045; 2.866; 2.647
+cohort-03,observed,solo-control,solo.CF.on,Codex frontier,on,10,10,0,3.036,2.913,3.262,2.525,3.942,3.942; 2.978; 2.892; 3.281; 2.982; 2.525; 2.727; 3.412; 3.09; 3.204
+cohort-03,observed,solo-control,solo.CC.off,Codex cheaper,off,10,10,0,3.407,3.307,3.549,3.094,4.09,3.094; 3.452; 3.361; 3.362; 3.82; 3.547; 3.289; 3.549; 3.203; 4.09
+cohort-03,observed,solo-control,solo.CC.on,Codex cheaper,on,10,10,0,3.616,3.391,3.725,3.095,4.056,4.006; 3.688; 3.666; 3.737; 3.095; 3.428; 3.566; 4.056; 3.228; 3.379
+cohort-03,observed,solo-control,solo.AF.off,Claude frontier,off,10,10,0,2.388,2.344,2.46,2.185,2.536,2.397; 2.378; 2.185; 2.536; 2.341; 2.456; 2.462; 2.505; 2.248; 2.354
+cohort-03,observed,solo-control,solo.AF.on,Claude frontier,on,10,10,0,2.366,2.289,2.552,2.223,2.754,2.314; 2.754; 2.28; 2.38; 2.703; 2.568; 2.506; 2.245; 2.223; 2.352
+cohort-03,observed,solo-control,solo.AC.off,Claude cheaper,off,10,10,0,3.732,3.492,3.967,2.79,4.357,3.75; 3.796; 3.43; 2.79; 4.357; 3.715; 3.491; 4.263; 4.024; 3.497
+cohort-03,observed,solo-control,solo.AC.on,Claude cheaper,on,10,10,0,3.781,3.467,3.981,3.182,4.823,3.678; 4.008; 4.064; 3.556; 3.438; 3.899; 4.823; 3.884; 3.182; 3.281

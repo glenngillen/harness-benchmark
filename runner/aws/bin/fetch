@@ -1,0 +1,49 @@
+#!/bin/bash
+# Bring the runner's records into this worktree.
+#
+#   runner/aws/bin/fetch [--no-sync] [--dry-run]
+#
+# 1. Asks the runner to upload its records now (skip with --no-sync, e.g. after the instance is gone).
+# 2. Downloads s3://<bucket>/records/ into .runs/fetch/<timestamp>/ (gitignored staging).
+# 3. Copies only allowed record files into records/ (src/runner/records.ts) and writes a report
+#    listing new, changed and rejected files to .runs/fetch/<timestamp>/report.json.
+# Review `git status records/` before committing.
+source "$(dirname "$0")/_common.sh"
+load_target
+
+sync=true dry=""
+while [ $# -gt 0 ]; do
+  case "$1" in
+    --no-sync) sync=false ;;
+    --dry-run) dry="--dry-run" ;;
+    *) die "unknown argument $1" ;;
+  esac
+  shift
+done
+if $sync; then ssm_run 600 "/usr/local/sbin/harness-bootstrap sync" > /dev/null; fi
+
+staged="$BENCH_ROOT/.runs/fetch/$(date -u +%Y%m%dT%H%M%SZ)"
+mkdir -p "$staged/records"
+filters=()
+while IFS= read -r line; do [ -n "$line" ] && filters+=("$line"); done < <(s3_filters)
+aws s3 sync --only-show-errors "${filters[@]}" "s3://$HARNESS_BUCKET/records/" "$staged/records/"
+
+# The runner's records/ also holds files that came from the repo bundle, and a release keeps its
+# older copies (rsync --ignore-existing). The runner never authors these, so never copy them back
+# over the worktree's (newer) versions.
+rm -rf "$staged/records/freeze"
+find "$staged/records" \( -name README.md -o -name safeguards.json -o -name access-handoff.md \) -type f -delete
+
+# A changed file owned by another local user (e.g. the agent account that committed it) cannot be
+# overwritten by Node's copyFileSync on macOS: it fails setting the mode, deletes the destination
+# and aborts. Remove such files first so they are recreated, owned by you.
+if [ -z "$dry" ]; then
+  (cd "$staged/records" && find . -type f) | while IFS= read -r rel; do
+    dest="$BENCH_ROOT/records/${rel#./}"
+    if [ -f "$dest" ] && [ ! -O "$dest" ] && ! cmp -s "$staged/records/$rel" "$dest"; then rm -f "$dest"; fi
+  done
+fi
+
+(cd "$BENCH_ROOT" && npm run --silent runner -- fetch-apply --staged "$staged/records" --report "$staged/report.json" $dry)
+echo "report: ${staged#"$BENCH_ROOT"/}/report.json"
+git -C "$BENCH_ROOT" status --short -- records/ | head -40

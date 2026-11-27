@@ -1,0 +1,5 @@
+Implemented the SQLite-backed job API, single-process worker with retries and restart recovery, and polling browser UI.
+
+`npm run build` passes, and the worker starts and shuts down. The smoke and contract checks could not run because this environment blocks TCP listeners (`listen EPERM`), including the server’s listener.
+
+Main changes: [server.ts](/opt/harness/work/.runs/campaign/cohort-03/block-03/slot-02-pi.CF-CC.off/attempt-1/workspace/src/server.ts), [jobs.ts](/opt/harness/work/.runs/campaign/cohort-03/block-03/slot-02-pi.CF-CC.off/attempt-1/workspace/src/jobs.ts), [worker.ts](/opt/harness/work/.runs/campaign/cohort-03/block-03/slot-02-pi.CF-CC.off/attempt-1/workspace/src/worker.ts), [validation.ts](/opt/harness/work/.runs/campaign/cohort-03/block-03/slot-02-pi.CF-CC.off/attempt-1/workspace/src/validation.ts), and [index.html](/opt/harness/work/.runs/campaign/cohort-03/block-03/slot-02-pi.CF-CC.off/attempt-1/workspace/ui/index.html).

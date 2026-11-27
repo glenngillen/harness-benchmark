@@ -1,0 +1,50 @@
+#!/bin/bash
+# Destroy the runner and its records bucket, in one step, after a final safety fetch.
+#
+#   runner/aws/bin/teardown
+#
+# 1. Refuses while a campaign or the blocks driver is still running.
+# 2. Runs a final runner/aws/bin/fetch and refuses if it brings anything new or changed into
+#    records/ (commit those first, then rerun).
+# 3. Asks you to type "destroy", then allows deleting the versioned bucket and runs
+#    `terraform destroy`. Keeps terraform.tfstate until destroy succeeds.
+# Afterwards revoke the subscription logins (they outlive the instance): sign out the Codex device
+# in ChatGPT settings and revoke the Claude token in Claude settings.
+source "$(dirname "$0")/_common.sh"
+need terraform
+need git
+load_target
+require_instance
+
+echo "== Checking nothing is still running on the runner"
+busy="$(ssm_run 120 "if systemctl is-active --quiet harness-blocks; then echo busy-driver; fi; if sudo -u bench -H tmux has-session -t harness 2>/dev/null; then echo busy-campaign; fi" 2>/dev/null || echo unreachable)"
+case "$busy" in
+  *busy-driver*|*busy-campaign*) die "a campaign or the blocks driver is still running (see runner/aws/bin/blocks status); stop it before tearing down" ;;
+  *unreachable*)
+    read -r -p "Could not reach the runner to check or fetch. Destroy without a final fetch? [y/N] " a
+    case "$a" in y|Y) skip_fetch=1 ;; *) die "not destroying" ;; esac ;;
+esac
+
+if [ -z "${skip_fetch:-}" ]; then
+  echo "== Final fetch"
+  "$AWS_DIR/bin/fetch"
+  pending="$(git -C "$BENCH_ROOT" status --porcelain -- records/)"
+  [ -z "$pending" ] || die "the fetch brought uncommitted changes into records/ (listed above). Commit them, then rerun runner/aws/bin/teardown"
+  echo "records/ is fully committed."
+fi
+
+echo
+echo "This permanently deletes instance $HARNESS_INSTANCE_ID, its disk and logins,"
+echo "the bucket $HARNESS_BUCKET with every object version, the role and the network."
+read -r -p "Type 'destroy' to continue: " a
+[ "$a" = destroy ] || die "not destroying"
+
+echo "== Allowing the versioned bucket to be deleted"
+terraform -chdir="$TF_DIR" apply -auto-approve -input=false -target=aws_s3_bucket.records -var force_destroy_bucket=true
+echo "== Destroying"
+terraform -chdir="$TF_DIR" destroy -auto-approve -input=false -var force_destroy_bucket=true
+
+echo
+echo "Done. Now revoke the subscription logins:"
+echo "  - ChatGPT: Settings > Security, sign out the Codex device"
+echo "  - Claude:  Settings, revoke the token created by 'claude setup-token'"

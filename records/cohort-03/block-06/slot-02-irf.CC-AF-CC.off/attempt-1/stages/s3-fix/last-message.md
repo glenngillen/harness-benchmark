@@ -1,0 +1,3 @@
+Addressed all seven findings. Worker claims are atomic, retries stay within three attempts, and graceful shutdown finishes the active job. Server errors now return JSON 500 responses, and the UI preserves job elements between polls and omits empty numeric fields.
+
+`npm run build` passes, and the worker starts and shuts down cleanly. Smoke and contract checks remain blocked because local server binding returns `listen EPERM` in this environment.

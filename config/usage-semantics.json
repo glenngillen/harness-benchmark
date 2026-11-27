@@ -1,0 +1,28 @@
+{
+  "$comment": "How native usage counters map onto the cost.dev dimensions (methodology section 10). null means unsettled: the normaliser reports both readings as lower/upper bounds instead of choosing one. The unscored pilot slice replaces each null with an observed value and evidence before the freeze gate; changing a value after scoring creates a new cohort.",
+  "cohort": "cohort-03",
+  "codex": {
+    "status": "pilot-verified",
+    "turnCompletedScope": "session-cumulative",
+    "turnCompletedScopeOptions": [
+      "per-turn",
+      "session-cumulative"
+    ],
+    "cachedInputSubsetOfInput": true,
+    "reasoningIncludedInOutput": true,
+    "cacheWrites": "not-reported",
+    "cacheWritesOptions": [
+      "not-reported",
+      "verified-not-billed"
+    ],
+    "evidence": "Pilot run 2026-11-20 (Codex 0.169.0 on the AWS runner). Scope: in all four resumed Codex stages (slots 17-20, s3-fix), turn.completed.usage equals the session rollout's cumulative token_count after the turn, and the rollout total before the turn equals the same session's s1-implement usage exactly, so turn.completed is session-cumulative on resume and a stage's usage is that value minus the prior session total. Subsets: in all 24 Codex stages the rollout's total_tokens equals input_tokens + output_tokens, cached_input_tokens <= input_tokens and reasoning_output_tokens <= output_tokens, so cached input is a subset of input and reasoning is included in output (as the client counts them). Cache writes: cache_write_input_tokens is 0 in every stage; billing of cache writes is not verified, so this stays not-reported."
+  },
+  "claude-code": {
+    "status": "client-documented",
+    "totals": "sum of result.model_usage_since_last_result per model",
+    "cacheReadSeparateFromInput": true,
+    "cacheWriteTtlSplit": "cacheCreationEphemeral5mInputTokens / cacheCreationEphemeral1hInputTokens when present; any remainder of cacheCreationInputTokens is unsplit and priced between the 5m and 1h rates",
+    "outputCounter": "output_tokens is the only output counter; extended thinking has no separate counter, so it cannot be counted twice",
+    "evidence": "S12/S13 and the installed 2.1.323 client's stream-json schema (adapter slice). The pilots confirm the cumulative cross-check and auxiliary-request attribution."
+  }
+}

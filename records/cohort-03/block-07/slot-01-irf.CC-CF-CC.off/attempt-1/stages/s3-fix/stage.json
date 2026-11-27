@@ -1,0 +1,129 @@
+{
+  "stageId": "cohort-03-b07-s01-a1--s3-fix",
+  "role": "CC",
+  "provider": "openai",
+  "tool": "codex",
+  "toolVersion": "0.169.0",
+  "mode": "resume",
+  "requestedModel": "gpt-6-luna",
+  "resolvedModel": "gpt-6-luna",
+  "resolvedModelSource": "session rollout turn_context",
+  "requestedEffort": "high",
+  "appliedEffort": "high",
+  "sessionId": "01a210b1-f3d4-7080-9a0a-75b3b9c39ba9",
+  "termination": "completed",
+  "terminationDetail": null,
+  "exitCode": 0,
+  "signal": null,
+  "startedAt": "2026-11-25T03:18:42.803Z",
+  "endedAt": "2026-11-25T03:20:36.274Z",
+  "durationMs": 113471,
+  "finalMessage": "Addressed all three findings: request bodies now decode UTF-8 safely across chunks, restart recovery preserves attempt counts and enforces the three-attempt limit, and the form sends invalid values to the API for field-specific errors.\n\nThe build passes, and the worker recovery check passed. I could not verify HTTP server startup because this environment blocks socket binding with `EPERM`.",
+  "usage": {
+    "source": "codex exec --json turn.completed.usage",
+    "semantics": "turn.completed usage summed within this invocation; per-turn vs session-cumulative on resume is unverified until the pilot (methodology 9)",
+    "completeness": "complete",
+    "raw": [
+      {
+        "input_tokens": 1009633,
+        "cached_input_tokens": 947968,
+        "cache_write_input_tokens": 0,
+        "output_tokens": 15863,
+        "reasoning_output_tokens": 5923
+      }
+    ],
+    "supplementary": {
+      "rolloutCumulativeBefore": {
+        "input_tokens": 563578,
+        "cached_input_tokens": 534912,
+        "cache_write_input_tokens": 0,
+        "output_tokens": 10822,
+        "reasoning_output_tokens": 3176,
+        "total_tokens": 574400
+      },
+      "rolloutCumulativeAfter": {
+        "input_tokens": 1009633,
+        "cached_input_tokens": 947968,
+        "cache_write_input_tokens": 0,
+        "output_tokens": 15863,
+        "reasoning_output_tokens": 5923,
+        "total_tokens": 1025496
+      },
+      "rolloutFound": true,
+      "malformedEventLines": 0,
+      "turnsStarted": 1,
+      "turnsCompleted": 1,
+      "signalsSent": []
+    }
+  },
+  "recordFiles": [
+    "prompt.md",
+    "events.jsonl",
+    "stderr.txt",
+    "last-message.md",
+    "stage.json"
+  ],
+  "settings": {
+    "model": "gpt-6-luna",
+    "model_reasoning_effort": "high",
+    "approval_policy": "never",
+    "sandbox_mode": "workspace-write",
+    "stage_permission": "workspace-write",
+    "outer_isolation": "bwrap",
+    "sandbox_workspace_write.network_access": "false",
+    "ignoreUserConfig": true,
+    "ignoreRules": true,
+    "ephemeral": false,
+    "resumeLatest": "never",
+    "fallbackModel": "none (Codex has no fallback option)",
+    "env": [
+      "CODEX_HOME",
+      "HOME",
+      "LANG",
+      "NO_COLOR",
+      "PATH",
+      "TMPDIR",
+      "npm_config_audit",
+      "npm_config_cache",
+      "npm_config_fund",
+      "npm_config_update_notifier"
+    ],
+    "isolation": {
+      "mechanism": "bwrap",
+      "hidden": [
+        ".",
+        "~"
+      ],
+      "writable": [
+        ".runs/campaign/cohort-03/block-07/slot-01-irf.CC-CF-CC.off/attempt-1/homes/s1-implement",
+        ".runs/campaign/cohort-03/block-07/slot-01-irf.CC-CF-CC.off/attempt-1/workspace"
+      ],
+      "readable": [
+        "node_modules",
+        "../../node-v22.23.4"
+      ],
+      "network": "shared host network namespace (provider API)"
+    },
+    "argv": [
+      "exec",
+      "resume",
+      "--json",
+      "--ignore-user-config",
+      "--ignore-rules",
+      "-m",
+      "gpt-6-luna",
+      "-c",
+      "model_reasoning_effort=\"high\"",
+      "-c",
+      "approval_policy=\"never\"",
+      "-c",
+      "sandbox_workspace_write.network_access=false",
+      "-o",
+      "<capture>/last-message.md",
+      "-c",
+      "sandbox_mode=\"workspace-write\"",
+      "01a210b1-f3d4-7080-9a0a-75b3b9c39ba9",
+      "-"
+    ]
+  }
+}

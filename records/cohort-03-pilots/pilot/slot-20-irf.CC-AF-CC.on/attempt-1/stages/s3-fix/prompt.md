@@ -1,0 +1,33 @@
+A reviewer has examined your implementation. Their findings are below. Address the ones that are correct; you may decline a finding you are confident is wrong, but say why in your summary.
+
+## Findings
+
+# Review findings
+
+1. [major] src/worker.ts:11-14 — When the worker restarts, a job that was `running` keeps the attempt that was cut short. If that was attempt 3, the job is set straight to `failed` with `"transient failure"`, even though the attempt never failed. The spec says a job running when the worker died "completes, or fails per the retry rules", and only simulated transient failures should use up the 3 attempts. Example: with `failAttempts: 2`, attempts 1 and 2 fail as designed, and attempt 3 should complete. If the worker is killed (SIGKILL or SIGTERM) during attempt 3, the job ends `failed` instead of completing. Even when the job is only requeued, the cut-short attempt is still counted, so `failAttempts: 1` killed during attempt 2 later runs attempt 3. It still completes, but the history is off by one, and a second crash would fail it wrongly.
+   Evidence: the startup recovery runs `UPDATE ... status='failed' ... WHERE status='running' AND attempts>=3`. `claim()` increments `attempts` before any work is done, and nothing rolls it back on a crash.
+   Fix: in recovery, requeue every `running` job (`status='queued', progress_completed=0, available_at=0`) and do not count the interrupted attempt. Either decrement `attempts` there, or track transient failures in a separate column and use that for the 3-attempt limit. Only mark a job `failed` from `fail()`, after a real simulated failure.
+
+2. [major] src/worker.ts:48-55 — On SIGTERM during a job, the worker leaves the job `running` with its attempt already counted. Recovery happens only on the next worker start (and finding 1 applies there). Until then, `GET /api/jobs` reports `running` with stale progress, even though no worker owns the job.
+   Evidence: when interrupted, the code does `break` and goes to `finally`, which only clears the heartbeat timer and closes the DB. The job row is never updated.
+   Fix: before exiting on SIGTERM, put the in-flight job back with `UPDATE jobs SET status='queued', progress_completed=0, attempts=attempts-1, available_at=0 WHERE id=? AND status='running'`, or with the equivalent change if you adopt the separate failure counter from finding 1.
+
+3. [minor] src/server.ts:47,95 — The request handler is an `async` function passed to `createServer`, and no error handler wraps it. Any exception becomes an unhandled promise rejection, which kills the server process on Node 22. Examples: the `throw e` re-thrown on line 95, an `SQLITE_BUSY` error after the 5 s busy timeout, or an error while reading the body stream. Clients get a dropped connection, not a JSON error.
+   Evidence: there is no try/catch around the handler body, and no `process.on('unhandledRejection')`.
+   Fix: wrap the handler body in try/catch. In the catch, send `500` with `{"error":{"code":"internal_error","message":...}}` if headers have not been sent yet.
+
+4. [minor] src/worker.ts:43-63 — Any error thrown by SQLite in the main loop ends the loop. This includes a busy or locked error from `claim()` (`BEGIN IMMEDIATE`) or from a progress update. The `finally` then closes the DB and the worker exits. Jobs stop being processed, and `/health` reports `down` until someone restarts the worker by hand.
+   Evidence: there is no try/catch inside the `while` loop; the only handler is the outer `try/finally`.
+   Fix: catch errors for each iteration, log them, sleep briefly, and continue. Make sure a job already claimed is either finished or requeued.
+
+5. [minor] src/server.ts:110-112 — Shutdown on SIGTERM waits for `server.close()` to finish, and nothing forces it after a timeout. If a client holds an in-flight or keep-alive connection (the UI polls every 500 ms), the server may not exit promptly.
+   Evidence: the shutdown handler only calls `server.close(cb)`. It never calls `server.closeAllConnections()` and sets no fallback timer.
+   Fix: call `server.closeIdleConnections()` right after `server.close()`. Then call `server.closeAllConnections()`, or `process.exit(0)` via a `setTimeout(..., 2000).unref()` fallback.
+
+## Rules
+
+- The same rules as before apply: work only inside this repository and do not modify anything under `checks/` or the fixed files.
+- You have at most 10 minutes for this stage.
+- When you are done, make sure the application builds and starts as the task describes, then stop. Reply with a short summary of what you changed.
+
+The repository includes fixed build, smoke, and contract checks (`npm run build`, `npm run check:smoke`, `npm run check:contract`). You may run them yourself. When you finish, the runner will also run them, and if any fail you may receive their output and a limited number of chances to repair. Passing these checks does not guarantee acceptance: a separate, hidden evaluation decides that.

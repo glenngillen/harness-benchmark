@@ -1,0 +1,65 @@
+{
+  "$comment": "Frozen model/client roster for cohort-03. Requested values only; resolved identifiers, applied effort and actual access are recorded by the pilot slice. See methodology.md section 4.",
+  "cohort": "cohort-03",
+  "roles": {
+    "CF": {
+      "label": "Codex frontier",
+      "tier": "frontier",
+      "provider": "openai",
+      "tool": "codex",
+      "toolVersion": "0.169.0",
+      "toolRelease": "https://github.com/openai/codex/releases/tag/rust-v0.169.0",
+      "requestedModel": "gpt-6-astra",
+      "effort": "low",
+      "effortRationale": "R-CF",
+      "priceRow": "openai:gpt-6-astra",
+      "sources": ["S06", "S09", "S11", "S14"]
+    },
+    "CC": {
+      "label": "Codex cheaper",
+      "tier": "cheaper",
+      "provider": "openai",
+      "tool": "codex",
+      "toolVersion": "0.169.0",
+      "toolRelease": "https://github.com/openai/codex/releases/tag/rust-v0.169.0",
+      "requestedModel": "gpt-6-luna",
+      "effort": "high",
+      "effortRationale": "R-CC",
+      "priceRow": "openai:gpt-6-luna",
+      "sources": ["S06", "S09", "S11", "S14"]
+    },
+    "AF": {
+      "label": "Claude frontier",
+      "tier": "frontier",
+      "provider": "anthropic",
+      "tool": "claude-code",
+      "toolVersion": "2.1.323",
+      "toolRelease": "https://github.com/anthropics/claude-code/releases/tag/v2.1.323",
+      "requestedModel": "claude-opus-5-5",
+      "effort": "medium",
+      "effortRationale": "R-AF",
+      "priceRow": "anthropic:claude-opus-5-5",
+      "sources": ["S07", "S08", "S10", "S12", "S13", "S14"]
+    },
+    "AC": {
+      "label": "Claude cheaper",
+      "tier": "cheaper",
+      "provider": "anthropic",
+      "tool": "claude-code",
+      "toolVersion": "2.1.323",
+      "toolRelease": "https://github.com/anthropics/claude-code/releases/tag/v2.1.323",
+      "requestedModel": "claude-haiku-5-5",
+      "effort": "medium",
+      "effortRationale": "R-AC",
+      "priceRow": "anthropic:claude-haiku-5-5",
+      "sources": ["S07", "S08", "S10", "S12", "S13", "S14"]
+    }
+  },
+  "rules": {
+    "effortFixedAcrossRolesAndConditions": true,
+    "fallbackModelsAllowed": false,
+    "silentSubstitution": "reject-from-cohort",
+    "authentication": "existing subscription via native CLI login; no API keys, no paid overflow, no credit purchase, no upgrade",
+    "claudeBareMode": "forbidden (abandons subscription login, S12)"
+  }
+}

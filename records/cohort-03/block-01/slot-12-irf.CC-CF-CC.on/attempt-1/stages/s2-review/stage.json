@@ -1,0 +1,122 @@
+{
+  "stageId": "cohort-03-b01-s12-a1--s2-review",
+  "role": "CF",
+  "provider": "openai",
+  "tool": "codex",
+  "toolVersion": "0.169.0",
+  "mode": "fresh",
+  "requestedModel": "gpt-6-astra",
+  "resolvedModel": "gpt-6-astra",
+  "resolvedModelSource": "session rollout turn_context",
+  "requestedEffort": "low",
+  "appliedEffort": "low",
+  "sessionId": "01a20e43-0870-7413-980e-e0c860c02616",
+  "termination": "completed",
+  "terminationDetail": null,
+  "exitCode": 0,
+  "signal": null,
+  "startedAt": "2026-11-24T15:53:23.442Z",
+  "endedAt": "2026-11-24T15:54:23.477Z",
+  "durationMs": 60035,
+  "finalMessage": "# Review findings\n\n1. [major] src/worker.ts:13 — Restarting during the third attempt permanently fails jobs that should succeed.\n   Evidence: Startup marks every `running` job with `attempts >= 3` as failed with `\"transient failure\"`, without checking whether a transient failure occurred. A job with `failAttempts: 2` interrupted during its successful third attempt is therefore never processed again, contrary to the restart requirement.\n   Fix: Recover interrupted processing rather than treating interruption as a dependency failure. Preserve enough state to resume or replay the interrupted final attempt, and mark it failed only when the transient-failure rule actually applies.\n\n2. [major] src/server.ts:20 — Request chunk boundaries can corrupt valid Unicode input.\n   Evidence: Each buffer is decoded separately with `chunk.toString()`. Calling the handler with valid JSON containing `é`, split between its two UTF-8 bytes, returned `201` with `input: \"��\"`. This violates exact input preservation and can also cause incorrect validation, output, and idempotency comparisons.\n   Fix: Accumulate buffers and decode once with `Buffer.concat(...).toString('utf8')`, or use a streaming UTF-8 decoder.\n\n3. [major] src/server.ts:42 — An unknown request path can terminate the server.\n   Evidence: The URL constructor is outside any error handler. A request target of `//[` causes `new URL()` to throw `TypeError: Invalid URL`, confirmed by invoking the request handler. Because the HTTP listener is async and its rejected promise is unhandled, this can terminate Node instead of returning the required JSON `404`.\n   Fix: Guard URL parsing and return a structured JSON error for unparseable paths. Also catch unexpected failures at the request-handler boundary so malformed requests cannot terminate the process.\n\n4. [minor] ui/index.html:20 — Native form validation prevents invalid values from reaching API validation.\n   Evidence: The form uses `required`, `maxlength`, and numeric `min`/`max` constraints without `novalidate`. For example, submitting steps `21` or `1.5` is blocked before the submit handler runs, so no API request occurs and `form-error` does not show the offending field as required.\n   Fix: Add `novalidate` to the form and remove input restrictions that prevent submitting the entered value, such as `maxlength`. Keep numeric conversion in the submit handler and display the API’s validation errors in `form-error`.",
+  "usage": {
+    "source": "codex exec --json turn.completed.usage",
+    "semantics": "turn.completed usage summed within this invocation; per-turn vs session-cumulative on resume is unverified until the pilot (methodology 9)",
+    "completeness": "complete",
+    "raw": [
+      {
+        "input_tokens": 134112,
+        "cached_input_tokens": 119296,
+        "cache_write_input_tokens": 0,
+        "output_tokens": 1693,
+        "reasoning_output_tokens": 212
+      }
+    ],
+    "supplementary": {
+      "rolloutCumulativeBefore": null,
+      "rolloutCumulativeAfter": {
+        "input_tokens": 134112,
+        "cached_input_tokens": 119296,
+        "cache_write_input_tokens": 0,
+        "output_tokens": 1693,
+        "reasoning_output_tokens": 212,
+        "total_tokens": 135805
+      },
+      "rolloutFound": true,
+      "malformedEventLines": 0,
+      "turnsStarted": 1,
+      "turnsCompleted": 1,
+      "signalsSent": []
+    }
+  },
+  "recordFiles": [
+    "prompt.md",
+    "events.jsonl",
+    "stderr.txt",
+    "last-message.md",
+    "stage.json"
+  ],
+  "settings": {
+    "model": "gpt-6-astra",
+    "model_reasoning_effort": "low",
+    "approval_policy": "never",
+    "sandbox_mode": "read-only",
+    "stage_permission": "read-only",
+    "outer_isolation": "bwrap",
+    "sandbox_workspace_write.network_access": "false",
+    "ignoreUserConfig": true,
+    "ignoreRules": true,
+    "ephemeral": false,
+    "resumeLatest": "never",
+    "fallbackModel": "none (Codex has no fallback option)",
+    "env": [
+      "CODEX_HOME",
+      "HOME",
+      "LANG",
+      "NO_COLOR",
+      "PATH",
+      "TMPDIR",
+      "npm_config_audit",
+      "npm_config_cache",
+      "npm_config_fund",
+      "npm_config_update_notifier"
+    ],
+    "isolation": {
+      "mechanism": "bwrap",
+      "hidden": [
+        ".",
+        "~"
+      ],
+      "writable": [
+        ".runs/campaign/cohort-03/block-01/slot-12-irf.CC-CF-CC.on/attempt-1/homes/s2-review"
+      ],
+      "readable": [
+        "node_modules",
+        "../../node-v22.23.4",
+        ".runs/campaign/cohort-03/block-01/slot-12-irf.CC-CF-CC.on/attempt-1/snapshots/s2-review"
+      ],
+      "network": "shared host network namespace (provider API)"
+    },
+    "argv": [
+      "exec",
+      "--json",
+      "--ignore-user-config",
+      "--ignore-rules",
+      "-m",
+      "gpt-6-astra",
+      "-c",
+      "model_reasoning_effort=\"low\"",
+      "-c",
+      "approval_policy=\"never\"",
+      "-c",
+      "sandbox_workspace_write.network_access=false",
+      "-o",
+      "<capture>/last-message.md",
+      "--sandbox",
+      "read-only",
+      "-C",
+      "<workspace>",
+      "-"
+    ]
+  }
+}

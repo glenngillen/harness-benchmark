@@ -1,0 +1,5 @@
+Implemented the SQLite-backed job API, durable idempotency and retries, separate worker with restart recovery and heartbeats, and a polling browser UI.
+
+`npm run build` passes. The worker started and processed a Unicode job successfully. The smoke and contract checks, and server startup, could not run here because this environment blocks localhost listening (`listen EPERM`).
+
+Changes are in [src/db.ts](/opt/harness/work/.runs/campaign/cohort-03/block-04/slot-15-pi.CF-CC.off/attempt-1/workspace/src/db.ts), [src/jobs.ts](/opt/harness/work/.runs/campaign/cohort-03/block-04/slot-15-pi.CF-CC.off/attempt-1/workspace/src/jobs.ts), [src/server.ts](/opt/harness/work/.runs/campaign/cohort-03/block-04/slot-15-pi.CF-CC.off/attempt-1/workspace/src/server.ts), [src/worker.ts](/opt/harness/work/.runs/campaign/cohort-03/block-04/slot-15-pi.CF-CC.off/attempt-1/workspace/src/worker.ts), and [ui/index.html](/opt/harness/work/.runs/campaign/cohort-03/block-04/slot-15-pi.CF-CC.off/attempt-1/workspace/ui/index.html).

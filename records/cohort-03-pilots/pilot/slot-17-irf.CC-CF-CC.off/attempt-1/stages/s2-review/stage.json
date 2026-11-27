@@ -1,0 +1,122 @@
+{
+  "stageId": "cohort-03-pilots-b00-s17-a1--s2-review",
+  "role": "CF",
+  "provider": "openai",
+  "tool": "codex",
+  "toolVersion": "0.169.0",
+  "mode": "fresh",
+  "requestedModel": "gpt-6-astra",
+  "resolvedModel": "gpt-6-astra",
+  "resolvedModelSource": "session rollout turn_context",
+  "requestedEffort": "low",
+  "appliedEffort": "low",
+  "sessionId": "01a20d61-5520-72a3-b5f2-3d04dfe8f8c0",
+  "termination": "completed",
+  "terminationDetail": null,
+  "exitCode": 0,
+  "signal": null,
+  "startedAt": "2026-11-24T11:46:51.951Z",
+  "endedAt": "2026-11-24T11:48:06.855Z",
+  "durationMs": 74904,
+  "finalMessage": "# Review findings\n\n1. [major] src/server.ts:24 — Request chunks are decoded independently, corrupting valid Unicode input.\n   Evidence: Invoking the request handler with `{\"input\":\"café\"}` split between the two UTF-8 bytes of `é` returned `201` with input `\"caf��\"`. HTTP chunk boundaries can occur anywhere. This violates exact input storage and also changes output and idempotency comparisons.\n   Fix: Buffer the bytes and decode once, or use a streaming UTF-8 decoder such as `req.setEncoding('utf8')`.\n\n2. [major] src/server.ts:31 — An unknown request path can crash the server instead of returning JSON.\n   Evidence: Passing the origin-form path `//[` to the handler throws `Invalid URL`: `new URL` interprets it as an invalid authority. The async request callback has no rejection handler, so this becomes an unhandled rejection.\n   Fix: Parse request targets as paths without interpreting leading double slashes as an authority, and handle parsing failures with the required JSON response.\n\n3. [major] src/worker.ts:22 — Restarted processing attempts are not counted.\n   Evidence: Startup requeues running jobs with `resume_attempt=attempts`. The next claim retains that count while resetting progress to zero and processing every step again. A job interrupted during attempt 1 can therefore complete after another full processing attempt while still reporting `attempts: 1`, contrary to the required increment when an attempt starts.\n   Fix: Count restarted attempts when transitioning back to `running`, and apply the retry limit and simulated failure rules consistently to that count.\n\n4. [minor] ui/index.html:17 — Native form validation prevents fractional values from reaching API validation.\n   Evidence: Both numeric inputs have the default integer step constraint, and the form lacks `novalidate`. Entering `1.5` blocks the submit event, so no API request occurs and `form-error` never displays the offending field as required.\n   Fix: Add `novalidate` to the form so submitted numeric values reach the API and its validation errors appear in the alert region.\n\n5. [minor] src/worker.ts:19 — Jobs created within the same millisecond can run out of submission order.\n   Evidence: Queue selection sorts by `created_at,id`. Timestamps have millisecond precision, while IDs are random UUIDs, so tied timestamps are ordered randomly rather than oldest first.\n   Fix: Use insertion order as the tie-breaker, such as `ORDER BY created_at, rowid`, consistent with the insertion ordering used by the jobs list.",
+  "usage": {
+    "source": "codex exec --json turn.completed.usage",
+    "semantics": "turn.completed usage summed within this invocation; per-turn vs session-cumulative on resume is unverified until the pilot (methodology 9)",
+    "completeness": "complete",
+    "raw": [
+      {
+        "input_tokens": 137054,
+        "cached_input_tokens": 106496,
+        "cache_write_input_tokens": 0,
+        "output_tokens": 1910,
+        "reasoning_output_tokens": 460
+      }
+    ],
+    "supplementary": {
+      "rolloutCumulativeBefore": null,
+      "rolloutCumulativeAfter": {
+        "input_tokens": 137054,
+        "cached_input_tokens": 106496,
+        "cache_write_input_tokens": 0,
+        "output_tokens": 1910,
+        "reasoning_output_tokens": 460,
+        "total_tokens": 138964
+      },
+      "rolloutFound": true,
+      "malformedEventLines": 0,
+      "turnsStarted": 1,
+      "turnsCompleted": 1,
+      "signalsSent": []
+    }
+  },
+  "recordFiles": [
+    "prompt.md",
+    "events.jsonl",
+    "stderr.txt",
+    "last-message.md",
+    "stage.json"
+  ],
+  "settings": {
+    "model": "gpt-6-astra",
+    "model_reasoning_effort": "low",
+    "approval_policy": "never",
+    "sandbox_mode": "read-only",
+    "stage_permission": "read-only",
+    "outer_isolation": "bwrap",
+    "sandbox_workspace_write.network_access": "false",
+    "ignoreUserConfig": true,
+    "ignoreRules": true,
+    "ephemeral": false,
+    "resumeLatest": "never",
+    "fallbackModel": "none (Codex has no fallback option)",
+    "env": [
+      "CODEX_HOME",
+      "HOME",
+      "LANG",
+      "NO_COLOR",
+      "PATH",
+      "TMPDIR",
+      "npm_config_audit",
+      "npm_config_cache",
+      "npm_config_fund",
+      "npm_config_update_notifier"
+    ],
+    "isolation": {
+      "mechanism": "bwrap",
+      "hidden": [
+        ".",
+        "~"
+      ],
+      "writable": [
+        ".runs/campaign/cohort-03-pilots/pilot/slot-17-irf.CC-CF-CC.off/attempt-1/homes/s2-review"
+      ],
+      "readable": [
+        "node_modules",
+        "../../node-v22.23.4",
+        ".runs/campaign/cohort-03-pilots/pilot/slot-17-irf.CC-CF-CC.off/attempt-1/snapshots/s2-review"
+      ],
+      "network": "shared host network namespace (provider API)"
+    },
+    "argv": [
+      "exec",
+      "--json",
+      "--ignore-user-config",
+      "--ignore-rules",
+      "-m",
+      "gpt-6-astra",
+      "-c",
+      "model_reasoning_effort=\"low\"",
+      "-c",
+      "approval_policy=\"never\"",
+      "-c",
+      "sandbox_workspace_write.network_access=false",
+      "-o",
+      "<capture>/last-message.md",
+      "--sandbox",
+      "read-only",
+      "-C",
+      "<workspace>",
+      "-"
+    ]
+  }
+}

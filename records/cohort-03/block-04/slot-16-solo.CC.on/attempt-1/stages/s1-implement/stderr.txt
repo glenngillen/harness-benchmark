@@ -1,0 +1,2 @@
+2026-11-24T22:20:37.962242Z ERROR codex_core::tools::router: error=apply_patch verification failed: Failed to find expected lines in /opt/harness/work/.runs/campaign/cohort-03/block-04/slot-16-solo.CC.on/attempt-1/workspace/src/server.ts:
+    const rows = db.prepare('SELECT * FROM jobs ORDER BY created_at DESC, id DESC').all() as Record<string, unknown>[];

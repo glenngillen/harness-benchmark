@@ -1,0 +1,27 @@
+A reviewer has examined your implementation. Their findings are below. Address the ones that are correct; you may decline a finding you are confident is wrong, but say why in your summary.
+
+## Findings
+
+# Review findings
+
+1. [minor] src/worker.ts:18-25 — When a worker restarts, it lowers `attempts` for jobs it finds `running` (`attempts = MAX(attempts - 1, 0)`). It does the same in `requeueInterrupted` on a graceful stop. The task defines `attempts` as "the number of processing attempts started so far", so an attempt that was started and then interrupted should still count. Today the API can show `attempts` going down (for example 2 → 1 after a restart), which breaks the field's meaning.
+   Evidence: `recoverRunning` and `requeueInterrupted` both decrement `attempts`. `runAttempt` then uses `job.attempts + 1`, so the interrupted attempt is run again under the same number.
+   Fix: Keep `attempts` unchanged when requeueing. Just set `status='queued', progress_completed=0, run_after=0`. If you still want an interrupted attempt not to use up the 3-attempt budget, track that in a separate column instead of rewriting `attempts`. Also check that an interrupted job still ends up completed or failed within 10 s of the restart under the 3-attempt rule (for example, a job interrupted during attempt 3 should not jump straight to `failed` unless that is the behaviour you intend).
+
+2. [minor] ui/index.html:49-52,66-70 — If the user clears the Steps or Fail attempts field, the form sends `""` (for example `"steps": ""`). The API then rejects a submission that should have used the default (`steps` 5, `failAttempts` 0). The task says to send numeric values as numbers; it does not ask for a blank field to become an empty string.
+   Evidence: `numericOrRaw('')` falls through and returns `''`, so the body contains `"steps": ""` and the server returns 400 for `steps`.
+   Fix: Leave a field out of the body when its trimmed value is empty, so the API applies its defaults. Keep sending other non-numeric text as typed so the API's validation still shows.
+
+3. [minor] src/worker.ts:55-61 — On a simulated failure, `startAttempt` and `scheduleRetry`/`fail` are two separate writes with no transaction around them. If the process is killed between them, the job is left `running` with `attempts` already incremented. Finding 1 currently hides this, because the recovery path decrements `attempts`. Once finding 1 is fixed, a crash here could use up an extra attempt or leave the counts inconsistent.
+   Evidence: There is no `BEGIN`/`COMMIT` around the start-then-fail sequence in `runAttempt`.
+   Fix: Put the failing-attempt path in one transaction: increment `attempts`, then requeue with `run_after` or mark `failed`. Do the same for the select-and-start of a job, so recovery always finds a consistent row.
+
+I only read the code. I did not run the build, the servers or the checks. The rest looked correct for the task: validation, idempotency (an `IMMEDIATE` transaction plus a key table that survives restarts), routing (404/405), the error format, heartbeat-based `/health`, polling every 200 ms, progress written after each step, the retry delay (500 ms), and the UI test IDs and 1 s refresh.
+
+## Rules
+
+- The same rules as before apply: work only inside this repository and do not modify anything under `checks/` or the fixed files.
+- You have at most 10 minutes for this stage.
+- When you are done, make sure the application builds and starts as the task describes, then stop. Reply with a short summary of what you changed.
+
+The repository includes fixed build, smoke, and contract checks (`npm run build`, `npm run check:smoke`, `npm run check:contract`). You may run them yourself. The runner will not run them for you or send you their output. Passing these checks does not guarantee acceptance: a separate, hidden evaluation decides that.

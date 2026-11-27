@@ -1,0 +1,122 @@
+{
+  "stageId": "cohort-03-b06-s12-a1--s2-review",
+  "role": "CF",
+  "provider": "openai",
+  "tool": "codex",
+  "toolVersion": "0.169.0",
+  "mode": "fresh",
+  "requestedModel": "gpt-6-astra",
+  "resolvedModel": "gpt-6-astra",
+  "resolvedModelSource": "session rollout turn_context",
+  "requestedEffort": "low",
+  "appliedEffort": "low",
+  "sessionId": "01a21070-e182-7060-a28c-18ca7967f235",
+  "termination": "completed",
+  "terminationDetail": null,
+  "exitCode": 0,
+  "signal": null,
+  "startedAt": "2026-11-25T02:02:42.581Z",
+  "endedAt": "2026-11-25T02:03:31.679Z",
+  "durationMs": 49098,
+  "finalMessage": "# Review findings\n\n1. [blocker] ui/index.html:36 — Invalid JavaScript disables the entire browser UI.\n   Evidence: Parsing the inline script produces `SyntaxError: Invalid left-hand side in assignment`. Assignments such as `item.dataset-testid = 'job-item'` are invalid; the same error appears for status, progress, and result. Consequently, submission handlers and automatic refresh never initialize.\n   Fix: Replace all four assignments with `element.dataset.testid = '...'` or `element.setAttribute('data-testid', '...')`.\n\n2. [major] src/server.ts:17 — Request decoding can corrupt submitted Unicode text.\n   Evidence: Each incoming buffer is independently decoded with `chunk.toString()`. Calling the handler with valid JSON containing `café`, split between the two UTF-8 bytes of `é`, returned `201` with input `caf��`. This violates exact input preservation and can also cause incorrect idempotency conflicts.\n   Fix: Decode using a streaming UTF-8 decoder, set the request encoding to UTF-8 before reading, or concatenate buffers before decoding.\n\n3. [major] ui/index.html:18 — Native form validation prevents invalid values from reaching API validation.\n   Evidence: The form has no `novalidate`, while its fields have `required`, `min`, `max`, and implicit integer-step constraints. Even after fixing the script, submitting an empty input, steps `21`, or fractional steps is blocked before the submit handler runs, so the API cannot provide the required field errors in `form-error`.\n   Fix: Add `novalidate` to the form so submissions reach the API and its rejection details populate the alert.\n\n4. [minor] src/server.ts:26 — Unsupported methods on `/` return the wrong status and error code.\n   Evidence: Calling the handler with `POST /` returns `404 not_found`. `/` is a known path, so the required response is `405 method_not_allowed`.\n   Fix: Handle `/` independently of the method, serving HTML for GET and returning the standard 405 JSON error otherwise.",
+  "usage": {
+    "source": "codex exec --json turn.completed.usage",
+    "semantics": "turn.completed usage summed within this invocation; per-turn vs session-cumulative on resume is unverified until the pilot (methodology 9)",
+    "completeness": "complete",
+    "raw": [
+      {
+        "input_tokens": 139160,
+        "cached_input_tokens": 122752,
+        "cache_write_input_tokens": 0,
+        "output_tokens": 1521,
+        "reasoning_output_tokens": 101
+      }
+    ],
+    "supplementary": {
+      "rolloutCumulativeBefore": null,
+      "rolloutCumulativeAfter": {
+        "input_tokens": 139160,
+        "cached_input_tokens": 122752,
+        "cache_write_input_tokens": 0,
+        "output_tokens": 1521,
+        "reasoning_output_tokens": 101,
+        "total_tokens": 140681
+      },
+      "rolloutFound": true,
+      "malformedEventLines": 0,
+      "turnsStarted": 1,
+      "turnsCompleted": 1,
+      "signalsSent": []
+    }
+  },
+  "recordFiles": [
+    "prompt.md",
+    "events.jsonl",
+    "stderr.txt",
+    "last-message.md",
+    "stage.json"
+  ],
+  "settings": {
+    "model": "gpt-6-astra",
+    "model_reasoning_effort": "low",
+    "approval_policy": "never",
+    "sandbox_mode": "read-only",
+    "stage_permission": "read-only",
+    "outer_isolation": "bwrap",
+    "sandbox_workspace_write.network_access": "false",
+    "ignoreUserConfig": true,
+    "ignoreRules": true,
+    "ephemeral": false,
+    "resumeLatest": "never",
+    "fallbackModel": "none (Codex has no fallback option)",
+    "env": [
+      "CODEX_HOME",
+      "HOME",
+      "LANG",
+      "NO_COLOR",
+      "PATH",
+      "TMPDIR",
+      "npm_config_audit",
+      "npm_config_cache",
+      "npm_config_fund",
+      "npm_config_update_notifier"
+    ],
+    "isolation": {
+      "mechanism": "bwrap",
+      "hidden": [
+        ".",
+        "~"
+      ],
+      "writable": [
+        ".runs/campaign/cohort-03/block-06/slot-12-irf.CC-CF-CC.on/attempt-1/homes/s2-review"
+      ],
+      "readable": [
+        "node_modules",
+        "../../node-v22.23.4",
+        ".runs/campaign/cohort-03/block-06/slot-12-irf.CC-CF-CC.on/attempt-1/snapshots/s2-review"
+      ],
+      "network": "shared host network namespace (provider API)"
+    },
+    "argv": [
+      "exec",
+      "--json",
+      "--ignore-user-config",
+      "--ignore-rules",
+      "-m",
+      "gpt-6-astra",
+      "-c",
+      "model_reasoning_effort=\"low\"",
+      "-c",
+      "approval_policy=\"never\"",
+      "-c",
+      "sandbox_workspace_write.network_access=false",
+      "-o",
+      "<capture>/last-message.md",
+      "--sandbox",
+      "read-only",
+      "-C",
+      "<workspace>",
+      "-"
+    ]
+  }
+}

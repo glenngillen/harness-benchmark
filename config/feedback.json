@@ -1,0 +1,65 @@
+{
+  "$comment": "Deterministic build-time feedback loop (the treatment). Disabled condition runs none of this. See methodology.md section 5.",
+  "cohort": "cohort-03",
+  "trigger": "each time an implement, fix, or sensor-repair stage returns with checkCondition == on",
+  "suites": [
+    {
+      "id": "build",
+      "command": "npm run build",
+      "purpose": "TypeScript compiles",
+      "checks": [
+        "build.compile"
+      ]
+    },
+    {
+      "id": "smoke",
+      "command": "npm run check:smoke",
+      "purpose": "server and worker start; health endpoint responds",
+      "checks": [
+        "smoke.health",
+        "smoke.worker-up"
+      ]
+    },
+    {
+      "id": "contract",
+      "command": "npm run check:contract",
+      "purpose": "disclosed examples for submission, validation, completion, retry, idempotency",
+      "checks": [
+        "contract.submit-job",
+        "contract.reject-invalid",
+        "contract.complete-job",
+        "contract.retry-transient",
+        "contract.idempotent-replay"
+      ]
+    }
+  ],
+  "suitesLocation": "identical copies under checks/ in the starting repository for BOTH conditions (read-only to the model, so either condition may run them as a native self-check); the runner executes its own protected copy from outside the workspace, so edits to the workspace copy cannot change feedback",
+  "feedbackContents": [
+    "suite id and check name for each failure, in suite order",
+    "expected vs observed status code / field, using only disclosed example data",
+    "last 40 lines of server and worker stderr, secrets-scrubbed",
+    "remaining sensor repairs and remaining stage minutes"
+  ],
+  "feedbackExcludes": [
+    "independent evaluator cases, fixtures, verdicts, or source",
+    "any instruction beyond prompts/sensor-repair.md"
+  ],
+  "truncation": "whole message truncated at limits.handoff.sensorFeedbackMaxBytes with an explicit [truncated] marker",
+  "stopRule": "stop when all suites pass, when maxPerWorkflow repairs are used, or when the owning stage ceiling is reached",
+  "passImpliesAcceptance": false,
+  "implementation": {
+    "modelVisibleSuites": "fixtures/scaffold/checks/ (core.ts, smoke.ts, contract.ts, cli.ts), run with node --experimental-strip-types; --report <file> writes job-tracker/check-report@1 JSON",
+    "runner": "src/feedback/checks.ts: copies the workspace with the evaluator snapshot rules, restores protected fixed files and checks/, runs build then smoke then contract in the OS sandbox under one ceiling",
+    "loop": "src/feedback/loop.ts",
+    "feedbackBuilder": "src/feedback/feedback.ts",
+    "record": "harness-benchmark/check-run@1 per check run, plus a repair event carrying the exact feedback text and its byte count"
+  },
+  "ceilingSeconds": 120,
+  "ceilingClippedTo": "remaining workflow time",
+  "gate": {
+    "intermediate": "failing checks with no repairs or no stage time left: continue to the scheduled review",
+    "final": "failing checks with no repairs left: repair-budget-exhausted; with repairs left but no stage time: stage-timeout",
+    "workflowCeiling": "failing checks at the workflow ceiling: task-timeout",
+    "suiteRunnerFailure": "runner-infrastructure-failure (operational)"
+  }
+}

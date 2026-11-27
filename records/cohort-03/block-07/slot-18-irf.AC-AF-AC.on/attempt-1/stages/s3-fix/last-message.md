@@ -1,0 +1,8 @@
+All three findings are addressed, and the build and both check suites pass (smoke 2/2, contract 5/5).
+
+**What changed:**
+- **Finding 1 (attempt count), applied.** `recoverInterruptedJobs` and `requeue` in `src/worker.ts` now set `attempts = MAX(attempts - 1, 0)` along with `status='queued'` and `progress_completed=0`. An interrupted attempt is not counted, so the next claim reuses its number. `attempts` can no longer go above 3, and a failed job ends at exactly 3. I checked the cases by reasoning, not by running them: `failAttempts: 2` killed during attempt 2 now reruns as attempt 2 and fails once more, then succeeds on attempt 3.
+- **Finding 2 (number parsing), applied.** The UI sends a value as a number only when it matches `/^-?\d+(\.\d+)?$/`. Anything else, such as `0x3` or `1e1`, is sent as typed so the API rejects it and names the field.
+- **Finding 3 (heartbeat on shutdown), applied.** On clean shutdown the worker deletes its `worker_heartbeat` row before closing the database, so `/health` reports `worker: "down"` immediately. The requeue fix from finding 1 covers the attempt cost.
+
+**Test gap:** my SIGTERM test hit the job while it was waiting in its retry delay, not during a running attempt. So the decrement path itself was not exercised end to end. The heartbeat clearing was confirmed (`worker: down` at 0.5 s), and a restarted job completed with `attempts: 3`, as expected.

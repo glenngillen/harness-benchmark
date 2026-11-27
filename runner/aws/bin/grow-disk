@@ -1,0 +1,38 @@
+#!/bin/bash
+# Grow the runner's root volume in place, without Terraform and without a restart.
+#
+#   runner/aws/bin/grow-disk [GiB]      default 80
+#
+# Safe while a campaign runs: EBS volumes grow online and the filesystem is extended live. EBS
+# volumes cannot shrink, and AWS allows one size change per volume every 6 hours.
+source "$(dirname "$0")/_common.sh"
+load_target
+require_instance
+size="${1:-80}"
+[[ "$size" =~ ^[0-9]+$ ]] && [ "$size" -le 200 ] || die "size must be a whole number of GiB, at most 200"
+
+vol="$(aws ec2 describe-instances --instance-ids "$HARNESS_INSTANCE_ID" \
+  --query 'Reservations[0].Instances[0].BlockDeviceMappings[?DeviceName==`/dev/sda1`].Ebs.VolumeId | [0]' --output text)"
+[[ "$vol" == vol-* ]] || vol="$(aws ec2 describe-volumes --filters Name=attachment.instance-id,Values="$HARNESS_INSTANCE_ID" --query 'Volumes[0].VolumeId' --output text)"
+[[ "$vol" == vol-* ]] || die "could not find the runner's root volume"
+cur="$(aws ec2 describe-volumes --volume-ids "$vol" --query 'Volumes[0].Size' --output text)"
+echo "root volume $vol is ${cur} GiB"
+if [ "$cur" -lt "$size" ]; then
+  aws ec2 modify-volume --volume-id "$vol" --size "$size" >/dev/null
+  echo "requested ${size} GiB; waiting for AWS to apply it"
+  while :; do
+    state="$(aws ec2 describe-volumes-modifications --volume-ids "$vol" --query 'VolumesModifications[0].ModificationState' --output text 2>/dev/null || echo modifying)"
+    case "$state" in optimizing|completed) break ;; failed) die "AWS reported the resize failed" ;; esac
+    sleep 5
+  done
+else
+  echo "already at least ${size} GiB; extending the filesystem only"
+fi
+
+ssm_run 300 'set -e
+dev="$(findmnt -no SOURCE /)"
+disk="/dev/$(lsblk -no PKNAME "$dev")"
+part="$(cat "/sys/class/block/$(basename "$dev")/partition")"
+growpart "$disk" "$part" || true   # exits 1 when there is nothing to grow
+resize2fs "$dev"
+df -h /'

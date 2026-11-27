@@ -1,0 +1,5 @@
+Implemented the SQLite-backed job API, worker process, retries and recovery, idempotent submissions, heartbeat health check, and polling browser UI.
+
+`npm run build` and `git diff --check` pass. The worker starts against a local database. The smoke and contract checks could not run because this environment blocks local network listeners with `listen EPERM`.
+
+The changes are in [src/db.ts](/opt/harness/work/.runs/campaign/cohort-03/block-07/slot-12-pi.CF-CC.on/attempt-1/workspace/src/db.ts), [src/jobs.ts](/opt/harness/work/.runs/campaign/cohort-03/block-07/slot-12-pi.CF-CC.on/attempt-1/workspace/src/jobs.ts), [src/server.ts](/opt/harness/work/.runs/campaign/cohort-03/block-07/slot-12-pi.CF-CC.on/attempt-1/workspace/src/server.ts), [src/worker.ts](/opt/harness/work/.runs/campaign/cohort-03/block-07/slot-12-pi.CF-CC.on/attempt-1/workspace/src/worker.ts), and [ui/index.html](/opt/harness/work/.runs/campaign/cohort-03/block-07/slot-12-pi.CF-CC.on/attempt-1/workspace/ui/index.html).

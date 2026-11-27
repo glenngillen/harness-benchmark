@@ -1,0 +1,3 @@
+Addressed all six findings: interrupted jobs reuse their attempt number, server and worker database errors are caught, shutdown handles idle connections with a fallback, and malformed JSON produces a single body error.
+
+`npm run build` and `git diff --check` pass; the worker starts and shuts down cleanly. The server couldn’t bind because this environment returns `listen EPERM`, so I couldn’t rerun the HTTP checks.

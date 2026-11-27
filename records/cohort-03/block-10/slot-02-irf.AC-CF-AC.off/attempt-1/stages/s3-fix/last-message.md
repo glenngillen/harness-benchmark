@@ -1,0 +1,6 @@
+Both findings are fixed. The build passes and both fixed suites pass (smoke 2/2, contract 5/5).
+
+- **Finding 1 (attempt counts erased), fixed.** Restart recovery and graceful shutdown no longer decrement `attempts`. The attempt count is preserved, and the next attempt is counted when it starts. Checked: a job killed mid-attempt 1 shows `running` with `attempts: 2` after restart.
+- **Finding 2 (`201` could show `running`), fixed.** `createJob()` now reads the inserted row inside the transaction, before commit, and returns that snapshot.
+
+**Judgment call on the retry cap.** With attempts now preserved, a job interrupted during attempt 3 would otherwise start a fourth attempt. Instead, a queued job that has already used 3 attempts is failed with `transient failure` at claim time, without being started. I verified this by inserting a queued job with `attempts: 3`: it ends `failed` with `attempts: 3`. The trade-off is that a job with `failAttempts ≤ 2` that is killed during its successful third attempt fails rather than completing. The brief's "3 attempts in total" rule seemed to require that, but a reviewer might read it differently.

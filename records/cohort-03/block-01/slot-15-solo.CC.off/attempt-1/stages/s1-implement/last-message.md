@@ -1,0 +1,3 @@
+Implemented the SQLite-backed job API and worker, including validation, idempotency, retries, progress, heartbeats, and restart recovery. Added the browser submission form and job list with automatic refresh.
+
+`npm run build` passed, and the worker started and shut down on `SIGTERM`. The smoke and contract checks could not run because this environment blocks local port binding (`listen EPERM`); the server startup attempt hit the same restriction.

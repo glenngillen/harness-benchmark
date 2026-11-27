@@ -1,0 +1,1 @@
+The background task `bqlrpuigh` was stopped at its time limit. It was my first manual-scenario run, which hung because `wait` also waited on the background servers. I don't need to restart it: I reran the same scenario from a script on port 3931 with specific-PID waits, and every check passed. The results are in my previous summary.

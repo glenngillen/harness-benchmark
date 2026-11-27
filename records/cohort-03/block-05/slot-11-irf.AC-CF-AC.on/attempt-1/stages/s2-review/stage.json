@@ -1,0 +1,122 @@
+{
+  "stageId": "cohort-03-b05-s11-a1--s2-review",
+  "role": "CF",
+  "provider": "openai",
+  "tool": "codex",
+  "toolVersion": "0.169.0",
+  "mode": "fresh",
+  "requestedModel": "gpt-6-astra",
+  "resolvedModel": "gpt-6-astra",
+  "resolvedModelSource": "session rollout turn_context",
+  "requestedEffort": "low",
+  "appliedEffort": "low",
+  "sessionId": "01a20ffa-9cdb-7023-ae87-0a8a83e1163c",
+  "termination": "completed",
+  "terminationDetail": null,
+  "exitCode": 0,
+  "signal": null,
+  "startedAt": "2026-11-24T23:53:31.760Z",
+  "endedAt": "2026-11-24T23:54:24.651Z",
+  "durationMs": 52891,
+  "finalMessage": "# Review findings\n\n1. [major] src/worker.ts:24 — Restart recovery erases attempts that already started.\n   Evidence: Recovery subtracts one from `attempts` before requeuing every running job. If attempt 1 is interrupted, restarting and completing the job reports only 1 attempt despite two processing attempts having started. Repeated restarts also allow repeated execution under the same attempt number, contrary to the defined counter and retry limit.\n   Fix: Preserve the durable count of attempts started during recovery. Ensure recovery and retry logic consistently enforce attempt numbering and the three-attempt limit.\n\n2. [major] src/server.ts:151 — SQLite TEXT storage does not preserve every valid JavaScript input string.\n   Evidence: An in-memory test using the installed Node.js SQLite implementation round-tripped `\"a\\u0000b\"` as `\"a\"` and `\"a\\ud800b\"` as `\"a�b\"`. Both inputs pass this application's validation. Since the server and worker read the input directly from TEXT, submitted input changes and the worker produces the wrong output.\n   Fix: Store input and output in a lossless representation, such as JSON-encoded strings, and decode them when processing and returning jobs. Verify embedded NULs and lone surrogate code units round-trip exactly.\n\n3. [major] src/server.ts:151 — Job creation can return a running job instead of the required queued job.\n   Evidence: The INSERT commits before the separate `selectById.get` call. The independent worker can claim that row between these statements, causing the `201` response to contain `status: \"running\"` and `attempts: 1`. Synchronous server calls do not prevent another process from updating SQLite.\n   Fix: Capture the newly inserted row atomically with `INSERT ... RETURNING *`, or read it within the same write transaction, and use that queued snapshot for the creation response.",
+  "usage": {
+    "source": "codex exec --json turn.completed.usage",
+    "semantics": "turn.completed usage summed within this invocation; per-turn vs session-cumulative on resume is unverified until the pilot (methodology 9)",
+    "completeness": "complete",
+    "raw": [
+      {
+        "input_tokens": 177237,
+        "cached_input_tokens": 152704,
+        "cache_write_input_tokens": 0,
+        "output_tokens": 1400,
+        "reasoning_output_tokens": 295
+      }
+    ],
+    "supplementary": {
+      "rolloutCumulativeBefore": null,
+      "rolloutCumulativeAfter": {
+        "input_tokens": 177237,
+        "cached_input_tokens": 152704,
+        "cache_write_input_tokens": 0,
+        "output_tokens": 1400,
+        "reasoning_output_tokens": 295,
+        "total_tokens": 178637
+      },
+      "rolloutFound": true,
+      "malformedEventLines": 0,
+      "turnsStarted": 1,
+      "turnsCompleted": 1,
+      "signalsSent": []
+    }
+  },
+  "recordFiles": [
+    "prompt.md",
+    "events.jsonl",
+    "stderr.txt",
+    "last-message.md",
+    "stage.json"
+  ],
+  "settings": {
+    "model": "gpt-6-astra",
+    "model_reasoning_effort": "low",
+    "approval_policy": "never",
+    "sandbox_mode": "read-only",
+    "stage_permission": "read-only",
+    "outer_isolation": "bwrap",
+    "sandbox_workspace_write.network_access": "false",
+    "ignoreUserConfig": true,
+    "ignoreRules": true,
+    "ephemeral": false,
+    "resumeLatest": "never",
+    "fallbackModel": "none (Codex has no fallback option)",
+    "env": [
+      "CODEX_HOME",
+      "HOME",
+      "LANG",
+      "NO_COLOR",
+      "PATH",
+      "TMPDIR",
+      "npm_config_audit",
+      "npm_config_cache",
+      "npm_config_fund",
+      "npm_config_update_notifier"
+    ],
+    "isolation": {
+      "mechanism": "bwrap",
+      "hidden": [
+        ".",
+        "~"
+      ],
+      "writable": [
+        ".runs/campaign/cohort-03/block-05/slot-11-irf.AC-CF-AC.on/attempt-1/homes/s2-review"
+      ],
+      "readable": [
+        "node_modules",
+        "../../node-v22.23.4",
+        ".runs/campaign/cohort-03/block-05/slot-11-irf.AC-CF-AC.on/attempt-1/snapshots/s2-review"
+      ],
+      "network": "shared host network namespace (provider API)"
+    },
+    "argv": [
+      "exec",
+      "--json",
+      "--ignore-user-config",
+      "--ignore-rules",
+      "-m",
+      "gpt-6-astra",
+      "-c",
+      "model_reasoning_effort=\"low\"",
+      "-c",
+      "approval_policy=\"never\"",
+      "-c",
+      "sandbox_workspace_write.network_access=false",
+      "-o",
+      "<capture>/last-message.md",
+      "--sandbox",
+      "read-only",
+      "-C",
+      "<workspace>",
+      "-"
+    ]
+  }
+}

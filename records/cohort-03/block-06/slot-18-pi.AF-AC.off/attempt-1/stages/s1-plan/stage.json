@@ -1,0 +1,299 @@
+{
+  "stageId": "cohort-03-b06-s18-a1--s1-plan",
+  "role": "AF",
+  "provider": "anthropic",
+  "tool": "claude-code",
+  "toolVersion": "2.1.323",
+  "mode": "fresh",
+  "requestedModel": "claude-opus-5-5",
+  "requestedEffort": "medium",
+  "appliedEffort": null,
+  "resolvedModel": "claude-opus-5-5",
+  "resolvedModelSource": "stream-json assistant message.model",
+  "sessionId": "607ba578-783e-4ee9-af2e-2392b8477fc3",
+  "termination": "completed",
+  "terminationDetail": null,
+  "exitCode": 0,
+  "signal": null,
+  "startedAt": "2026-11-25T02:30:33.825Z",
+  "endedAt": "2026-11-25T02:31:49.486Z",
+  "durationMs": 75661,
+  "finalMessage": "# Plan\n\n## Approach\nUse one SQLite database (WAL mode, busy_timeout, as `src/db.ts` already sets up) as the only link between the two processes. It holds a `jobs` table, with a unique `idempotency_key` column and a `next_run_at` column for retry delays, plus a single-row `worker_heartbeat` table. The server is a plain `node:http` router that validates input strictly, reads and writes jobs, and serves `ui/index.html`. The worker polls every 200 ms. It claims the oldest runnable queued job with one atomic `UPDATE … RETURNING`, runs the 100 ms steps and writes progress after each one, and handles retries by putting the job back in `queued` with a future `next_run_at`. When the worker starts, it puts any job left in `running` back in the queue. The UI is a vanilla JS page that reads `GET /api/jobs` once a second.\n\n## Files\n- `src/db.ts`: keep `openDatabase`. Add the schema setup (`CREATE TABLE IF NOT EXISTS`, run by both processes), the row type, `rowToJob(row)` to build the API JSON shape, and a `nowIso()` helper.\n- `src/server.ts`: rewrite with the router, body reading, validation, idempotency, JSON errors, `/health`, the UI route, and SIGTERM handling.\n- `src/worker.ts`: rewrite with the heartbeat, crash recovery, the claim loop, step processing, retries, and SIGTERM handling.\n- `ui/index.html`: the form, the job list, the polling script, and all required `data-testid`s. Keep the path the same, because the server reads `../ui/index.html` relative to `dist/server.js`.\n\n## Steps\n1. **Schema** (in `db.ts`, after the pragmas):\n   ```sql\n   CREATE TABLE IF NOT EXISTS jobs(\n     seq INTEGER PRIMARY KEY AUTOINCREMENT, id TEXT UNIQUE NOT NULL,\n     status TEXT NOT NULL, input TEXT NOT NULL, steps INTEGER NOT NULL,\n     fail_attempts INTEGER NOT NULL, attempts INTEGER NOT NULL DEFAULT 0,\n     progress_completed INTEGER NOT NULL DEFAULT 0, output TEXT, error TEXT,\n     idempotency_key TEXT UNIQUE, payload TEXT NOT NULL,\n     next_run_at INTEGER NOT NULL DEFAULT 0,\n     created_at TEXT NOT NULL, updated_at TEXT NOT NULL);\n   CREATE TABLE IF NOT EXISTS worker_heartbeat(id INTEGER PRIMARY KEY CHECK(id=1), beat_at INTEGER NOT NULL);\n   ```\n   - Columns map to the job fields as follows. `result` is `{output}` only when status is completed and is `null` otherwise. `error` is `null` unless the job failed. `progress` is `{completed: progress_completed, total: steps}`. Timestamps come from `new Date().toISOString()`. Ids come from `crypto.randomUUID()`.\n   - `payload` holds the canonical JSON `JSON.stringify({input, steps, failAttempts})`, built after defaults are applied and always with keys in that order.\n2. **Server router.** Parse the pathname with `new URL`, then route:\n   - `/`: GET only. Serve the HTML.\n   - `/health`: GET only.\n   - `/api/jobs`: GET and POST.\n   - `^/api/jobs/([^/]+)$`: GET only. Use `decodeURIComponent` inside try/catch and return 404 if it fails.\n   - A known path with the wrong method returns 405 `method_not_allowed`. Anything else returns 404 `not_found`.\n   - Every JSON response sets `content-type: application/json; charset=utf-8`.\n   - Wrap the handler in try/catch and return 500 `internal_error` on failure.\n3. **`/health`.** Read `beat_at`. Report `worker: \"up\"` only if `Date.now() - beat_at < 3000`.\n4. **POST validation.** Read the whole body, then collect every problem into `fields[]` before responding:\n   - **Content-Type:** take the part before `;`, trim and lowercase it, and require it to equal `application/json`. Otherwise add field `body`.\n   - **JSON:** call `JSON.parse` in try/catch. Malformed JSON adds field `body`. A parsed value that is not a plain object (null, an array, or a primitive) also adds field `body`.\n   - **Unknown keys:** each one adds its own key as a field.\n   - **`input`:** must be a string, `length` 1–1000, and `trim() !== ''`. Store it untrimmed.\n   - **`steps` and `failAttempts`:** if present, require `typeof === 'number' && Number.isInteger(v)` and the allowed range. If absent, apply the default. An explicit `null` is invalid.\n   - **`Idempotency-Key` header:** if present and it fails `^[A-Za-z0-9_-]{1,128}$`, add field `Idempotency-Key`. Note that `req.headers['idempotency-key']` can be an array; treat that as invalid.\n   - **Response:** if anything was collected, return 400 `{error:{code:'invalid_request', message, fields}}`.\n5. **Create and idempotency.** Run `BEGIN IMMEDIATE` … `COMMIT`, with ROLLBACK on error.\n   - If there is a key, `SELECT` by `idempotency_key`. If a job exists and its `payload` equals the new payload, return 200 with that job. If the payload differs, return 409 `idempotency_conflict`.\n   - Otherwise `INSERT` the job with status `queued`, `next_run_at = 0`, and both timestamps set to now, then return 201.\n   - Also catch a UNIQUE constraint error and fall back to re-running the lookup.\n6. **Listing and lookup.** `GET /api/jobs` uses `ORDER BY seq DESC`. `GET /api/jobs/:id` returns the job or 404.\n7. **Server shutdown.** On SIGTERM or SIGINT: `server.close()`, `server.closeAllConnections()`, `db.close()`, `process.exit(0)`. Add a 2 s fallback exit.\n8. **Worker startup.**\n   - Open the database and apply the schema.\n   - Recover crashed jobs:\n     ```sql\n     UPDATE jobs SET status='queued', attempts=MAX(attempts-1,0),\n       progress_completed=0, next_run_at=0, updated_at=?\n     WHERE status='running';\n     ```\n     The interrupted attempt is redone as the same attempt number. This keeps the cap of 3 attempts and makes `failAttempts` behave predictably.\n   - Write the heartbeat right away (`INSERT … ON CONFLICT(id) DO UPDATE`), then again every 1000 ms with `setInterval`.\n9. **Worker loop.** While not stopping:\n   - Claim a job:\n     ```sql\n     UPDATE jobs SET status='running', attempts=attempts+1, progress_completed=0, updated_at=?\n     WHERE id=(SELECT id FROM jobs WHERE status='queued' AND next_run_at<=?\n               ORDER BY seq ASC LIMIT 1)\n     RETURNING *;\n     ```\n     Call it with `.get()`. If nothing comes back, sleep 200 ms.\n   - Let `n` be the new `attempts`.\n   - **Failure path:** if `n <= fail_attempts`, sleep about 100 ms (the first step), then:\n     - if `n >= 3`, set status `failed`, error `\"transient failure\"`, output NULL, progress 0;\n     - otherwise set status `queued`, `next_run_at = Date.now() + 500`, progress 0.\n   - **Success path:** for each step `i` from 1 to `steps`, sleep 100 ms, then `UPDATE progress_completed=i, updated_at`. Check `stopping` between steps. Finish with status `completed`, `output = input.toUpperCase()`, `progress_completed = steps`.\n10. **Worker SIGTERM.** Set `stopping`. If a job is in progress, put it back in the queue as in step 8 (`attempts-1`, status `queued`). Clear the interval, `DELETE FROM worker_heartbeat`, `db.close()`, and exit 0. Do all of this within about 1 s: break out of the step sleep, or check the flag after each 100 ms step.\n11. **UI.**\n    - **Form:** `<form data-testid=\"job-form\" novalidate>` containing:\n      - `<input data-testid=\"job-input\">` with no `required` attribute, so the API's validation produces the error;\n      - `<input type=\"number\" data-testid=\"job-steps\" value=\"5\">`;\n      - `<input type=\"number\" data-testid=\"job-fail-attempts\" value=\"0\">`;\n      - `<button data-testid=\"job-submit\">`;\n      - `<div data-testid=\"form-error\" role=\"alert\"></div>`.\n    - **Submit handler:**\n      - Call `preventDefault`.\n      - Build the body: `input` is the raw string. For each numeric field, leave it out if empty; use `Number(v)` if the value is numeric; otherwise send the raw string so the API rejects it.\n      - `fetch` with `Content-Type: application/json`.\n      - On a non-2xx response, fill `form-error` with the message plus each `field: message` using `textContent`.\n      - On success, clear `form-error`, clear the input, and refresh right away.\n    - **Job list:** `<ul data-testid=\"job-list\">`. Poll every 1000 ms and re-render in the API's newest-first order.\n      - Each job is an `<li data-testid=\"job-item\" data-job-id=id>` with child spans `job-status`, `job-progress` (`${completed}/${total}`), and `job-result` (the output, the error, or `''`).\n      - Use `textContent` only, never innerHTML, so user input can't inject markup.\n\n## Behaviours to verify\n- **Build and checks:** `npm run build && npm run check:smoke && npm run check:contract` all pass.\n- **Validation:** use curl.\n  - `-d '{\"input\":\"a\",\"steps\":\"3\"}'` returns 400 with field `steps`.\n  - Sending with no Content-Type returns 400 with field `body`.\n  - `-d '[1]'` returns field `body`.\n  - `-d '{bad'` returns field `body`.\n  - `{\"input\":\"   \"}` returns field `input`.\n  - Header `Idempotency-Key: a b` returns field `Idempotency-Key`.\n  - After all of these, `GET /api/jobs` shows the job count unchanged.\n- **Defaults:** `{\"input\":\"a\"}` returns 201 with steps 5 and failAttempts 0.\n- **Idempotency:**\n  - With key K, send `{\"input\":\"a\"}` and get 201. Send `{\"input\":\"a\",\"steps\":5,\"failAttempts\":0}` with K and get 200 with the same id.\n  - `{\"input\":\"b\"}` with K returns 409.\n  - Restart the server and replay: still 200 with the same id.\n- **Progress:** create a job with `steps:10`, poll `GET /api/jobs/:id` every 100 ms, and watch `progress.completed` rise through 1..10. The job should finish with `COMPLETED` output and `attempts: 1`.\n- **Retries:**\n  - `failAttempts:2` ends completed with attempts 3.\n  - `failAttempts:3` ends failed with attempts 3, error `\"transient failure\"`, and result null.\n  - Status should go back to `queued` between attempts.\n- **Restart recovery:** start a `steps:20` job and `kill -9` the worker mid-run. The job stays `running`. Restart the worker and the job should complete within about 3 s.\n- **Health:** shows `up` while the worker runs and `down` within 3 s of killing it. Start either process first and confirm both are fine.\n- **Routes:** `DELETE /api/jobs` returns 405, `/nope` returns 404, `POST /health` returns 405.\n- **SIGTERM:** `kill -TERM` makes each process exit with code 0 promptly.\n- **UI:** open `/`.\n  - Submitting with an empty input shows `input` in the alert.\n  - A valid submission appears at the top, and its status and progress update with no reload.\n- **Fresh database path:** run with `DATABASE_PATH=/tmp/x/y/jobs.db` and confirm the directories are created.\n\n## Risks\n- **Lock errors from the two processes writing at once.** Keep `busy_timeout`, use `BEGIN IMMEDIATE` for the idempotency transaction, and keep transactions short. Never hold a transaction open across `await`.\n- **`node:sqlite` value types.** Columns may come back as numbers or bigint depending on settings, so wrap numeric columns in `Number(...)` inside `rowToJob`. Make sure `RETURNING` is called with `.get()`, not `.run()`.\n- **Idempotency comparison.** Compare the canonical payload string built in a fixed key order, never the raw body. For example, `{\"steps\":5,\"input\":\"a\"}` must match `{\"input\":\"a\"}`.\n- **Number checks.** `typeof v === 'number'` rejects `\"3\"`. `Number.isInteger` rejects `2.5`. `true` and `null` must be rejected too.\n- **Browser validation getting in the way.** Without `novalidate`, or with `required` or `min` attributes on the inputs, the browser blocks the submission and `form-error` never shows the API's rejection.\n- **Retry timing.** The retry delay must be at least 250 ms. With 500 ms and 200 ms polling, three attempts take under 3 s, which fits the 12 s check budget.\n- **Over-polling.** Don't poll the database faster than about 100 ms. Do run the heartbeat on its own interval, so it isn't blocked while a long job is processing. The step sleeps are async, so the interval still fires.\n- **Imports.** Keep the `./db.ts` import style, which `rewriteRelativeImportExtensions` handles. Don't import anything from `checks/`.",
+  "usage": {
+    "source": "claude -p --output-format stream-json: assistant message.usage, result.model_usage_since_last_result, result.modelUsage",
+    "semantics": "requests: assistant message usage per API request (deduplicated by message id); sinceLastResult: result.model_usage_since_last_result per model, incremental, summed across results; cumulative: result.modelUsage per model, session-cumulative (continues across resume), never summed",
+    "completeness": "complete",
+    "raw": [
+      {
+        "kind": "request",
+        "messageId": "msg_011ChNrrWdvcT4w9midToeoE",
+        "model": "claude-opus-5-5",
+        "usage": {
+          "input_tokens": 2,
+          "cache_creation_input_tokens": 350,
+          "cache_read_input_tokens": 7152,
+          "cache_creation": {
+            "ephemeral_5m_input_tokens": 0,
+            "ephemeral_1h_input_tokens": 350
+          },
+          "output_tokens": 5,
+          "service_tier": "standard",
+          "inference_geo": "global",
+          "speed": "standard"
+        }
+      },
+      {
+        "kind": "request",
+        "messageId": "msg_011ChNrrfKZasJw1BUx8AdoZ",
+        "model": "claude-opus-5-5",
+        "usage": {
+          "input_tokens": 2,
+          "cache_creation_input_tokens": 2302,
+          "cache_read_input_tokens": 7502,
+          "cache_creation": {
+            "ephemeral_5m_input_tokens": 0,
+            "ephemeral_1h_input_tokens": 2302
+          },
+          "output_tokens": 16,
+          "service_tier": "standard",
+          "inference_geo": "global",
+          "speed": "standard"
+        }
+      },
+      {
+        "kind": "request",
+        "messageId": "msg_011ChNrs3aXBRWkxASTjHaKK",
+        "model": "claude-opus-5-5",
+        "usage": {
+          "input_tokens": 2,
+          "cache_creation_input_tokens": 2526,
+          "cache_read_input_tokens": 9804,
+          "cache_creation": {
+            "ephemeral_5m_input_tokens": 0,
+            "ephemeral_1h_input_tokens": 2526
+          },
+          "output_tokens": 8,
+          "service_tier": "standard",
+          "inference_geo": "global",
+          "speed": "standard"
+        }
+      },
+      {
+        "kind": "request",
+        "messageId": "msg_011ChNrsGNxbyiMA1acfEXd8",
+        "model": "claude-opus-5-5",
+        "usage": {
+          "input_tokens": 2,
+          "cache_creation_input_tokens": 4638,
+          "cache_read_input_tokens": 12330,
+          "cache_creation": {
+            "ephemeral_5m_input_tokens": 0,
+            "ephemeral_1h_input_tokens": 4638
+          },
+          "output_tokens": 3,
+          "service_tier": "standard",
+          "inference_geo": "global",
+          "speed": "standard"
+        }
+      },
+      {
+        "kind": "result",
+        "index": 0,
+        "usage": {
+          "input_tokens": 8,
+          "cache_creation_input_tokens": 9816,
+          "cache_read_input_tokens": 36788,
+          "output_tokens": 7933,
+          "output_tokens_details": {
+            "thinking_tokens": 2123
+          },
+          "server_tool_use": {
+            "web_search_requests": 0,
+            "web_fetch_requests": 0
+          },
+          "service_tier": "standard",
+          "cache_creation": {
+            "ephemeral_1h_input_tokens": 9816,
+            "ephemeral_5m_input_tokens": 0
+          },
+          "inference_geo": "global",
+          "iterations": [],
+          "speed": "standard",
+          "fallback_credit": null
+        },
+        "sinceLastResult": {
+          "claude-opus-5-5": {
+            "inputTokens": 8,
+            "outputTokens": 7933,
+            "cacheReadInputTokens": 36788,
+            "cacheCreationInputTokens": 9816,
+            "webSearchRequests": 0,
+            "costUSD": 0.2445776,
+            "contextWindow": 1000000,
+            "maxOutputTokens": 128000,
+            "thinkingTokens": 2123,
+            "cacheCreationEphemeral5mInputTokens": 0,
+            "cacheCreationEphemeral1hInputTokens": 9816,
+            "canonicalModel": "claude-opus-5-5",
+            "provider": "firstParty",
+            "costBasis": "list"
+          }
+        },
+        "modelUsage": {
+          "claude-opus-5-5": {
+            "inputTokens": 8,
+            "outputTokens": 7933,
+            "cacheReadInputTokens": 36788,
+            "cacheCreationInputTokens": 9816,
+            "webSearchRequests": 0,
+            "costUSD": 0.2445776,
+            "contextWindow": 1000000,
+            "maxOutputTokens": 128000,
+            "thinkingTokens": 2123,
+            "cacheCreationEphemeral5mInputTokens": 0,
+            "cacheCreationEphemeral1hInputTokens": 9816,
+            "canonicalModel": "claude-opus-5-5",
+            "provider": "firstParty",
+            "costBasis": "list"
+          }
+        },
+        "nativeCostEstimateUsd": 0.2445776
+      }
+    ],
+    "supplementary": {
+      "cumulativeBefore": null,
+      "cumulativeAfter": {
+        "claude-opus-5-5": {
+          "inputTokens": 8,
+          "outputTokens": 7933,
+          "cacheReadInputTokens": 36788,
+          "cacheCreationInputTokens": 9816,
+          "webSearchRequests": 0,
+          "costUSD": 0.2445776,
+          "contextWindow": 1000000,
+          "maxOutputTokens": 128000,
+          "thinkingTokens": 2123,
+          "cacheCreationEphemeral5mInputTokens": 0,
+          "cacheCreationEphemeral1hInputTokens": 9816,
+          "canonicalModel": "claude-opus-5-5",
+          "provider": "firstParty",
+          "costBasis": "list"
+        }
+      },
+      "auxiliaryModels": [],
+      "resultCount": 1,
+      "resultsMissingSinceLastResult": 0,
+      "numTurns": 10,
+      "permissionDenials": 0,
+      "apiRetries": 0,
+      "malformedEventLines": 0,
+      "signalsSent": [],
+      "init": {
+        "model": "claude-opus-5-5",
+        "apiKeySource": "none",
+        "tools": [
+          "Glob",
+          "Grep",
+          "Read"
+        ],
+        "permissionMode": "default",
+        "version": "2.1.323",
+        "mcpServers": []
+      }
+    }
+  },
+  "recordFiles": [
+    "prompt.md",
+    "events.jsonl",
+    "stderr.txt",
+    "last-message.md",
+    "stage.json"
+  ],
+  "settings": {
+    "model": "claude-opus-5-5",
+    "effort": "medium",
+    "tools": [
+      "Read",
+      "Grep",
+      "Glob"
+    ],
+    "allowedTools": [
+      "Read",
+      "Grep",
+      "Glob"
+    ],
+    "disallowedTools": [
+      "mcp__*"
+    ],
+    "permissionMode": "default",
+    "permissionPrompts": "none",
+    "settingSources": "none",
+    "promptSuggestions": false,
+    "slashCommands": "disabled",
+    "fallbackModel": "unset",
+    "bare": false,
+    "sessionPersistence": true,
+    "env": [
+      "CLAUDE_CODE_DISABLE_AUTO_MEMORY",
+      "CLAUDE_CODE_DISABLE_NONESSENTIAL_TRAFFIC",
+      "CLAUDE_CODE_OAUTH_TOKEN",
+      "CLAUDE_CODE_SUBPROCESS_ENV_SCRUB",
+      "CLAUDE_CONFIG_DIR",
+      "DISABLE_AUTOUPDATER",
+      "HOME",
+      "LANG",
+      "NO_COLOR",
+      "PATH",
+      "TMPDIR",
+      "npm_config_audit",
+      "npm_config_cache",
+      "npm_config_fund",
+      "npm_config_update_notifier"
+    ],
+    "tmpdir": "/tmp (private tmpfs of the stage sandbox)",
+    "managedPolicy": [],
+    "isolation": {
+      "mechanism": "bwrap",
+      "hidden": [
+        ".",
+        "~"
+      ],
+      "writable": [
+        ".runs/campaign/cohort-03/block-06/slot-18-pi.AF-AC.off/attempt-1/homes/s1-plan"
+      ],
+      "readable": [
+        "node_modules",
+        "../../node-v22.23.4",
+        ".runs/campaign/cohort-03/block-06/slot-18-pi.AF-AC.off/attempt-1/snapshots/s1-plan"
+      ],
+      "network": "shared host network namespace (provider API)"
+    },
+    "argv": [
+      "-p",
+      "--output-format",
+      "stream-json",
+      "--verbose",
+      "--model",
+      "claude-opus-5-5",
+      "--effort",
+      "medium",
+      "--setting-sources",
+      "",
+      "--prompt-suggestions",
+      "false",
+      "--disable-slash-commands",
+      "--permission-prompts",
+      "none",
+      "--permission-mode",
+      "default",
+      "--tools",
+      "Read,Grep,Glob",
+      "--allowedTools",
+      "Read,Grep,Glob",
+      "--disallowedTools",
+      "mcp__*",
+      "--session-id",
+      "607ba578-783e-4ee9-af2e-2392b8477fc3"
+    ]
+  }
+}

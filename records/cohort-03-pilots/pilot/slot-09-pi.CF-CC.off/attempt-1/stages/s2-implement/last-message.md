@@ -1,0 +1,3 @@
+Implemented the SQLite backed job tracker: durable job and idempotency state, HTTP API, separate worker with progress and retries, restart recovery, and a polling browser UI.
+
+`npm run build` passes. A separate worker process completed a retrying job and shut down cleanly. The smoke and contract runners could not start because this environment blocks binding to `127.0.0.1` (`listen EPERM`), so HTTP behavior remains unverified here.

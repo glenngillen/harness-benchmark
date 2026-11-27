@@ -1,0 +1,3 @@
+Addressed all six findings: the form now submits invalid values to the API, interrupted attempts are requeued, idempotency transactions cannot fall through to duplicate creation, and the server and worker handle runtime errors and shutdown more safely.
+
+`npm run build` and `git diff --check` passed, and the worker started. I couldn’t verify server startup because this environment blocks port binding (`listen EPERM`).

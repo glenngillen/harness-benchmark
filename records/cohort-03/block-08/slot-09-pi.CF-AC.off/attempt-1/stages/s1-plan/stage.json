@@ -1,0 +1,122 @@
+{
+  "stageId": "cohort-03-b08-s09-a1--s1-plan",
+  "role": "CF",
+  "provider": "openai",
+  "tool": "codex",
+  "toolVersion": "0.169.0",
+  "mode": "fresh",
+  "requestedModel": "gpt-6-astra",
+  "resolvedModel": "gpt-6-astra",
+  "resolvedModelSource": "session rollout turn_context",
+  "requestedEffort": "low",
+  "appliedEffort": "low",
+  "sessionId": "01a21144-907a-7fd3-a468-9bc56979fc10",
+  "termination": "completed",
+  "terminationDetail": null,
+  "exitCode": 0,
+  "signal": null,
+  "startedAt": "2026-11-25T05:53:55.552Z",
+  "endedAt": "2026-11-25T05:55:33.631Z",
+  "durationMs": 98079,
+  "finalMessage": "# Plan\n\n## Approach\nKeep the existing TypeScript entry points, npm commands, and HTML location. Use SQLite as the sole communication channel, with shared schema initialization and job serialization used by both processes. The server validates and persists submissions; the worker processes one job at a time using short database transactions and asynchronous timers. The browser submits through the API and polls for updates.\n\n## Files\n- `src/db.ts`: Extend database initialization with tables, indexes, typed row conversion, and transaction helpers.\n- `src/jobs.ts`: Add shared job types, validation, normalized payload comparison, and database operations.\n- `src/server.ts`: Implement routing, JSON responses, submission handling, health reporting, and graceful shutdown.\n- `src/worker.ts`: Implement heartbeat, job claiming, observable progress, retries, restart recovery, and shutdown.\n- `ui/index.html`: Implement the form, error region, job list, polling, and minimal styling.\n- Leave all fixed files and `checks/` unchanged. Add no dependencies.\n\n## Steps\n1. **Initialize durable storage from either process.**\n   - Preserve directory creation and the existing `busy_timeout` before enabling WAL.\n   - Execute idempotent schema creation in a short transaction so simultaneous startup is safe.\n   - Create a `jobs` table with:\n     - An integer insertion sequence for deterministic ordering and a unique public ID generated with `randomUUID()`.\n     - Input, steps, fail-attempt count, status, attempt count, completed-step count, nullable output/error, and ISO creation/update timestamps.\n     - A nullable unique idempotency key.\n     - An internal numeric `available_at` timestamp for delayed retries.\n   - Create a singleton worker heartbeat table containing the latest epoch-millisecond timestamp.\n   - Index queued-job lookup. Keep insertion sequence, retry scheduling, and heartbeat fields out of API responses.\n   - Implement one row-to-job serializer that always returns the exact required fields, including explicit `null` values and `progress.total = steps`.\n\n2. **Implement complete submission validation.**\n   - Accept `application/json` case-insensitively, including parameters such as `charset=utf-8`; reject missing or other media types with field `\"body\"`.\n   - Read the request body asynchronously, catch malformed JSON, and reject `null`, arrays, and primitive values with field `\"body\"`.\n   - For an object, collect all identifiable field errors rather than stopping at the first:\n     - `input` must be a string with JavaScript length 1–1000 and nonempty `trim()`. Preserve its original contents.\n     - Default `steps` and `failAttempts` only when absent; explicitly supplied `null` is invalid.\n     - Require numeric integers within the specified bounds, without coercion.\n     - Report every unknown own property by its name.\n   - Validate any supplied `Idempotency-Key` against the exact regex, reporting `\"Idempotency-Key\"` on failure. Aggregate this with body errors when possible.\n   - Return `400` with `invalid_request`, a useful message, and the required `fields` array. Validation must finish before any job insertion or idempotency lookup.\n\n3. **Make creation and idempotency atomic.**\n   - Normalize valid requests to the tuple `(input, steps, failAttempts)` after defaults.\n   - Inside `BEGIN IMMEDIATE`, look up a supplied key. Compare the three stored values directly, avoiding JSON property-order differences.\n   - Return the original job’s current representation with `200` for a matching tuple, or `409 idempotency_conflict` for a mismatch.\n   - Otherwise insert one queued job with attempts/progress zero, null output/error, and equal creation/update timestamps; commit before responding `201`.\n   - Capture the inserted queued representation inside the transaction. Do not reread after commit for the creation response, since the worker could already have claimed it.\n   - Retain the unique key constraint as a database-level guarantee. Requests without keys store SQL `NULL` and always create distinct jobs.\n   - Roll back transactions on errors; never keep a transaction open across an `await`.\n\n4. **Complete HTTP routing and lifecycle.**\n   - Classify routes by pathname before dispatching methods:\n     - `/`: GET serves the existing HTML file location.\n     - `/health`: GET returns JSON with worker liveness.\n     - `/api/jobs`: GET lists jobs by insertion sequence descending; POST submits.\n     - `/api/jobs/:id`: GET returns the job or `404 not_found`.\n   - Known routes with unsupported methods return `405 method_not_allowed`; unknown paths return `404 not_found`. A missing job on the recognized item route remains a known route for method handling.\n   - Use a shared JSON error helper and `application/json; charset=utf-8` for every API response and routing error.\n   - Health reports `\"up\"` only when a persisted heartbeat exists and is no more than 3 seconds old.\n   - Catch asynchronous request-handler errors so they cannot become unhandled rejections; unexpected failures use a JSON `500` response without exposing database details.\n   - Preserve `PORT` defaulting to 3000 and the module-relative HTML lookup, which works from `dist/server.js`.\n   - On SIGTERM/SIGINT, stop accepting connections, let active handlers finish, then close SQLite. Bound connection draining so idle or incomplete clients cannot prevent exit.\n\n5. **Implement sequential worker processing.**\n   - Initialize the same database schema, write a heartbeat immediately, and refresh it about every 500 ms while idle, processing, or awaiting retries.\n   - Poll eligible queued jobs every 100 ms. Select the oldest insertion sequence with `available_at <= now`.\n   - Claim in a short transaction: set `running`, increment attempts, reset completed progress to zero, clear output/error, and update the timestamp.\n   - Await about 100 ms per step using Node’s asynchronous timers.\n   - At the first step, if the persisted attempt number is at most `failAttempts`, fail before recording any progress.\n   - Otherwise persist progress after each step. Commit the final progress, completed status, and JavaScript `input.toUpperCase()` output together.\n   - Do not hold SQLite locks during processing sleeps. Process only one job at a time.\n\n6. **Persist retry scheduling and recover interrupted work.**\n   - On a simulated failure with attempts below 3, set the same job to queued, keep progress zero and output/error null, and persist `available_at = now + 500`.\n   - After the third simulated failure, atomically set status failed, error exactly `\"transient failure\"`, result null, and attempts 3.\n   - Delayed retries remain queued; the worker may process another eligible job during their delay. Choose oldest first among eligible jobs.\n   - At worker startup, recover any persisted running job before claiming fresh queued work. Restart its work from step zero as continuation of its already-counted attempt, preserving the attempt number. Subsequent transient retries increment normally. This avoids creating a fourth attempt solely because a worker crashed during attempt 3.\n   - Recovery must occur promptly, without waiting for the old heartbeat to expire. The specified deployment has one worker; no distributed worker leasing is necessary.\n   - Completed and failed rows are never selected for processing or recovery.\n   - On SIGTERM/SIGINT, stop claiming work and stop at a step boundary. Leave interrupted work durably running for startup recovery, clear the heartbeat, stop timers, and close SQLite. SIGKILL recovery follows the same persisted-state path.\n   - Do not reset tables, queued retry deadlines, or terminal jobs on startup.\n\n7. **Build the browser page against the API.**\n   - Add the required test IDs: `job-form`, `job-input`, `job-steps`, `job-fail-attempts`, `job-submit`, `form-error`, and `job-list`.\n   - Use a textarea for input and numeric fields defaulting to 5 and 0. Set the form to `novalidate` so browser validation does not prevent API rejection messages.\n   - Submit input exactly as entered and convert numeric controls with `Number(...)`; do not use `parseInt`, which silently truncates invalid fractional input.\n   - Clear the alert when starting a submission; show API rejection code/message plus every `fields[].field` and message. The `form-error` region must have `role=\"alert\"` and otherwise remain empty.\n   - Fetch the list immediately on load and after successful submission; poll approximately every 500 ms.\n   - Serialize list fetches or ignore stale responses so slower earlier requests cannot overwrite newer state. Keep polling after temporary failures.\n   - Render jobs newest first, each with `data-testid=\"job-item\"` and `data-job-id`. Include status, exact `completed/total` progress, and output/error/empty text as specified.\n   - Use DOM creation and `textContent` for submitted input, output, and error text. Preserve the form and focus while updating the list.\n\n8. **Build and verify the complete contract.**\n   - Run `npm run build`, then `npm run check:smoke` and `npm run check:contract`.\n   - The existing checks cover only selected API examples. Supplement them with local HTTP/process checks and browser inspection below, using disposable database paths.\n   - Keep any added verification source under `src/` or `ui/`; do not alter the supplied checks or configuration.\n\n## Behaviours to verify\n- **Startup and configuration:** Start worker first, server first, and both simultaneously against a missing nested database directory. Confirm readiness within 10 seconds and custom/default configuration.\n- **Job shape and ordering:** Submit several jobs, including rapid submissions, and inspect creation, detail, and list responses. Verify null fields, timestamps, defaults, and deterministic newest-first ordering.\n- **Validation:** Exercise malformed JSON, arrays/null/primitives, missing or non-JSON content type, unknown fields, multiple simultaneous errors, whitespace-only input, length boundaries, numeric strings, fractions, null values, and invalid keys. Confirm all relevant field names and unchanged job count.\n- **Idempotency:** Replay omitted versus explicit defaults, vary each payload field, issue concurrent same-key submissions, and replay after server restart. Confirm one ID per key, matching replays return 200, and conflicts create nothing.\n- **Routing:** Check unsupported methods on every known route, unknown paths, and missing job IDs. Confirm JSON content types and the required error codes.\n- **Progress and pickup:** Poll a 20-step job frequently. Confirm pickup within 1 second when idle, intermediate durable progress, roughly 100 ms steps, one-at-a-time processing, and final uppercase output including Unicode examples.\n- **Retries:** Test `failAttempts` 0, 1, 2, 3, and 5. Confirm attempt totals 1, 2, 3, 3, and 3 respectively, zero progress on simulated failures, queued retry delays, exact terminal error, and no duplicate jobs.\n- **Durability:** Stop/restart both processes using the same database. SIGKILL the worker during ordinary processing, during a retry delay, and during attempt 3. Verify prompt recovery, retained IDs/state, and no reprocessing of terminal jobs.\n- **Heartbeat and shutdown:** Observe worker up while processing and idle, down within 3 seconds after SIGKILL, and clean SIGTERM exits without lingering timers/connections.\n- **Browser:** Verify every required selector, numeric request values, rejection messages naming offending fields, newest-first ordering, failed/completed result text, and updates within 2 seconds without reload. Submit HTML-like text and confirm it renders as text.\n\n## Risks\n- **SQLite startup races:** Initialize schema from both processes, preserve busy timeout ordering, and use brief transactions.\n- **Idempotency races:** A lookup followed by an unprotected insert is insufficient; keep both in one transaction with a unique constraint.\n- **Crash accounting:** Treat replay of interrupted work as continuation of its persisted attempt; never decrement attempts or silently create attempt 4.\n- **Retry timing lost on restart:** Store retry eligibility in SQLite rather than only in a timer.\n- **Inconsistent job representations:** Centralize serialization and commit terminal status/result/progress together.\n- **UI hiding API validation:** Disable native form blocking, avoid numeric truncation, and display every returned offending field.\n- **Passing only disclosed checks:** The supplied suites omit browser behavior, restart durability, and much validation; complete the supplemental checks before considering the task finished.",
+  "usage": {
+    "source": "codex exec --json turn.completed.usage",
+    "semantics": "turn.completed usage summed within this invocation; per-turn vs session-cumulative on resume is unverified until the pilot (methodology 9)",
+    "completeness": "complete",
+    "raw": [
+      {
+        "input_tokens": 57884,
+        "cached_input_tokens": 45312,
+        "cache_write_input_tokens": 0,
+        "output_tokens": 2868,
+        "reasoning_output_tokens": 142
+      }
+    ],
+    "supplementary": {
+      "rolloutCumulativeBefore": null,
+      "rolloutCumulativeAfter": {
+        "input_tokens": 57884,
+        "cached_input_tokens": 45312,
+        "cache_write_input_tokens": 0,
+        "output_tokens": 2868,
+        "reasoning_output_tokens": 142,
+        "total_tokens": 60752
+      },
+      "rolloutFound": true,
+      "malformedEventLines": 0,
+      "turnsStarted": 1,
+      "turnsCompleted": 1,
+      "signalsSent": []
+    }
+  },
+  "recordFiles": [
+    "prompt.md",
+    "events.jsonl",
+    "stderr.txt",
+    "last-message.md",
+    "stage.json"
+  ],
+  "settings": {
+    "model": "gpt-6-astra",
+    "model_reasoning_effort": "low",
+    "approval_policy": "never",
+    "sandbox_mode": "read-only",
+    "stage_permission": "read-only",
+    "outer_isolation": "bwrap",
+    "sandbox_workspace_write.network_access": "false",
+    "ignoreUserConfig": true,
+    "ignoreRules": true,
+    "ephemeral": false,
+    "resumeLatest": "never",
+    "fallbackModel": "none (Codex has no fallback option)",
+    "env": [
+      "CODEX_HOME",
+      "HOME",
+      "LANG",
+      "NO_COLOR",
+      "PATH",
+      "TMPDIR",
+      "npm_config_audit",
+      "npm_config_cache",
+      "npm_config_fund",
+      "npm_config_update_notifier"
+    ],
+    "isolation": {
+      "mechanism": "bwrap",
+      "hidden": [
+        ".",
+        "~"
+      ],
+      "writable": [
+        ".runs/campaign/cohort-03/block-08/slot-09-pi.CF-AC.off/attempt-1/homes/s1-plan"
+      ],
+      "readable": [
+        "node_modules",
+        "../../node-v22.23.4",
+        ".runs/campaign/cohort-03/block-08/slot-09-pi.CF-AC.off/attempt-1/snapshots/s1-plan"
+      ],
+      "network": "shared host network namespace (provider API)"
+    },
+    "argv": [
+      "exec",
+      "--json",
+      "--ignore-user-config",
+      "--ignore-rules",
+      "-m",
+      "gpt-6-astra",
+      "-c",
+      "model_reasoning_effort=\"low\"",
+      "-c",
+      "approval_policy=\"never\"",
+      "-c",
+      "sandbox_workspace_write.network_access=false",
+      "-o",
+      "<capture>/last-message.md",
+      "--sandbox",
+      "read-only",
+      "-C",
+      "<workspace>",
+      "-"
+    ]
+  }
+}

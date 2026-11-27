@@ -1,0 +1,5 @@
+Implemented the SQLite-backed job API and worker, including validation, idempotency, retries, crash recovery, and the polling browser UI.
+
+`npm run build` passed. A worker integration check completed a job with the expected `HELLO` output, and the worker exited cleanly on SIGTERM. The smoke and contract checks, and the server startup attempt, were blocked because this environment rejects network binds with `listen EPERM`.
+
+Changed [src/db.ts](/opt/harness/work/.runs/campaign/cohort-03/block-04/slot-23-pi.AF-CC.off/attempt-1/workspace/src/db.ts), [src/server.ts](/opt/harness/work/.runs/campaign/cohort-03/block-04/slot-23-pi.AF-CC.off/attempt-1/workspace/src/server.ts), [src/worker.ts](/opt/harness/work/.runs/campaign/cohort-03/block-04/slot-23-pi.AF-CC.off/attempt-1/workspace/src/worker.ts), and [ui/index.html](/opt/harness/work/.runs/campaign/cohort-03/block-04/slot-23-pi.AF-CC.off/attempt-1/workspace/ui/index.html).

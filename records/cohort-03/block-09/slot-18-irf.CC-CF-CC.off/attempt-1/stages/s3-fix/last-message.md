@@ -1,0 +1,3 @@
+Addressed all five findings: fixed the UI script and disabled native form blocking, preserved UTF-8 across request chunks, returned 405 for unsupported methods on `/`, and made worker recovery resume the same attempt with a guard against starting attempt four.
+
+The build and UI script syntax check pass. The worker starts. The smoke and contract runners still cannot run because the environment rejects binding to `127.0.0.1` with `listen EPERM`.

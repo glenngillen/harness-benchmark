@@ -1,0 +1,3 @@
+Implemented the SQLite-backed job tracker: the HTTP API handles validation and durable idempotency, the separate worker processes jobs with progress, retries, and crash recovery, and the browser page submits and polls jobs.
+
+`npm run build` passes, and the worker starts and shuts down cleanly. The server startup and both provided check suites could not be verified because this environment rejects local network binding with `listen EPERM`.

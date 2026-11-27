@@ -1,0 +1,66 @@
+[
+  {
+    "id": "A1-worker-never-healthy",
+    "behaviour": "A1",
+    "files": [
+      "src/health.ts"
+    ],
+    "fault": "/health always reports the worker as \"down\" even while it heartbeats."
+  },
+  {
+    "id": "A2-job-response-missing-id",
+    "behaviour": "A2",
+    "files": [
+      "src/jobjson.ts"
+    ],
+    "fault": "Job representations omit the id, so a submission does not return its identifier."
+  },
+  {
+    "id": "A3-wrong-output",
+    "behaviour": "A3",
+    "files": [
+      "src/work.ts"
+    ],
+    "fault": "Completed jobs report the input unchanged instead of upper-cased."
+  },
+  {
+    "id": "A4-steps-unbounded",
+    "behaviour": "A4",
+    "files": [
+      "src/validate.ts"
+    ],
+    "fault": "steps above 20 are accepted and create a job."
+  },
+  {
+    "id": "A5-idempotency-ignores-payload",
+    "behaviour": "A5",
+    "files": [
+      "src/fingerprint.ts"
+    ],
+    "fault": "A reused Idempotency-Key with a different input is replayed instead of returning 409."
+  },
+  {
+    "id": "A6-no-retry",
+    "behaviour": "A6",
+    "files": [
+      "src/retry.ts"
+    ],
+    "fault": "The first transient failure marks the job failed instead of retrying."
+  },
+  {
+    "id": "A7-no-crash-recovery",
+    "behaviour": "A7",
+    "files": [
+      "src/recovery.ts"
+    ],
+    "fault": "Running jobs are never requeued on worker start and their lease lasts a day, so in-flight work stays \"running\" after a restart."
+  },
+  {
+    "id": "A8-ui-hides-errors",
+    "behaviour": "A8",
+    "files": [
+      "ui/index.html"
+    ],
+    "fault": "The UI swallows validation errors: nothing appears in the form-error region."
+  }
+]

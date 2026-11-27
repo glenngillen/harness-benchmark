@@ -1,0 +1,100 @@
+{
+  "schema": "harness-benchmark/attempt@1",
+  "campaign": "cohort-03-pilots",
+  "block": 0,
+  "slot": 15,
+  "conditionId": "pi.AF-AC.off",
+  "attempt": 1,
+  "replaces": null,
+  "phase": "finished",
+  "startedAt": "2026-11-24T11:32:56.556Z",
+  "endedAt": "2026-11-24T11:38:11.076Z",
+  "activeMs": 314520,
+  "waitBeforeMs": 0,
+  "waitReason": null,
+  "termination": "completed",
+  "terminationDetail": null,
+  "outcome": "completed",
+  "accepted": true,
+  "evaluation": {
+    "status": "passed",
+    "verdictFile": "verdict.json",
+    "durationMs": 21918,
+    "snapshotHash": "533628392ea111ce32997af7ce2a05eddbf9b4d8811f8436d891467e86fbceca",
+    "reason": null
+  },
+  "sensorRepairs": 0,
+  "stages": [
+    {
+      "id": "s1-plan",
+      "kind": "plan",
+      "role": "AF",
+      "mode": "fresh",
+      "resumedSession": null,
+      "sessionId": "6db1e137-de10-4000-9223-8ccd52111fde",
+      "requestedModel": "claude-opus-5-5",
+      "resolvedModel": "claude-opus-5-5",
+      "termination": "completed",
+      "terminationDetail": null,
+      "startedAt": "2026-11-24T11:32:56.945Z",
+      "endedAt": "2026-11-24T11:34:19.141Z",
+      "durationMs": 82196,
+      "promptSha256": "1678516eba3a49bbe946d5b905655ca3675d9fd3266aebb9455fd4f56c565d03",
+      "workspaceHashBefore": "5d6bfabe6baefcc875f20a06ff37597b966e13c3745b24bdc73801b1dc434fe2",
+      "workspaceHashAfter": "5d6bfabe6baefcc875f20a06ff37597b966e13c3745b24bdc73801b1dc434fe2",
+      "handoff": {
+        "kind": "plan",
+        "status": "ok",
+        "sha256": "1d069497b2280ef7ad9bfadcf60c1e81b01bbfeb97fbbac1ac1d99bfea276699",
+        "originalBytes": 13296,
+        "truncated": true,
+        "file": "handoffs/plan.md"
+      },
+      "usageCompleteness": "complete",
+      "recordDir": "stages/s1-plan"
+    },
+    {
+      "id": "s2-implement",
+      "kind": "implement",
+      "role": "AC",
+      "mode": "fresh",
+      "resumedSession": null,
+      "sessionId": "0b22dca3-58c8-4c0f-af73-aa94238ed10f",
+      "requestedModel": "claude-haiku-5-5",
+      "resolvedModel": "claude-haiku-5-5",
+      "termination": "completed",
+      "terminationDetail": null,
+      "startedAt": "2026-11-24T11:34:19.625Z",
+      "endedAt": "2026-11-24T11:38:11.054Z",
+      "durationMs": 231429,
+      "promptSha256": "d6e47f62483904220f9726c2ff9bfe1e4f2b4babc4d3fc1278965198a1d9b469",
+      "workspaceHashBefore": "5d6bfabe6baefcc875f20a06ff37597b966e13c3745b24bdc73801b1dc434fe2",
+      "workspaceHashAfter": "533628392ea111ce32997af7ce2a05eddbf9b4d8811f8436d891467e86fbceca",
+      "handoff": null,
+      "usageCompleteness": "complete",
+      "recordDir": "stages/s2-implement"
+    }
+  ],
+  "finalSnapshotHash": "533628392ea111ce32997af7ce2a05eddbf9b4d8811f8436d891467e86fbceca",
+  "manualHandling": null,
+  "environment": {
+    "os": {
+      "type": "Linux",
+      "platform": "linux",
+      "release": "7.0.0-1018-aws",
+      "arch": "x64"
+    },
+    "cpu": {
+      "model": "Intel(R) Xeon(R) Platinum 8259CL CPU @ 2.50GHz",
+      "count": 2
+    },
+    "memoryBytes": 4018356224,
+    "node": "v22.23.4",
+    "hostId": "9073d9a2d96e7acdfe5e9acce87e8bc009a06e154b675d021381d15737ce0448",
+    "benchmarkRevision": {
+      "commit": "ec6522eeb406c1500cd878e9cf6b0e4fa6b56076",
+      "dirty": null,
+      "source": "bundle"
+    }
+  }
+}

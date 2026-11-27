@@ -1,0 +1,9 @@
+cohort,dataset,group,condition,assignment,checks,scored,accepted,cost_per_accepted_status,cost_per_accepted_usd,lower_usd,upper_usd,bootstrap_status,bootstrap95_lower_usd,bootstrap95_upper_usd,bootstrap_undefined_fraction,total_cost_status,total_cost_usd,total_cost_lower_usd,total_cost_upper_usd
+cohort-03,observed,condition,solo.CF.off,Codex frontier,off,10,2,lower-bound,,3.53776,,suppressed,,,,lower-bound,,7.07552,
+cohort-03,observed,condition,solo.CF.on,Codex frontier,on,10,4,lower-bound,,1.8062495,,suppressed,,,,lower-bound,,7.224998,
+cohort-03,observed,condition,solo.CC.off,Codex cheaper,off,10,9,lower-bound,,0.0142713644444,,suppressed,,,,lower-bound,,0.12844228,
+cohort-03,observed,condition,solo.CC.on,Codex cheaper,on,10,10,lower-bound,,0.013235506,,suppressed,,,,lower-bound,,0.13235506,
+cohort-03,observed,condition,solo.AF.off,Claude frontier,off,10,6,exact,0.944608966667,0.944608966667,0.944608966667,computed,0.623731968889,1.943785265,0.0002,exact,5.6676538,5.6676538,5.6676538
+cohort-03,observed,condition,solo.AF.on,Claude frontier,on,10,6,exact,0.909182166667,0.909182166667,0.909182166667,computed,0.612561111667,1.81825785833,0.0003,exact,5.455093,5.455093,5.455093
+cohort-03,observed,condition,solo.AC.off,Claude cheaper,off,10,10,exact,0.043062332,0.043062332,0.043062332,computed,0.03989088595,0.04573235765,0,exact,0.43062332,0.43062332,0.43062332
+cohort-03,observed,condition,solo.AC.on,Claude cheaper,on,10,9,exact,0.0473557866667,0.0473557866667,0.0473557866667,computed,0.0405742288,0.0627881370357,0,exact,0.42620208,0.42620208,0.42620208

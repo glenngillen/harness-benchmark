@@ -1,0 +1,75 @@
+{
+  "$comment": "Frozen resource ceilings and retry policy for cohort-03. Minutes are active elapsed wall-clock minutes (quota waits excluded and recorded separately). See methodology.md sections 7-8.",
+  "cohort": "cohort-03",
+  "workflowCeilingMinutes": 30,
+  "stageCeilingMinutes": {
+    "solo": {
+      "implement": 30
+    },
+    "pi": {
+      "plan": 5,
+      "implement": 25
+    },
+    "irf": {
+      "implement": 15,
+      "review": 5,
+      "fix": 10
+    }
+  },
+  "sensorRepairs": {
+    "maxPerWorkflow": 2,
+    "sharesBudgetOf": "the implement or fix stage that triggered it",
+    "appliesWhen": "checkCondition == on"
+  },
+  "reviewStages": 1,
+  "fixStages": {
+    "irf": 1,
+    "scheduledEvenIfNoFindings": true
+  },
+  "evaluator": {
+    "ceilingMinutes": 2,
+    "countsTowardWorkflowCeiling": false
+  },
+  "deterministicChecks": {
+    "ceilingSeconds": 120,
+    "countsTowardWorkflowCeiling": true
+  },
+  "handoff": {
+    "planMaxBytes": 12000,
+    "reviewMaxBytes": 8000,
+    "reviewMaxFindings": 10,
+    "sensorFeedbackMaxBytes": 4000
+  },
+  "tokenCeilings": "none imposed; neither client exposes a matched per-stage token cap for subscription use, so time ceilings bound work",
+  "nativeTurnLimits": "left at native default (Claude Code --max-turns unset; no Codex equivalent applied)",
+  "operationalReplacements": {
+    "maxPerSlot": 2,
+    "freshWorkspace": true,
+    "onExhausted": "pause campaign and report block incomplete"
+  },
+  "scoredFailureRetries": 0,
+  "termination": {
+    "scoredFailure": [
+      "task-timeout",
+      "stage-timeout",
+      "failed-required-handoff",
+      "repair-budget-exhausted",
+      "model-error-exit"
+    ],
+    "operational": [
+      "auth-missing",
+      "quota-exhausted",
+      "provider-outage",
+      "model-substituted",
+      "runner-infrastructure-failure",
+      "evaluator-infrastructure-failure"
+    ]
+  },
+  "billingGuards": {
+    "paidOverflow": "forbidden",
+    "apiKeyAuth": "forbidden",
+    "creditPurchase": "forbidden",
+    "planUpgrade": "forbidden",
+    "onQuotaExhaustion": "pause, preserve attempt, wait for allowance reset, then operational replacement"
+  }
+}

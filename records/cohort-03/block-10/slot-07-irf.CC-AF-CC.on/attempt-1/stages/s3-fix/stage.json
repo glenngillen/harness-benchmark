@@ -1,0 +1,129 @@
+{
+  "stageId": "cohort-03-b10-s07-a1--s3-fix",
+  "role": "CC",
+  "provider": "openai",
+  "tool": "codex",
+  "toolVersion": "0.169.0",
+  "mode": "resume",
+  "requestedModel": "gpt-6-luna",
+  "resolvedModel": "gpt-6-luna",
+  "resolvedModelSource": "session rollout turn_context",
+  "requestedEffort": "high",
+  "appliedEffort": "high",
+  "sessionId": "01a21216-ebe7-7da3-a29b-e81a7186a9b6",
+  "termination": "completed",
+  "terminationDetail": null,
+  "exitCode": 0,
+  "signal": null,
+  "startedAt": "2026-11-25T09:48:24.022Z",
+  "endedAt": "2026-11-25T09:49:21.255Z",
+  "durationMs": 57233,
+  "finalMessage": "Addressed all three findings: startup recovery and graceful SIGTERM now requeue interrupted jobs and roll back the interrupted attempt; empty numeric fields are omitted so API defaults apply.\n\n`npm run build` passes. I also confirmed the worker recovers a job interrupted on attempt 3 and completes it. Server and HTTP checks remain blocked by this environment’s `listen EPERM` socket restriction.",
+  "usage": {
+    "source": "codex exec --json turn.completed.usage",
+    "semantics": "turn.completed usage summed within this invocation; per-turn vs session-cumulative on resume is unverified until the pilot (methodology 9)",
+    "completeness": "complete",
+    "raw": [
+      {
+        "input_tokens": 949001,
+        "cached_input_tokens": 915968,
+        "cache_write_input_tokens": 0,
+        "output_tokens": 12834,
+        "reasoning_output_tokens": 4521
+      }
+    ],
+    "supplementary": {
+      "rolloutCumulativeBefore": {
+        "input_tokens": 684195,
+        "cached_input_tokens": 657280,
+        "cache_write_input_tokens": 0,
+        "output_tokens": 10545,
+        "reasoning_output_tokens": 3339,
+        "total_tokens": 694740
+      },
+      "rolloutCumulativeAfter": {
+        "input_tokens": 949001,
+        "cached_input_tokens": 915968,
+        "cache_write_input_tokens": 0,
+        "output_tokens": 12834,
+        "reasoning_output_tokens": 4521,
+        "total_tokens": 961835
+      },
+      "rolloutFound": true,
+      "malformedEventLines": 0,
+      "turnsStarted": 1,
+      "turnsCompleted": 1,
+      "signalsSent": []
+    }
+  },
+  "recordFiles": [
+    "prompt.md",
+    "events.jsonl",
+    "stderr.txt",
+    "last-message.md",
+    "stage.json"
+  ],
+  "settings": {
+    "model": "gpt-6-luna",
+    "model_reasoning_effort": "high",
+    "approval_policy": "never",
+    "sandbox_mode": "workspace-write",
+    "stage_permission": "workspace-write",
+    "outer_isolation": "bwrap",
+    "sandbox_workspace_write.network_access": "false",
+    "ignoreUserConfig": true,
+    "ignoreRules": true,
+    "ephemeral": false,
+    "resumeLatest": "never",
+    "fallbackModel": "none (Codex has no fallback option)",
+    "env": [
+      "CODEX_HOME",
+      "HOME",
+      "LANG",
+      "NO_COLOR",
+      "PATH",
+      "TMPDIR",
+      "npm_config_audit",
+      "npm_config_cache",
+      "npm_config_fund",
+      "npm_config_update_notifier"
+    ],
+    "isolation": {
+      "mechanism": "bwrap",
+      "hidden": [
+        ".",
+        "~"
+      ],
+      "writable": [
+        ".runs/campaign/cohort-03/block-10/slot-07-irf.CC-AF-CC.on/attempt-1/homes/s1-implement",
+        ".runs/campaign/cohort-03/block-10/slot-07-irf.CC-AF-CC.on/attempt-1/workspace"
+      ],
+      "readable": [
+        "node_modules",
+        "../../node-v22.23.4"
+      ],
+      "network": "shared host network namespace (provider API)"
+    },
+    "argv": [
+      "exec",
+      "resume",
+      "--json",
+      "--ignore-user-config",
+      "--ignore-rules",
+      "-m",
+      "gpt-6-luna",
+      "-c",
+      "model_reasoning_effort=\"high\"",
+      "-c",
+      "approval_policy=\"never\"",
+      "-c",
+      "sandbox_workspace_write.network_access=false",
+      "-o",
+      "<capture>/last-message.md",
+      "-c",
+      "sandbox_mode=\"workspace-write\"",
+      "01a21216-ebe7-7da3-a29b-e81a7186a9b6",
+      "-"
+    ]
+  }
+}

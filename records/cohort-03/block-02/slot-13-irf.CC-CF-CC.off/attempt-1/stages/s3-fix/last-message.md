@@ -1,0 +1,3 @@
+Fixed all three findings: successful form submissions now retain the form reference across `await`, `novalidate` lets API validation report invalid values, and worker recovery preserves attempts and prevents a fourth attempt.
+
+The build passes, and the worker starts and shuts down on `SIGTERM`. Smoke and contract checks remain blocked because this environment rejects listening sockets with `EPERM`.

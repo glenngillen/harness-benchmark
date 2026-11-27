@@ -1,0 +1,17 @@
+cohort,dataset,group,condition,assignment,checks,scored,n_exact,mean_input_tokens,mean_cached_tokens,mean_cacheWrite_tokens,mean_output_tokens
+cohort-03,observed,condition,pi.CF-CC.off,Codex frontier → Codex cheaper,off,10,0,not exact,not exact,not exact,not exact
+cohort-03,observed,condition,pi.CF-CC.on,Codex frontier → Codex cheaper,on,10,0,not exact,not exact,not exact,not exact
+cohort-03,observed,condition,pi.CF-AC.off,Codex frontier → Claude cheaper,off,10,0,not exact,not exact,not exact,not exact
+cohort-03,observed,condition,pi.CF-AC.on,Codex frontier → Claude cheaper,on,10,0,not exact,not exact,not exact,not exact
+cohort-03,observed,condition,pi.AF-CC.off,Claude frontier → Codex cheaper,off,10,0,not exact,not exact,not exact,not exact
+cohort-03,observed,condition,pi.AF-CC.on,Claude frontier → Codex cheaper,on,10,0,not exact,not exact,not exact,not exact
+cohort-03,observed,condition,pi.AF-AC.off,Claude frontier → Claude cheaper,off,10,10,41.2,817032.5,69162,40963.7
+cohort-03,observed,condition,pi.AF-AC.on,Claude frontier → Claude cheaper,on,10,10,42.8,909529.5,77685,43806.2
+cohort-03,observed,solo-control,solo.CF.off,Codex frontier,off,10,0,not exact,not exact,not exact,not exact
+cohort-03,observed,solo-control,solo.CF.on,Codex frontier,on,10,0,not exact,not exact,not exact,not exact
+cohort-03,observed,solo-control,solo.CC.off,Codex cheaper,off,10,0,not exact,not exact,not exact,not exact
+cohort-03,observed,solo-control,solo.CC.on,Codex cheaper,on,10,0,not exact,not exact,not exact,not exact
+cohort-03,observed,solo-control,solo.AF.off,Claude frontier,off,10,10,19.2,221248.9,29970.6,14133.7
+cohort-03,observed,solo-control,solo.AF.on,Claude frontier,on,10,10,19.2,215540.5,28139.3,13860.5
+cohort-03,observed,solo-control,solo.AC.off,Claude cheaper,off,10,10,32,779117.2,68020.3,43327.8
+cohort-03,observed,solo-control,solo.AC.on,Claude cheaper,on,10,10,29.6,732951.8,69281.9,42862.7

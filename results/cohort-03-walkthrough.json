@@ -1,0 +1,185 @@
+{
+  "rule": "first scored workflow in the seeded schedule (lowest block, then lowest slot)",
+  "record": "records/cohort-03/block-01/slot-01-pi.AF-AC.on/attempt-1",
+  "conditionId": "pi.AF-AC.on",
+  "termination": "completed",
+  "accepted": true,
+  "activeMs": 239254,
+  "sensorRepairs": 0,
+  "evaluation": {
+    "status": "passed",
+    "passedCases": 53,
+    "totalCases": 53,
+    "durationMs": 20894
+  },
+  "checkRuns": [
+    {
+      "status": "passed",
+      "failedSuites": []
+    }
+  ],
+  "stages": [
+    {
+      "id": "s1-plan",
+      "kind": "plan",
+      "role": "AF",
+      "requestedModel": "claude-opus-5-5",
+      "resolvedModel": "claude-opus-5-5",
+      "durationMs": 74940,
+      "termination": "completed",
+      "tokens": {
+        "input_tokens": 8,
+        "cached_input_tokens": 33404,
+        "cache_write_5m_tokens": 0,
+        "cache_write_1h_tokens": 11693,
+        "output_tokens": 7843,
+        "cache_write_unsplit_tokens": 0
+      },
+      "cost": {
+        "status": "exact",
+        "usd": 0.2571168,
+        "picoUsd": "257116800000",
+        "lowerUsd": 0.2571168,
+        "upperUsd": 0.2571168,
+        "lowerPicoUsd": "257116800000",
+        "upperPicoUsd": "257116800000",
+        "reasons": []
+      }
+    },
+    {
+      "id": "s2-implement",
+      "kind": "implement",
+      "role": "AC",
+      "requestedModel": "claude-haiku-5-5",
+      "resolvedModel": "claude-haiku-5-5",
+      "durationMs": 157353,
+      "termination": "completed",
+      "tokens": {
+        "input_tokens": 24,
+        "cached_input_tokens": 471728,
+        "cache_write_5m_tokens": 0,
+        "cache_write_1h_tokens": 51618,
+        "output_tokens": 31204,
+        "cache_write_unsplit_tokens": 0
+      },
+      "cost": {
+        "status": "exact",
+        "usd": 0.03064528,
+        "picoUsd": "30645280000",
+        "lowerUsd": 0.03064528,
+        "upperUsd": 0.03064528,
+        "lowerPicoUsd": "30645280000",
+        "upperPicoUsd": "30645280000",
+        "reasons": []
+      }
+    }
+  ],
+  "totals": {
+    "tokens": {
+      "input_tokens": 32,
+      "cached_input_tokens": 505132,
+      "cache_write_5m_tokens": 0,
+      "cache_write_1h_tokens": 63311,
+      "output_tokens": 39047,
+      "cache_write_unsplit_tokens": 0
+    },
+    "cost": {
+      "status": "exact",
+      "usd": 0.28776208,
+      "picoUsd": "287762080000",
+      "lowerUsd": 0.28776208,
+      "upperUsd": 0.28776208,
+      "lowerPicoUsd": "287762080000",
+      "upperPicoUsd": "287762080000",
+      "reasons": []
+    }
+  },
+  "condition": {
+    "workflows": [
+      {
+        "block": 1,
+        "slot": 1,
+        "accepted": true,
+        "termination": "completed",
+        "cost": 0.28776208,
+        "costStatus": "exact"
+      },
+      {
+        "block": 2,
+        "slot": 19,
+        "accepted": false,
+        "termination": "completed",
+        "cost": 0.28255307,
+        "costStatus": "exact"
+      },
+      {
+        "block": 3,
+        "slot": 12,
+        "accepted": false,
+        "termination": "completed",
+        "cost": 0.26238152,
+        "costStatus": "exact"
+      },
+      {
+        "block": 4,
+        "slot": 12,
+        "accepted": false,
+        "termination": "completed",
+        "cost": 0.29352976,
+        "costStatus": "exact"
+      },
+      {
+        "block": 5,
+        "slot": 1,
+        "accepted": false,
+        "termination": "completed",
+        "cost": 0.29501875,
+        "costStatus": "exact"
+      },
+      {
+        "block": 6,
+        "slot": 11,
+        "accepted": false,
+        "termination": "completed",
+        "cost": 0.31800165,
+        "costStatus": "exact"
+      },
+      {
+        "block": 7,
+        "slot": 16,
+        "accepted": false,
+        "termination": "completed",
+        "cost": 0.2816359,
+        "costStatus": "exact"
+      },
+      {
+        "block": 8,
+        "slot": 13,
+        "accepted": true,
+        "termination": "completed",
+        "cost": 0.25661349,
+        "costStatus": "exact"
+      },
+      {
+        "block": 9,
+        "slot": 22,
+        "accepted": false,
+        "termination": "completed",
+        "cost": 0.28726201,
+        "costStatus": "exact"
+      },
+      {
+        "block": 10,
+        "slot": 3,
+        "accepted": false,
+        "termination": "completed",
+        "cost": 0.30035967,
+        "costStatus": "exact"
+      }
+    ],
+    "accepted": 2,
+    "scored": 10,
+    "totalCostUsd": 2.8651179,
+    "costPerAcceptedUsd": 1.43255895
+  }
+}

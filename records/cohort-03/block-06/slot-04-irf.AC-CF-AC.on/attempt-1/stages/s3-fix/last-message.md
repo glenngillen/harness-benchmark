@@ -1,0 +1,6 @@
+I addressed all four findings. Build and both check suites pass (smoke 2/2, contract 5/5).
+
+1. **Lossless text (fixed).** Input and output are now stored JSON-encoded and decoded on read, so NUL characters and unpaired surrogates survive. I confirmed `"a\u0000b\ud800x"` round-trips through submission, processing (output `A\u0000B\ud800X`), and retrieval. The columns are renamed to `input_json` and `output_json`, so **database files created before this change won't work**. Delete `data/jobs.db` to start fresh. It's gitignored.
+2. **Attempt budget on recovery (fixed).** A job interrupted during its final allowed attempt is re-run as that same attempt, not a fourth one. I tested this directly on the database: a third attempt interrupted with `failAttempts: 2` completes at `attempts: 3`, and with `failAttempts: 3` it ends `failed` at `attempts: 3`. An interrupted first attempt still gets its normal retry.
+3. **Numeric input (fixed).** The UI now uses `valueAsNumber`, so `1e1` is sent as `10`. Non-finite values are still sent as typed so the API rejects them. I checked this by reading the code, not in a browser.
+4. **Body size limit (fixed).** I removed the 16 KiB cap. A valid body with 17,000 spaces of padding now gets `201`. This trades away the cap's protection against a single very large request, which now buffers in memory with no limit.

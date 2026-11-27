@@ -1,0 +1,3 @@
+Addressed all four findings: recovery now finalizes exhausted transient failures without a fourth attempt, the form sends invalid values to the API, validation aggregates header and body errors, and creation returns a queued snapshot captured before commit.
+
+`npm run build` and `git diff --check` pass. The smoke and contract checks previously could not run because the sandbox rejected localhost binding with `listen EPERM`.

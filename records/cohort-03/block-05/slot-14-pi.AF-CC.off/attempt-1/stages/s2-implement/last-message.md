@@ -1,0 +1,5 @@
+Implemented the API, durable SQLite job state, worker processing with retries and crash recovery, and browser UI.
+
+`npm run build` passes. I also verified worker startup, clean SIGTERM shutdown, and job completion with uppercase output. The smoke and contract checks could not run: their localhost port probe fails with `listen EPERM` in this environment.
+
+Changes are in [src/db.ts](/opt/harness/work/.runs/campaign/cohort-03/block-05/slot-14-pi.AF-CC.off/attempt-1/workspace/src/db.ts), [src/server.ts](/opt/harness/work/.runs/campaign/cohort-03/block-05/slot-14-pi.AF-CC.off/attempt-1/workspace/src/server.ts), [src/worker.ts](/opt/harness/work/.runs/campaign/cohort-03/block-05/slot-14-pi.AF-CC.off/attempt-1/workspace/src/worker.ts), and [ui/index.html](/opt/harness/work/.runs/campaign/cohort-03/block-05/slot-14-pi.AF-CC.off/attempt-1/workspace/ui/index.html).

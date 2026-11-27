@@ -1,0 +1,22 @@
+{
+  "$comment": "Frozen pattern list for the per-block quota-misclassification audit (methodology.md section 8, npm run audit-block). Deliberately broader than the adapters' quota recognition: it includes both adapters' quota-exhausted patterns verbatim, plus HTTP 429/529, overloaded, credit, plan limit and reset wording. A match is only a flag for a person to decide; it never reclassifies an attempt by itself. Every matched location is kept as a flag (nothing is capped); consoleFlagsPerAttempt only limits how many flags per attempt the CLI prints. Patterns are JavaScript regular expressions, applied case-insensitively to each line of stderr.txt and last-message.md, to the termination details, and to the client-emitted values of each event (see sources).",
+  "schema": "harness-benchmark/quota-audit-patterns@1",
+  "excerptChars": 160,
+  "consoleFlagsPerAttempt": 20,
+  "patterns": [
+    { "id": "codex-adapter-quota", "source": "src/adapters/codex.ts FAILURE_PATTERNS quota-exhausted", "regex": "usage[ _]limit|usage_limit_reached|quota|rate[ _-]?limit|too many requests|\\b429\\b|try again (?:at|in)" },
+    { "id": "claude-adapter-quota", "source": "src/adapters/claude.ts FAILURE_PATTERNS quota-exhausted", "regex": "usage[ _]limit|hit your limit|limit reached|rate[ _-]?limit|quota|billing|too many requests|\\b429\\b|resets? (?:at|in)\\b" },
+    { "id": "http-429-529", "source": "audit addition", "regex": "\\b(?:429|529)\\b" },
+    { "id": "overloaded", "source": "audit addition", "regex": "overloaded" },
+    { "id": "credit", "source": "audit addition", "regex": "\\bcredits?\\b|out_of_credits" },
+    { "id": "plan-limit", "source": "audit addition", "regex": "\\bplan[ _-]?limits?\\b|\\blimit (?:of|for) your plan\\b|upgrade your plan" },
+    { "id": "reset", "source": "audit addition", "regex": "\\bresets?\\b[^\\n]{0,60}\\b(?:at|in|on|after|limit|quota|usage|window|allowance)\\b|\\b(?:limit|quota|usage|window|allowance)\\b[^\\n]{0,60}\\bresets?\\b|resets_?at" },
+    { "id": "allowance", "source": "audit addition", "regex": "\\b(?:out of|exhausted|exceeded|reached)\\b[^\\n]{0,40}\\b(?:allowance|limit|usage|messages|requests)\\b" }
+  ],
+  "sources": {
+    "stderr": "every stage's stderr.txt, line by line",
+    "finalMessage": "every stage's last-message.md, line by line, and stage.json finalMessage",
+    "termination": "attempt.json terminationDetail and every stage's terminationDetail (attempt.json and stage.json)",
+    "events": "every stage's events.jsonl. Model- and tool-authored content is skipped because it cannot evidence a provider limit: Codex item events whose item type is agent_message, reasoning, command_execution, file_change, mcp_tool_call, web_search or todo_list, and Claude assistant and user messages and the system init event. Every other event is scanned over its string values and the numeric values of fields whose name contains status or code. A Claude rate_limit_event whose status is not \"allowed\" is always flagged (rule claude-rate-limit-status); an \"allowed\" status event is routine telemetry and is skipped. Lines that are not JSON are scanned as text."
+  }
+}

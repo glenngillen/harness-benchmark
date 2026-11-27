@@ -1,0 +1,3 @@
+Addressed all three findings. Idempotency lookup and insertion now share a SQLite write transaction, and request errors return JSON 500 responses. Interrupted attempts count toward the three attempt limit; recovery and graceful shutdown requeue jobs with attempts remaining and fail jobs interrupted on attempt three.
+
+`npm run build` passes, and the worker starts and shuts down. I couldn’t verify the server start or run the HTTP checks because this environment rejects socket binding with `listen EPERM`.

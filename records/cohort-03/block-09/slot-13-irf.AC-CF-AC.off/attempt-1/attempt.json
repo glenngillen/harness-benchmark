@@ -1,0 +1,121 @@
+{
+  "schema": "harness-benchmark/attempt@1",
+  "campaign": "cohort-03",
+  "block": 9,
+  "slot": 13,
+  "conditionId": "irf.AC-CF-AC.off",
+  "attempt": 1,
+  "replaces": null,
+  "phase": "finished",
+  "startedAt": "2026-11-25T08:16:56.700Z",
+  "endedAt": "2026-11-25T08:22:59.963Z",
+  "activeMs": 363263,
+  "waitBeforeMs": 0,
+  "waitReason": null,
+  "termination": "completed",
+  "terminationDetail": null,
+  "outcome": "completed",
+  "accepted": true,
+  "evaluation": {
+    "status": "passed",
+    "verdictFile": "verdict.json",
+    "durationMs": 23133,
+    "snapshotHash": "aca7a453c44a5d3a1fa11171eb8702e0f528988e4fd7da33d41d4bc1d9906ba8",
+    "reason": null
+  },
+  "sensorRepairs": 0,
+  "stages": [
+    {
+      "id": "s1-implement",
+      "kind": "implement",
+      "role": "AC",
+      "mode": "fresh",
+      "resumedSession": null,
+      "sessionId": "87e6b0e8-e606-42c1-9d41-2e6258c17bd9",
+      "requestedModel": "claude-haiku-5-5",
+      "resolvedModel": "claude-haiku-5-5",
+      "termination": "completed",
+      "terminationDetail": null,
+      "startedAt": "2026-11-25T08:16:57.035Z",
+      "endedAt": "2026-11-25T08:20:16.659Z",
+      "durationMs": 199624,
+      "promptSha256": "acab810c473bb4eff9adaf0b21bdf2446d432b508c2c76606575c280b8a54801",
+      "workspaceHashBefore": "5d6bfabe6baefcc875f20a06ff37597b966e13c3745b24bdc73801b1dc434fe2",
+      "workspaceHashAfter": "e35ee37d35a3396e8716e78eafea78c517dfbbb3773f49fe804df27307a523f5",
+      "handoff": null,
+      "usageCompleteness": "complete",
+      "recordDir": "stages/s1-implement"
+    },
+    {
+      "id": "s2-review",
+      "kind": "review",
+      "role": "CF",
+      "mode": "fresh",
+      "resumedSession": null,
+      "sessionId": "01a211ca-8fa6-7f92-870d-7ae557fb1a12",
+      "requestedModel": "gpt-6-astra",
+      "resolvedModel": "gpt-6-astra",
+      "termination": "completed",
+      "terminationDetail": null,
+      "startedAt": "2026-11-25T08:20:16.982Z",
+      "endedAt": "2026-11-25T08:21:38.231Z",
+      "durationMs": 81249,
+      "promptSha256": "d82cad737e3e08358e0adec64f66078e8398cc1a9dc05b9298b6e089820b05d1",
+      "workspaceHashBefore": "e35ee37d35a3396e8716e78eafea78c517dfbbb3773f49fe804df27307a523f5",
+      "workspaceHashAfter": "e35ee37d35a3396e8716e78eafea78c517dfbbb3773f49fe804df27307a523f5",
+      "handoff": {
+        "kind": "findings",
+        "status": "ok",
+        "sha256": "44321bc6c345c22bc606ec3f905aeffe2c3760836455dae0e931296eda212b80",
+        "originalBytes": 1953,
+        "truncated": false,
+        "file": "handoffs/findings.md"
+      },
+      "usageCompleteness": "complete",
+      "recordDir": "stages/s2-review"
+    },
+    {
+      "id": "s3-fix",
+      "kind": "fix",
+      "role": "AC",
+      "mode": "resume",
+      "resumedSession": "87e6b0e8-e606-42c1-9d41-2e6258c17bd9",
+      "sessionId": "87e6b0e8-e606-42c1-9d41-2e6258c17bd9",
+      "requestedModel": "claude-haiku-5-5",
+      "resolvedModel": "claude-haiku-5-5",
+      "termination": "completed",
+      "terminationDetail": null,
+      "startedAt": "2026-11-25T08:21:38.596Z",
+      "endedAt": "2026-11-25T08:22:59.950Z",
+      "durationMs": 81354,
+      "promptSha256": "1dd5b95da10e56955367cb0e28adcf2b25e48551e4f1c3859f4c5b386c969720",
+      "workspaceHashBefore": "e35ee37d35a3396e8716e78eafea78c517dfbbb3773f49fe804df27307a523f5",
+      "workspaceHashAfter": "aca7a453c44a5d3a1fa11171eb8702e0f528988e4fd7da33d41d4bc1d9906ba8",
+      "handoff": null,
+      "usageCompleteness": "complete",
+      "recordDir": "stages/s3-fix"
+    }
+  ],
+  "finalSnapshotHash": "aca7a453c44a5d3a1fa11171eb8702e0f528988e4fd7da33d41d4bc1d9906ba8",
+  "manualHandling": null,
+  "environment": {
+    "os": {
+      "type": "Linux",
+      "platform": "linux",
+      "release": "7.0.0-1018-aws",
+      "arch": "x64"
+    },
+    "cpu": {
+      "model": "Intel(R) Xeon(R) Platinum 8259CL CPU @ 2.50GHz",
+      "count": 2
+    },
+    "memoryBytes": 4018356224,
+    "node": "v22.23.4",
+    "hostId": "9073d9a2d96e7acdfe5e9acce87e8bc009a06e154b675d021381d15737ce0448",
+    "benchmarkRevision": {
+      "commit": "5c5cbeaabffb2c3eef9d2a9d776897dbe2f0467d",
+      "dirty": null,
+      "source": "bundle"
+    }
+  }
+}

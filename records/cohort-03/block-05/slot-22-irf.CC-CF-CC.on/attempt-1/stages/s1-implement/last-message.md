@@ -1,0 +1,5 @@
+Implemented the SQLite-backed job API, separate worker with heartbeat, retries and restart recovery, and a browser page that submits and polls jobs.
+
+`npm run build` passes, and the worker starts and shuts down cleanly. The smoke and contract checks could not run because the environment rejected loopback binds with `listen EPERM`; the server startup check hit the same restriction.
+
+Changed [src/db.ts](/opt/harness/work/.runs/campaign/cohort-03/block-05/slot-22-irf.CC-CF-CC.on/attempt-1/workspace/src/db.ts), [src/server.ts](/opt/harness/work/.runs/campaign/cohort-03/block-05/slot-22-irf.CC-CF-CC.on/attempt-1/workspace/src/server.ts), [src/worker.ts](/opt/harness/work/.runs/campaign/cohort-03/block-05/slot-22-irf.CC-CF-CC.on/attempt-1/workspace/src/worker.ts), and [ui/index.html](/opt/harness/work/.runs/campaign/cohort-03/block-05/slot-22-irf.CC-CF-CC.on/attempt-1/workspace/ui/index.html).

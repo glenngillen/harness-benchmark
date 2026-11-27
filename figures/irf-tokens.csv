@@ -1,0 +1,17 @@
+cohort,dataset,group,condition,assignment,checks,scored,n_exact,mean_input_tokens,mean_cached_tokens,mean_cacheWrite_tokens,mean_output_tokens
+cohort-03,observed,condition,irf.CC-CF-CC.off,Codex cheaper → Codex frontier → Codex cheaper,off,10,0,not exact,not exact,not exact,not exact
+cohort-03,observed,condition,irf.CC-CF-CC.on,Codex cheaper → Codex frontier → Codex cheaper,on,10,0,not exact,not exact,not exact,not exact
+cohort-03,observed,condition,irf.CC-AF-CC.off,Codex cheaper → Claude frontier → Codex cheaper,off,10,0,not exact,not exact,not exact,not exact
+cohort-03,observed,condition,irf.CC-AF-CC.on,Codex cheaper → Claude frontier → Codex cheaper,on,10,0,not exact,not exact,not exact,not exact
+cohort-03,observed,condition,irf.AC-CF-AC.off,Claude cheaper → Codex frontier → Claude cheaper,off,10,0,not exact,not exact,not exact,not exact
+cohort-03,observed,condition,irf.AC-CF-AC.on,Claude cheaper → Codex frontier → Claude cheaper,on,10,0,not exact,not exact,not exact,not exact
+cohort-03,observed,condition,irf.AC-AF-AC.off,Claude cheaper → Claude frontier → Claude cheaper,off,10,9,42,989086,90466.444,48697.333
+cohort-03,observed,condition,irf.AC-AF-AC.on,Claude cheaper → Claude frontier → Claude cheaper,on,10,10,48.6,1178911.6,88108.9,49059.1
+cohort-03,observed,solo-control,solo.CF.off,Codex frontier,off,10,0,not exact,not exact,not exact,not exact
+cohort-03,observed,solo-control,solo.CF.on,Codex frontier,on,10,0,not exact,not exact,not exact,not exact
+cohort-03,observed,solo-control,solo.CC.off,Codex cheaper,off,10,0,not exact,not exact,not exact,not exact
+cohort-03,observed,solo-control,solo.CC.on,Codex cheaper,on,10,0,not exact,not exact,not exact,not exact
+cohort-03,observed,solo-control,solo.AF.off,Claude frontier,off,10,10,19.2,221248.9,29970.6,14133.7
+cohort-03,observed,solo-control,solo.AF.on,Claude frontier,on,10,10,19.2,215540.5,28139.3,13860.5
+cohort-03,observed,solo-control,solo.AC.off,Claude cheaper,off,10,10,32,779117.2,68020.3,43327.8
+cohort-03,observed,solo-control,solo.AC.on,Claude cheaper,on,10,10,29.6,732951.8,69281.9,42862.7

@@ -1,0 +1,2 @@
+2026-11-25T04:27:08.776514Z ERROR codex_core::tools::router: error=apply_patch verification failed: Failed to find expected lines in /opt/harness/work/.runs/campaign/cohort-03/block-07/slot-14-solo.CC.on/attempt-1/workspace/src/server.ts:
+  if (pathname === '/' && req.method === 'GET') { res.writeHead(200, {'content-type':'text/html; charset=utf-8'}); res.end(uiHtml); return; }

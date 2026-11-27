@@ -1,0 +1,23 @@
+{
+  "$comment": "Frozen accounting and uncertainty rules. See methodology.md sections 9-10.",
+  "cohort": "cohort-03",
+  "priceSnapshot": "prices/cost-dev-2026-11-13.csv",
+  "priceSnapshotRaw": "prices/raw/",
+  "priceBooks": "selected_offering: direct / realtime / global / USD",
+  "billableDimensions": ["input_tokens", "cached_input_tokens", "cache_write_5m_tokens", "cache_write_1h_tokens", "output_tokens"],
+  "tierRule": "classify each request by its own prompt length; if per-request attribution is unavailable the stage tier is undetermined and its cost is reported as labelled lower/upper bounds or unavailable, never silently at the lower tier",
+  "unknownCategory": "unknown, never zero; any unknown stage cost makes the workflow and condition totals unavailable",
+  "costPerAccepted": "sum of estimated cost over all valid scored workflows in the condition / accepted workflows; undefined when accepted == 0",
+  "acceptanceInterval": { "method": "wilson", "confidence": 0.95 },
+  "elapsedAndTokens": ["individual observations", "median", "IQR (type 7 quantiles)", "range"],
+  "costInterval": {
+    "method": "percentile bootstrap, within condition",
+    "resamples": 10000,
+    "confidence": 0.95,
+    "seed": 20261114,
+    "streamPerCondition": "mulberry32(seed XOR fnv1a32(conditionId))",
+    "zeroSuccessResamples": "kept, ordered as +infinity, fraction reported as undefined; an interval bound landing in that mass is reported as unbounded",
+    "missingCosts": "interval suppressed"
+  },
+  "pooling": "none across workflows; no combined pairing score; no significance tests across native tools"
+}

@@ -1,0 +1,122 @@
+{
+  "stageId": "cohort-03-b03-s15-a1--s2-review",
+  "role": "CF",
+  "provider": "openai",
+  "tool": "codex",
+  "toolVersion": "0.169.0",
+  "mode": "fresh",
+  "requestedModel": "gpt-6-astra",
+  "resolvedModel": "gpt-6-astra",
+  "resolvedModelSource": "session rollout turn_context",
+  "requestedEffort": "low",
+  "appliedEffort": "low",
+  "sessionId": "01a20f29-9183-7c52-bffe-1abff155ad4a",
+  "termination": "completed",
+  "terminationDetail": null,
+  "exitCode": 0,
+  "signal": null,
+  "startedAt": "2026-11-24T20:05:11.910Z",
+  "endedAt": "2026-11-24T20:06:10.215Z",
+  "durationMs": 58305,
+  "finalMessage": "# Review findings\n\n1. [major] src/worker.ts:10 — Restart recovery permanently fails interrupted successful attempts.\n   Evidence: A job with `failAttempts: 2` that is killed while processing attempt 3 is first requeued, then immediately marked `failed` with `\"transient failure\"`. Executing the recovery SQL against this state confirmed that result. Its third attempt did not encounter a simulated failure, and the requirement says interrupted running jobs must be processed again.\n   Fix: Distinguish interrupted processing from exhausted transient failures. Recover and process interrupted jobs without assigning a terminal transient failure solely because `attempts >= 3`.\n\n2. [major] ui/index.html:13 — Native form validation prevents invalid values from reaching the API.\n   Evidence: The form lacks `novalidate`, while its fields have `required`, `min`, `max`, and `step` constraints. Submitting an empty input, `steps: 21`, or fractional steps is blocked before the submit handler runs, so no API request occurs and `form-error` does not show the offending fields. The task requires form submissions to use API validation.\n   Fix: Add `novalidate` to the form and allow invalid field values to reach the existing submission handler, retaining numeric conversion and rendering the API’s validation errors.\n\n3. [minor] src/server.ts:61 — An invalid idempotency key suppresses all body validation errors.\n   Evidence: Calling the request handler with `Idempotency-Key: bad!` and `{\"input\":\"\",\"steps\":\"3\",\"extra\":true}` returned a `fields` array containing only `Idempotency-Key`. The `if (!fields.length)` guard skips JSON parsing when header validation has already failed, omitting the required `input`, `steps`, and `extra` errors.\n   Fix: Parse and validate a readable JSON body independently of header validation, then combine all offending fields in the response.",
+  "usage": {
+    "source": "codex exec --json turn.completed.usage",
+    "semantics": "turn.completed usage summed within this invocation; per-turn vs session-cumulative on resume is unverified until the pilot (methodology 9)",
+    "completeness": "complete",
+    "raw": [
+      {
+        "input_tokens": 136043,
+        "cached_input_tokens": 115328,
+        "cache_write_input_tokens": 0,
+        "output_tokens": 1540,
+        "reasoning_output_tokens": 146
+      }
+    ],
+    "supplementary": {
+      "rolloutCumulativeBefore": null,
+      "rolloutCumulativeAfter": {
+        "input_tokens": 136043,
+        "cached_input_tokens": 115328,
+        "cache_write_input_tokens": 0,
+        "output_tokens": 1540,
+        "reasoning_output_tokens": 146,
+        "total_tokens": 137583
+      },
+      "rolloutFound": true,
+      "malformedEventLines": 0,
+      "turnsStarted": 1,
+      "turnsCompleted": 1,
+      "signalsSent": []
+    }
+  },
+  "recordFiles": [
+    "prompt.md",
+    "events.jsonl",
+    "stderr.txt",
+    "last-message.md",
+    "stage.json"
+  ],
+  "settings": {
+    "model": "gpt-6-astra",
+    "model_reasoning_effort": "low",
+    "approval_policy": "never",
+    "sandbox_mode": "read-only",
+    "stage_permission": "read-only",
+    "outer_isolation": "bwrap",
+    "sandbox_workspace_write.network_access": "false",
+    "ignoreUserConfig": true,
+    "ignoreRules": true,
+    "ephemeral": false,
+    "resumeLatest": "never",
+    "fallbackModel": "none (Codex has no fallback option)",
+    "env": [
+      "CODEX_HOME",
+      "HOME",
+      "LANG",
+      "NO_COLOR",
+      "PATH",
+      "TMPDIR",
+      "npm_config_audit",
+      "npm_config_cache",
+      "npm_config_fund",
+      "npm_config_update_notifier"
+    ],
+    "isolation": {
+      "mechanism": "bwrap",
+      "hidden": [
+        ".",
+        "~"
+      ],
+      "writable": [
+        ".runs/campaign/cohort-03/block-03/slot-15-irf.CC-CF-CC.off/attempt-1/homes/s2-review"
+      ],
+      "readable": [
+        "node_modules",
+        "../../node-v22.23.4",
+        ".runs/campaign/cohort-03/block-03/slot-15-irf.CC-CF-CC.off/attempt-1/snapshots/s2-review"
+      ],
+      "network": "shared host network namespace (provider API)"
+    },
+    "argv": [
+      "exec",
+      "--json",
+      "--ignore-user-config",
+      "--ignore-rules",
+      "-m",
+      "gpt-6-astra",
+      "-c",
+      "model_reasoning_effort=\"low\"",
+      "-c",
+      "approval_policy=\"never\"",
+      "-c",
+      "sandbox_workspace_write.network_access=false",
+      "-o",
+      "<capture>/last-message.md",
+      "--sandbox",
+      "read-only",
+      "-C",
+      "<workspace>",
+      "-"
+    ]
+  }
+}

@@ -1,0 +1,281 @@
+{
+  "stageId": "cohort-03-b02-s16-a1--s2-review",
+  "role": "AF",
+  "provider": "anthropic",
+  "tool": "claude-code",
+  "toolVersion": "2.1.323",
+  "mode": "fresh",
+  "requestedModel": "claude-opus-5-5",
+  "requestedEffort": "medium",
+  "appliedEffort": null,
+  "resolvedModel": "claude-opus-5-5",
+  "resolvedModelSource": "stream-json assistant message.model",
+  "sessionId": "dd8acdee-2cc2-4a36-82af-2414dd112865",
+  "termination": "completed",
+  "terminationDetail": null,
+  "exitCode": 0,
+  "signal": null,
+  "startedAt": "2026-11-24T18:12:39.310Z",
+  "endedAt": "2026-11-24T18:13:21.871Z",
+  "durationMs": 42561,
+  "finalMessage": "# Review findings\n\n1. [major] src/worker.ts:22-50 — When the worker reclaims a job whose lease expired, it always starts a new attempt with no upper limit. That breaks the \"up to 3 attempts in total\" rule and the \"`attempts` set to 3\" rule.\n   Evidence: `claimStmt` picks `status='running' AND lease_until < ?` and `claimUpdateStmt` always runs `attempts = attempts + 1`. Take a job that was on attempt 3 when the worker was killed or stopped. On restart it is claimed as attempt 4. With `failAttempts >= 4` it then fails with `attempts: 4`, because `job.attempt >= MAX_ATTEMPTS` is still true. With `failAttempts <= 2` it can complete on attempt 4 or later. Restarting the worker repeatedly while a job runs can push `attempts` up without limit.\n   Fix: In `claim()`, if the reclaimed row has `attempts >= MAX_ATTEMPTS`, mark it `failed` with `error='transient failure'`, `result_output=NULL` and `attempts` capped at 3, instead of starting another attempt. Alternatively, on a graceful stop, put the in-flight job back yourself: set `status='queued'`, `attempts = attempts - 1` and `progress_completed=0`, guarded by the attempt number. That way a clean `SIGTERM` does not use up one of the job's attempts. Also guard the `failed` branch with `attempts = MAX_ATTEMPTS` semantics so `attempts` is never stored above 3.\n\n2. [minor] src/worker.ts:16-20 — The heartbeat runs in a `setInterval` callback with no error handling. If `beatStmt.run` throws, for example `SQLITE_BUSY` after the 5 s `busy_timeout` while a write lock is held, the exception is uncaught and the whole worker process crashes. `/health` then reports `down` and no jobs are processed.\n   Evidence: `writeHeartbeat` has no try/catch, and there is no `uncaughtException` handler.\n   Fix: Wrap the body of `writeHeartbeat` in try/catch and log the error, matching how `claim()` failures are handled.\n\n3. [minor] ui/index.html:53-56 — A numeric field that is empty or not a number is silently dropped from the request, so the API default is used. The spec says the form sends the field values so that the API's validation applies, but here a cleared or invalid `steps`/`failAttempts` field never produces a validation error.\n   Evidence: `numberOrOmit` returns `undefined` when `el.value.trim()===''`. A `type=\"number\"` input also reports `''` for unparseable text such as `abc`, so the job is created with `steps: 5` and no error is shown.\n   Fix: Always include the field. Send `Number(raw)` when the field parses, and otherwise send the raw string, or `null` when it is empty. The API then rejects it and `form-error` lists the field.\n\n4. [minor] src/server.ts:80 — The Content-Type check `/^application\\/json\\b/i` also accepts types that are not JSON, such as `application/json-patch+json` or `application/json-seq`, because `-` counts as a word boundary.\n   Evidence: `\\b` matches between `n` and `-`.\n   Fix: Parse the media type (`contentType.split(';')[0].trim().toLowerCase()`) and require it to equal `application/json`.\n\n5. [minor] src/server.ts:200-203 — `HEAD /api/jobs` returns `405`, but `HEAD` is accepted on `/health`, `/` and `/api/jobs/:id`. The routes are inconsistent, and a probe that uses `HEAD` gets `method_not_allowed` on a valid path.\n   Evidence: Only `method === 'GET'` is checked for the list route, while the other GET routes use `isGet`.\n   Fix: Use `isGet` for the list route as well.",
+  "usage": {
+    "source": "claude -p --output-format stream-json: assistant message.usage, result.model_usage_since_last_result, result.modelUsage",
+    "semantics": "requests: assistant message usage per API request (deduplicated by message id); sinceLastResult: result.model_usage_since_last_result per model, incremental, summed across results; cumulative: result.modelUsage per model, session-cumulative (continues across resume), never summed",
+    "completeness": "complete",
+    "raw": [
+      {
+        "kind": "request",
+        "messageId": "msg_011ChNCtLCVvr1g2t2TDhupx",
+        "model": "claude-opus-5-5",
+        "usage": {
+          "input_tokens": 2,
+          "cache_creation_input_tokens": 352,
+          "cache_read_input_tokens": 7245,
+          "cache_creation": {
+            "ephemeral_5m_input_tokens": 0,
+            "ephemeral_1h_input_tokens": 352
+          },
+          "output_tokens": 6,
+          "service_tier": "standard",
+          "inference_geo": "global",
+          "speed": "standard"
+        }
+      },
+      {
+        "kind": "request",
+        "messageId": "msg_011ChNCtfgXbmvuHi8MbRazi",
+        "model": "claude-opus-5-5",
+        "usage": {
+          "input_tokens": 2,
+          "cache_creation_input_tokens": 11177,
+          "cache_read_input_tokens": 7597,
+          "cache_creation": {
+            "ephemeral_5m_input_tokens": 0,
+            "ephemeral_1h_input_tokens": 11177
+          },
+          "output_tokens": 5,
+          "service_tier": "standard",
+          "inference_geo": "global",
+          "speed": "standard"
+        }
+      },
+      {
+        "kind": "request",
+        "messageId": "msg_011ChNCtuGqbt77nRoq1ogbH",
+        "model": "claude-opus-5-5",
+        "usage": {
+          "input_tokens": 2,
+          "cache_creation_input_tokens": 858,
+          "cache_read_input_tokens": 18774,
+          "cache_creation": {
+            "ephemeral_5m_input_tokens": 0,
+            "ephemeral_1h_input_tokens": 858
+          },
+          "output_tokens": 6,
+          "service_tier": "standard",
+          "inference_geo": "global",
+          "speed": "standard"
+        }
+      },
+      {
+        "kind": "result",
+        "index": 0,
+        "usage": {
+          "input_tokens": 6,
+          "cache_creation_input_tokens": 12387,
+          "cache_read_input_tokens": 33616,
+          "output_tokens": 4154,
+          "output_tokens_details": {
+            "thinking_tokens": 2151
+          },
+          "server_tool_use": {
+            "web_search_requests": 0,
+            "web_fetch_requests": 0
+          },
+          "service_tier": "standard",
+          "cache_creation": {
+            "ephemeral_1h_input_tokens": 12387,
+            "ephemeral_5m_input_tokens": 0
+          },
+          "inference_geo": "global",
+          "iterations": [],
+          "speed": "standard",
+          "fallback_credit": null
+        },
+        "sinceLastResult": {
+          "claude-opus-5-5": {
+            "inputTokens": 6,
+            "outputTokens": 4154,
+            "cacheReadInputTokens": 33616,
+            "cacheCreationInputTokens": 12387,
+            "webSearchRequests": 0,
+            "costUSD": 0.18892319999999999,
+            "contextWindow": 1000000,
+            "maxOutputTokens": 128000,
+            "thinkingTokens": 2151,
+            "cacheCreationEphemeral5mInputTokens": 0,
+            "cacheCreationEphemeral1hInputTokens": 12387,
+            "canonicalModel": "claude-opus-5-5",
+            "provider": "firstParty",
+            "costBasis": "list"
+          }
+        },
+        "modelUsage": {
+          "claude-opus-5-5": {
+            "inputTokens": 6,
+            "outputTokens": 4154,
+            "cacheReadInputTokens": 33616,
+            "cacheCreationInputTokens": 12387,
+            "webSearchRequests": 0,
+            "costUSD": 0.18892319999999999,
+            "contextWindow": 1000000,
+            "maxOutputTokens": 128000,
+            "thinkingTokens": 2151,
+            "cacheCreationEphemeral5mInputTokens": 0,
+            "cacheCreationEphemeral1hInputTokens": 12387,
+            "canonicalModel": "claude-opus-5-5",
+            "provider": "firstParty",
+            "costBasis": "list"
+          }
+        },
+        "nativeCostEstimateUsd": 0.18892319999999999
+      }
+    ],
+    "supplementary": {
+      "cumulativeBefore": null,
+      "cumulativeAfter": {
+        "claude-opus-5-5": {
+          "inputTokens": 6,
+          "outputTokens": 4154,
+          "cacheReadInputTokens": 33616,
+          "cacheCreationInputTokens": 12387,
+          "webSearchRequests": 0,
+          "costUSD": 0.18892319999999999,
+          "contextWindow": 1000000,
+          "maxOutputTokens": 128000,
+          "thinkingTokens": 2151,
+          "cacheCreationEphemeral5mInputTokens": 0,
+          "cacheCreationEphemeral1hInputTokens": 12387,
+          "canonicalModel": "claude-opus-5-5",
+          "provider": "firstParty",
+          "costBasis": "list"
+        }
+      },
+      "auxiliaryModels": [],
+      "resultCount": 1,
+      "resultsMissingSinceLastResult": 0,
+      "numTurns": 7,
+      "permissionDenials": 0,
+      "apiRetries": 0,
+      "malformedEventLines": 0,
+      "signalsSent": [],
+      "init": {
+        "model": "claude-opus-5-5",
+        "apiKeySource": "none",
+        "tools": [
+          "Glob",
+          "Grep",
+          "Read"
+        ],
+        "permissionMode": "default",
+        "version": "2.1.323",
+        "mcpServers": []
+      }
+    }
+  },
+  "recordFiles": [
+    "prompt.md",
+    "events.jsonl",
+    "stderr.txt",
+    "last-message.md",
+    "stage.json"
+  ],
+  "settings": {
+    "model": "claude-opus-5-5",
+    "effort": "medium",
+    "tools": [
+      "Read",
+      "Grep",
+      "Glob"
+    ],
+    "allowedTools": [
+      "Read",
+      "Grep",
+      "Glob"
+    ],
+    "disallowedTools": [
+      "mcp__*"
+    ],
+    "permissionMode": "default",
+    "permissionPrompts": "none",
+    "settingSources": "none",
+    "promptSuggestions": false,
+    "slashCommands": "disabled",
+    "fallbackModel": "unset",
+    "bare": false,
+    "sessionPersistence": true,
+    "env": [
+      "CLAUDE_CODE_DISABLE_AUTO_MEMORY",
+      "CLAUDE_CODE_DISABLE_NONESSENTIAL_TRAFFIC",
+      "CLAUDE_CODE_OAUTH_TOKEN",
+      "CLAUDE_CODE_SUBPROCESS_ENV_SCRUB",
+      "CLAUDE_CONFIG_DIR",
+      "DISABLE_AUTOUPDATER",
+      "HOME",
+      "LANG",
+      "NO_COLOR",
+      "PATH",
+      "TMPDIR",
+      "npm_config_audit",
+      "npm_config_cache",
+      "npm_config_fund",
+      "npm_config_update_notifier"
+    ],
+    "tmpdir": "/tmp (private tmpfs of the stage sandbox)",
+    "managedPolicy": [],
+    "isolation": {
+      "mechanism": "bwrap",
+      "hidden": [
+        ".",
+        "~"
+      ],
+      "writable": [
+        ".runs/campaign/cohort-03/block-02/slot-16-irf.AC-AF-AC.on/attempt-1/homes/s2-review"
+      ],
+      "readable": [
+        "node_modules",
+        "../../node-v22.23.4",
+        ".runs/campaign/cohort-03/block-02/slot-16-irf.AC-AF-AC.on/attempt-1/snapshots/s2-review"
+      ],
+      "network": "shared host network namespace (provider API)"
+    },
+    "argv": [
+      "-p",
+      "--output-format",
+      "stream-json",
+      "--verbose",
+      "--model",
+      "claude-opus-5-5",
+      "--effort",
+      "medium",
+      "--setting-sources",
+      "",
+      "--prompt-suggestions",
+      "false",
+      "--disable-slash-commands",
+      "--permission-prompts",
+      "none",
+      "--permission-mode",
+      "default",
+      "--tools",
+      "Read,Grep,Glob",
+      "--allowedTools",
+      "Read,Grep,Glob",
+      "--disallowedTools",
+      "mcp__*",
+      "--session-id",
+      "dd8acdee-2cc2-4a36-82af-2414dd112865"
+    ]
+  }
+}

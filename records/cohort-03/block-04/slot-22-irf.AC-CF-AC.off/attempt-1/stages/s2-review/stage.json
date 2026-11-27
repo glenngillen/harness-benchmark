@@ -1,0 +1,122 @@
+{
+  "stageId": "cohort-03-b04-s22-a1--s2-review",
+  "role": "CF",
+  "provider": "openai",
+  "tool": "codex",
+  "toolVersion": "0.169.0",
+  "mode": "fresh",
+  "requestedModel": "gpt-6-astra",
+  "resolvedModel": "gpt-6-astra",
+  "resolvedModelSource": "session rollout turn_context",
+  "requestedEffort": "low",
+  "appliedEffort": "low",
+  "sessionId": "01a20fc0-e21f-7da0-a23d-3e2161c76d7d",
+  "termination": "completed",
+  "terminationDetail": null,
+  "exitCode": 0,
+  "signal": null,
+  "startedAt": "2026-11-24T22:50:28.343Z",
+  "endedAt": "2026-11-24T22:51:17.990Z",
+  "durationMs": 49647,
+  "finalMessage": "# Review findings\n\n1. [major] src/worker.ts:47 — Restart recovery can bypass the three-attempt limit and complete a job that must fail.\n   Evidence: Startup requeues every running job, and `claim()` unconditionally increments its attempts. An in-memory reproduction seeded a running job with `attempts: 3` and `failAttempts: 3`, representing interruption after claiming attempt 3. Recovery produced `status: \"completed\"`, `attempts: 4`, and output `\"HELLO\"` because attempt 4 bypasses the simulated failure condition. The contract requires this job to end failed with `\"transient failure\"` and exactly 3 attempts.\n   Fix: Handle exhausted transient-failure attempts during recovery before requeuing or claiming them. Persist the required failed state with a null result, and ensure restarting cannot advance these jobs beyond attempt 3.",
+  "usage": {
+    "source": "codex exec --json turn.completed.usage",
+    "semantics": "turn.completed usage summed within this invocation; per-turn vs session-cumulative on resume is unverified until the pilot (methodology 9)",
+    "completeness": "complete",
+    "raw": [
+      {
+        "input_tokens": 141402,
+        "cached_input_tokens": 124800,
+        "cache_write_input_tokens": 0,
+        "output_tokens": 1178,
+        "reasoning_output_tokens": 354
+      }
+    ],
+    "supplementary": {
+      "rolloutCumulativeBefore": null,
+      "rolloutCumulativeAfter": {
+        "input_tokens": 141402,
+        "cached_input_tokens": 124800,
+        "cache_write_input_tokens": 0,
+        "output_tokens": 1178,
+        "reasoning_output_tokens": 354,
+        "total_tokens": 142580
+      },
+      "rolloutFound": true,
+      "malformedEventLines": 0,
+      "turnsStarted": 1,
+      "turnsCompleted": 1,
+      "signalsSent": []
+    }
+  },
+  "recordFiles": [
+    "prompt.md",
+    "events.jsonl",
+    "stderr.txt",
+    "last-message.md",
+    "stage.json"
+  ],
+  "settings": {
+    "model": "gpt-6-astra",
+    "model_reasoning_effort": "low",
+    "approval_policy": "never",
+    "sandbox_mode": "read-only",
+    "stage_permission": "read-only",
+    "outer_isolation": "bwrap",
+    "sandbox_workspace_write.network_access": "false",
+    "ignoreUserConfig": true,
+    "ignoreRules": true,
+    "ephemeral": false,
+    "resumeLatest": "never",
+    "fallbackModel": "none (Codex has no fallback option)",
+    "env": [
+      "CODEX_HOME",
+      "HOME",
+      "LANG",
+      "NO_COLOR",
+      "PATH",
+      "TMPDIR",
+      "npm_config_audit",
+      "npm_config_cache",
+      "npm_config_fund",
+      "npm_config_update_notifier"
+    ],
+    "isolation": {
+      "mechanism": "bwrap",
+      "hidden": [
+        ".",
+        "~"
+      ],
+      "writable": [
+        ".runs/campaign/cohort-03/block-04/slot-22-irf.AC-CF-AC.off/attempt-1/homes/s2-review"
+      ],
+      "readable": [
+        "node_modules",
+        "../../node-v22.23.4",
+        ".runs/campaign/cohort-03/block-04/slot-22-irf.AC-CF-AC.off/attempt-1/snapshots/s2-review"
+      ],
+      "network": "shared host network namespace (provider API)"
+    },
+    "argv": [
+      "exec",
+      "--json",
+      "--ignore-user-config",
+      "--ignore-rules",
+      "-m",
+      "gpt-6-astra",
+      "-c",
+      "model_reasoning_effort=\"low\"",
+      "-c",
+      "approval_policy=\"never\"",
+      "-c",
+      "sandbox_workspace_write.network_access=false",
+      "-o",
+      "<capture>/last-message.md",
+      "--sandbox",
+      "read-only",
+      "-C",
+      "<workspace>",
+      "-"
+    ]
+  }
+}

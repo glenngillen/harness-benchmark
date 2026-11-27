@@ -1,0 +1,17 @@
+cohort,dataset,group,condition,assignment,checks,scored,expected,accepted,acceptance,wilson95_lower,wilson95_upper
+cohort-03,observed,condition,pi.CF-CC.off,Codex frontier → Codex cheaper,off,10,10,1,0.1,0.0178762130951,0.404150026795
+cohort-03,observed,condition,pi.CF-CC.on,Codex frontier → Codex cheaper,on,10,10,2,0.2,0.0566821514544,0.509837528463
+cohort-03,observed,condition,pi.CF-AC.off,Codex frontier → Claude cheaper,off,10,10,1,0.1,0.0178762130951,0.404150026795
+cohort-03,observed,condition,pi.CF-AC.on,Codex frontier → Claude cheaper,on,10,10,1,0.1,0.0178762130951,0.404150026795
+cohort-03,observed,condition,pi.AF-CC.off,Claude frontier → Codex cheaper,off,10,10,5,0.5,0.236593090513,0.763406909487
+cohort-03,observed,condition,pi.AF-CC.on,Claude frontier → Codex cheaper,on,10,10,2,0.2,0.0566821514544,0.509837528463
+cohort-03,observed,condition,pi.AF-AC.off,Claude frontier → Claude cheaper,off,10,10,4,0.4,0.168180329706,0.687326230266
+cohort-03,observed,condition,pi.AF-AC.on,Claude frontier → Claude cheaper,on,10,10,2,0.2,0.0566821514544,0.509837528463
+cohort-03,observed,solo-control,solo.CF.off,Codex frontier,off,10,10,2,0.2,0.0566821514544,0.509837528463
+cohort-03,observed,solo-control,solo.CF.on,Codex frontier,on,10,10,4,0.4,0.168180329706,0.687326230266
+cohort-03,observed,solo-control,solo.CC.off,Codex cheaper,off,10,10,9,0.9,0.595849973205,0.982123786905
+cohort-03,observed,solo-control,solo.CC.on,Codex cheaper,on,10,10,10,1,0.722467200137,1
+cohort-03,observed,solo-control,solo.AF.off,Claude frontier,off,10,10,6,0.6,0.312673769734,0.831819670294
+cohort-03,observed,solo-control,solo.AF.on,Claude frontier,on,10,10,6,0.6,0.312673769734,0.831819670294
+cohort-03,observed,solo-control,solo.AC.off,Claude cheaper,off,10,10,10,1,0.722467200137,1
+cohort-03,observed,solo-control,solo.AC.on,Claude cheaper,on,10,10,9,0.9,0.595849973205,0.982123786905

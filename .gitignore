@@ -1,0 +1,9 @@
+node_modules/
+dist/
+# runtime SQLite state of fixtures and materialised references
+data/
+.runs/
+# local scratch and diagnostics (runner/aws/bin/diagnose writes stderr from the runner here)
+.tmp/
+diagnose.out
+.env*

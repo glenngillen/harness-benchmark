@@ -1,0 +1,32 @@
+#!/bin/bash
+# Install a published revision on the runner (if not already installed) and start a campaign in
+# tmux there, over SSM. Isolation is always `required` on the runner.
+#
+#   runner/aws/bin/start --pilots [--retry-unexercised] [--revision <sha>]
+#   runner/aws/bin/start --block N [--revision <sha>]
+#
+# --revision defaults to the last `publish` (bundles/latest.json). After a quota pause (the
+# campaign exits 75; see `status`), run the same command again: finished slots are skipped and the
+# installed revision is reused. Refuses to start while a campaign is running.
+source "$(dirname "$0")/_common.sh"
+load_target
+
+revision="" args=""
+while [ $# -gt 0 ]; do
+  case "$1" in
+    --revision) revision="${2:-}"; shift ;;
+    --pilots|--retry-unexercised) args="$args $1" ;;
+    --block) [ -n "${2:-}" ] || die "--block needs a number"; args="$args --block $2"; shift ;;
+    *) die "unknown argument $1" ;;
+  esac
+  shift
+done
+[ -n "$args" ] || die "usage: start (--pilots [--retry-unexercised] | --block N) [--revision <sha>]"
+if [ -z "$revision" ]; then
+  revision="$(aws s3 cp --only-show-errors "s3://$HARNESS_BUCKET/bundles/latest.json" - | node -e 'let s="";process.stdin.on("data",d=>s+=d).on("end",()=>process.stdout.write(JSON.parse(s).revision))')" || die "no published bundle; run runner/aws/bin/publish first"
+fi
+[[ "$revision" =~ ^[0-9a-f]{40}$ ]] || die "revision must be a full 40-character commit id (got '$revision')"
+
+# Installing a new revision can take several minutes (npm ci, Chromium); allow an hour.
+ssm_run 3600 "/usr/local/sbin/harness-bootstrap release $revision && /usr/local/sbin/harness-bootstrap launch$args"
+echo "started. Follow it with runner/aws/bin/status, or attach: $(tf_out session_command) then 'sudo -iu bench tmux attach -t harness' (detach with Ctrl-b d)."

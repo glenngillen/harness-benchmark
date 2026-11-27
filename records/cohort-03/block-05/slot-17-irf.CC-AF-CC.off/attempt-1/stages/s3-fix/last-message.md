@@ -1,0 +1,3 @@
+Addressed all six findings: interrupted attempts now count toward the three attempt limit; the server returns JSON for request errors and guards rollback; the worker retries after database errors and requeues active work on shutdown; and missing or invalid content types report both `body` and `Content-Type`.
+
+`npm run build` passes, and the worker starts and shuts down cleanly. The server and supplied checks could not be exercised because this sandbox rejects localhost socket binding with `listen EPERM`.

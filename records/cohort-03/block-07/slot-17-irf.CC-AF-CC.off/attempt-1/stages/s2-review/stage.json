@@ -1,0 +1,281 @@
+{
+  "stageId": "cohort-03-b07-s17-a1--s2-review",
+  "role": "AF",
+  "provider": "anthropic",
+  "tool": "claude-code",
+  "toolVersion": "2.1.323",
+  "mode": "fresh",
+  "requestedModel": "claude-opus-5-5",
+  "requestedEffort": "medium",
+  "appliedEffort": null,
+  "resolvedModel": "claude-opus-5-5",
+  "resolvedModelSource": "stream-json assistant message.model",
+  "sessionId": "ba688095-ea32-4459-8f65-6601493a54ea",
+  "termination": "completed",
+  "terminationDetail": null,
+  "exitCode": 0,
+  "signal": null,
+  "startedAt": "2026-11-25T04:41:51.544Z",
+  "endedAt": "2026-11-25T04:42:39.867Z",
+  "durationMs": 48323,
+  "finalMessage": "# Review findings\n\n1. [major] ui/index.html:18-21 — The browser checks the form before the API ever sees it, so the \"API rejects a submission\" path can't be reached for most bad inputs. The inputs have `required`, `maxlength=\"1000\"`, `min`/`max` and an implied `step=1`. Steps of 0 or 25, a fail-attempts value of 9, a decimal like 2.5, or an empty input all fail the browser's own checks. The `submit` event never fires, no POST is sent, and `form-error` stays empty.\n   Evidence: `<input ... type=\"number\" min=\"1\" max=\"20\">`, `<input ... required maxlength=\"1000\">`, and the form has no `novalidate`. The task says that when the API rejects a submission, the `form-error` region shows it with each offending field name.\n   Fix: Add `novalidate` to the `<form>`, or remove `required`/`maxlength`/`min`/`max`, so every submission goes to `POST /api/jobs` and the API's errors are shown. To let decimals through, send `Number(value)` as it is now, or use `step=\"any\"`.\n\n2. [major] src/worker.ts:11-12 — On worker restart, a job that was `running` on its 3rd attempt is set to `failed` with `\"transient failure\"` instead of being processed again. The task says a job running when the worker died \"is processed again. It completes, or fails per the retry rules\". For example, `failAttempts: 2` killed during attempt 3, or `failAttempts: 0` killed three times, ends `failed` even though no transient failure happened.\n   Evidence: `UPDATE jobs SET status='failed', error='transient failure' ... WHERE status='running' AND attempts >= 3` runs at startup.\n   Fix: Don't count a crash-interrupted attempt as a failed attempt. Requeue every `running` job, for example by decrementing `attempts` (or tracking failed attempts in their own column) so the retry budget only counts real transient failures. Then the job runs again and completes, or fails only through the `failAttempts` rule.\n\n3. [minor] src/server.ts:22-92 — The async request handler has no top-level try/catch. Any thrown error, such as `throw e` at line 77 for a non-idempotency insert error, or an SQLite error like `SQLITE_BUSY` after the 5 s timeout, becomes an unhandled promise rejection. On Node 22 that kills the server process, and the client never gets a response.\n   Evidence: `throw e;` at line 77 inside `createServer(async (req, res) => {...})`. Nothing catches it.\n   Fix: Wrap the handler body in try/catch and reply `500 {\"error\":{\"code\":\"internal_error\",\"message\":...}}`. Only write the response if `!res.headersSent`.\n\n4. [minor] src/worker.ts:32-53 — The heartbeat is only written once per loop pass, before a job is taken. While a job runs, no heartbeat is written. A 20-step job takes at least about 2.0–2.2 s, which leaves very little margin under the 3 s `worker: \"up\"` window. Any slowdown, or a longer step delay within the allowed 50–500 ms, makes `/health` report `down` while the worker is busy.\n   Evidence: `heartbeat()` is called only at line 33. The step loop at lines 45-49 never refreshes it.\n   Fix: Call `heartbeat()` after each step, or run it from a `setInterval(heartbeat, 1000)` that is cleared on shutdown.\n\n5. [minor] src/worker.ts:28-52 — Database errors in the worker loop aren't caught, so one `SQLITE_BUSY` or other error ends the whole worker process for good. Jobs then stay `queued`/`running` until someone restarts it by hand.\n   Evidence: `update()`, `takeJob()` and `heartbeat()` all call `db.prepare(...).run()` directly in a top-level `while` with no try/catch.\n   Fix: Wrap each pass of the loop in try/catch. Log the error, sleep briefly, and continue. Any job left `running` can be requeued by the same logic used at startup.\n\n6. [minor] ui/index.html:40-47 — Every 500 ms the poll rebuilds the whole job list with `replaceChildren`. Any element the evaluator found by `data-testid` is detached within half a second, so a check that holds onto a `job-item` and waits for its status or progress text to change can see stale or detached nodes.\n   Evidence: `list.replaceChildren(...data.jobs.map(job => { const item = document.createElement('li'); ... }))` runs every poll.\n   Fix: Keep the existing `job-item` elements, matched by `data-job-id`, and update the text of their `job-status`/`job-progress`/`job-result` children in place. Only create items for new jobs, and keep newest-first order.\n\nI only read the code; nothing was built or run. The findings come from reading `src/` and `ui/` against the task.",
+  "usage": {
+    "source": "claude -p --output-format stream-json: assistant message.usage, result.model_usage_since_last_result, result.modelUsage",
+    "semantics": "requests: assistant message usage per API request (deduplicated by message id); sinceLastResult: result.model_usage_since_last_result per model, incremental, summed across results; cumulative: result.modelUsage per model, session-cumulative (continues across resume), never summed",
+    "completeness": "complete",
+    "raw": [
+      {
+        "kind": "request",
+        "messageId": "msg_011ChP2sDeuhhFgtk9HcQsm3",
+        "model": "claude-opus-5-5",
+        "usage": {
+          "input_tokens": 2,
+          "cache_creation_input_tokens": 352,
+          "cache_read_input_tokens": 7245,
+          "cache_creation": {
+            "ephemeral_5m_input_tokens": 0,
+            "ephemeral_1h_input_tokens": 352
+          },
+          "output_tokens": 6,
+          "service_tier": "standard",
+          "inference_geo": "global",
+          "speed": "standard"
+        }
+      },
+      {
+        "kind": "request",
+        "messageId": "msg_011ChP2saFQnA4iYheK7mJuq",
+        "model": "claude-opus-5-5",
+        "usage": {
+          "input_tokens": 2,
+          "cache_creation_input_tokens": 7603,
+          "cache_read_input_tokens": 7597,
+          "cache_creation": {
+            "ephemeral_5m_input_tokens": 0,
+            "ephemeral_1h_input_tokens": 7603
+          },
+          "output_tokens": 3,
+          "service_tier": "standard",
+          "inference_geo": "global",
+          "speed": "standard"
+        }
+      },
+      {
+        "kind": "request",
+        "messageId": "msg_011ChP2t4kuUM3GEbLxC9uCt",
+        "model": "claude-opus-5-5",
+        "usage": {
+          "input_tokens": 2,
+          "cache_creation_input_tokens": 1245,
+          "cache_read_input_tokens": 15200,
+          "cache_creation": {
+            "ephemeral_5m_input_tokens": 0,
+            "ephemeral_1h_input_tokens": 1245
+          },
+          "output_tokens": 8,
+          "service_tier": "standard",
+          "inference_geo": "global",
+          "speed": "standard"
+        }
+      },
+      {
+        "kind": "result",
+        "index": 0,
+        "usage": {
+          "input_tokens": 6,
+          "cache_creation_input_tokens": 9200,
+          "cache_read_input_tokens": 30042,
+          "output_tokens": 4414,
+          "output_tokens_details": {
+            "thinking_tokens": 2088
+          },
+          "server_tool_use": {
+            "web_search_requests": 0,
+            "web_fetch_requests": 0
+          },
+          "service_tier": "standard",
+          "cache_creation": {
+            "ephemeral_1h_input_tokens": 9200,
+            "ephemeral_5m_input_tokens": 0
+          },
+          "inference_geo": "global",
+          "iterations": [],
+          "speed": "standard",
+          "fallback_credit": null
+        },
+        "sinceLastResult": {
+          "claude-opus-5-5": {
+            "inputTokens": 6,
+            "outputTokens": 4414,
+            "cacheReadInputTokens": 30042,
+            "cacheCreationInputTokens": 9200,
+            "webSearchRequests": 0,
+            "costUSD": 0.16791240000000002,
+            "contextWindow": 1000000,
+            "maxOutputTokens": 128000,
+            "thinkingTokens": 2088,
+            "cacheCreationEphemeral5mInputTokens": 0,
+            "cacheCreationEphemeral1hInputTokens": 9200,
+            "canonicalModel": "claude-opus-5-5",
+            "provider": "firstParty",
+            "costBasis": "list"
+          }
+        },
+        "modelUsage": {
+          "claude-opus-5-5": {
+            "inputTokens": 6,
+            "outputTokens": 4414,
+            "cacheReadInputTokens": 30042,
+            "cacheCreationInputTokens": 9200,
+            "webSearchRequests": 0,
+            "costUSD": 0.16791240000000002,
+            "contextWindow": 1000000,
+            "maxOutputTokens": 128000,
+            "thinkingTokens": 2088,
+            "cacheCreationEphemeral5mInputTokens": 0,
+            "cacheCreationEphemeral1hInputTokens": 9200,
+            "canonicalModel": "claude-opus-5-5",
+            "provider": "firstParty",
+            "costBasis": "list"
+          }
+        },
+        "nativeCostEstimateUsd": 0.16791240000000002
+      }
+    ],
+    "supplementary": {
+      "cumulativeBefore": null,
+      "cumulativeAfter": {
+        "claude-opus-5-5": {
+          "inputTokens": 6,
+          "outputTokens": 4414,
+          "cacheReadInputTokens": 30042,
+          "cacheCreationInputTokens": 9200,
+          "webSearchRequests": 0,
+          "costUSD": 0.16791240000000002,
+          "contextWindow": 1000000,
+          "maxOutputTokens": 128000,
+          "thinkingTokens": 2088,
+          "cacheCreationEphemeral5mInputTokens": 0,
+          "cacheCreationEphemeral1hInputTokens": 9200,
+          "canonicalModel": "claude-opus-5-5",
+          "provider": "firstParty",
+          "costBasis": "list"
+        }
+      },
+      "auxiliaryModels": [],
+      "resultCount": 1,
+      "resultsMissingSinceLastResult": 0,
+      "numTurns": 7,
+      "permissionDenials": 0,
+      "apiRetries": 0,
+      "malformedEventLines": 0,
+      "signalsSent": [],
+      "init": {
+        "model": "claude-opus-5-5",
+        "apiKeySource": "none",
+        "tools": [
+          "Glob",
+          "Grep",
+          "Read"
+        ],
+        "permissionMode": "default",
+        "version": "2.1.323",
+        "mcpServers": []
+      }
+    }
+  },
+  "recordFiles": [
+    "prompt.md",
+    "events.jsonl",
+    "stderr.txt",
+    "last-message.md",
+    "stage.json"
+  ],
+  "settings": {
+    "model": "claude-opus-5-5",
+    "effort": "medium",
+    "tools": [
+      "Read",
+      "Grep",
+      "Glob"
+    ],
+    "allowedTools": [
+      "Read",
+      "Grep",
+      "Glob"
+    ],
+    "disallowedTools": [
+      "mcp__*"
+    ],
+    "permissionMode": "default",
+    "permissionPrompts": "none",
+    "settingSources": "none",
+    "promptSuggestions": false,
+    "slashCommands": "disabled",
+    "fallbackModel": "unset",
+    "bare": false,
+    "sessionPersistence": true,
+    "env": [
+      "CLAUDE_CODE_DISABLE_AUTO_MEMORY",
+      "CLAUDE_CODE_DISABLE_NONESSENTIAL_TRAFFIC",
+      "CLAUDE_CODE_OAUTH_TOKEN",
+      "CLAUDE_CODE_SUBPROCESS_ENV_SCRUB",
+      "CLAUDE_CONFIG_DIR",
+      "DISABLE_AUTOUPDATER",
+      "HOME",
+      "LANG",
+      "NO_COLOR",
+      "PATH",
+      "TMPDIR",
+      "npm_config_audit",
+      "npm_config_cache",
+      "npm_config_fund",
+      "npm_config_update_notifier"
+    ],
+    "tmpdir": "/tmp (private tmpfs of the stage sandbox)",
+    "managedPolicy": [],
+    "isolation": {
+      "mechanism": "bwrap",
+      "hidden": [
+        ".",
+        "~"
+      ],
+      "writable": [
+        ".runs/campaign/cohort-03/block-07/slot-17-irf.CC-AF-CC.off/attempt-1/homes/s2-review"
+      ],
+      "readable": [
+        "node_modules",
+        "../../node-v22.23.4",
+        ".runs/campaign/cohort-03/block-07/slot-17-irf.CC-AF-CC.off/attempt-1/snapshots/s2-review"
+      ],
+      "network": "shared host network namespace (provider API)"
+    },
+    "argv": [
+      "-p",
+      "--output-format",
+      "stream-json",
+      "--verbose",
+      "--model",
+      "claude-opus-5-5",
+      "--effort",
+      "medium",
+      "--setting-sources",
+      "",
+      "--prompt-suggestions",
+      "false",
+      "--disable-slash-commands",
+      "--permission-prompts",
+      "none",
+      "--permission-mode",
+      "default",
+      "--tools",
+      "Read,Grep,Glob",
+      "--allowedTools",
+      "Read,Grep,Glob",
+      "--disallowedTools",
+      "mcp__*",
+      "--session-id",
+      "ba688095-ea32-4459-8f65-6601493a54ea"
+    ]
+  }
+}

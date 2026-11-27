@@ -1,0 +1,122 @@
+{
+  "stageId": "cohort-03-b06-s04-a1--s2-review",
+  "role": "CF",
+  "provider": "openai",
+  "tool": "codex",
+  "toolVersion": "0.169.0",
+  "mode": "fresh",
+  "requestedModel": "gpt-6-astra",
+  "resolvedModel": "gpt-6-astra",
+  "resolvedModelSource": "session rollout turn_context",
+  "requestedEffort": "low",
+  "appliedEffort": "low",
+  "sessionId": "01a2104c-22eb-7de3-9d0c-6b97a42a7aed",
+  "termination": "completed",
+  "terminationDetail": null,
+  "exitCode": 0,
+  "signal": null,
+  "startedAt": "2026-11-25T01:22:34.465Z",
+  "endedAt": "2026-11-25T01:23:37.835Z",
+  "durationMs": 63370,
+  "finalMessage": "# Review findings\n\n1. [major] src/jobs.ts:105 — SQLite text round-tripping corrupts valid inputs.\n   Evidence: Calling `insertJob` against an in-memory database with `\"a\\u0000b\"` returns input `\"a\"`; an unpaired surrogate `\"\\ud800\"` returns `\"�\"`. Both pass validation. The worker processes this corrupted input, so the submitted text and resulting uppercase output violate the contract.\n   Fix: Store input and output using a lossless encoding, such as JSON-encoded strings, and decode them when reading. Verify embedded NULs and unpaired surrogates survive submission, processing, and retrieval.\n\n2. [major] src/jobs.ts:112 — Restart recovery permits attempts beyond the three-attempt limit.\n   Evidence: I simulated two transient failures followed by an interrupted third attempt. `requeueInterrupted` followed by `claimNext` returned a running job with `attempts: 4`. Recovery unconditionally requeues running jobs, and claiming unconditionally increments attempts.\n   Fix: Make recovery respect the attempt budget. Recover an interrupted final attempt without starting a fourth attempt, and ensure interrupted transient failures cannot bypass the required terminal failure behavior.\n\n3. [minor] ui/index.html:55 — Valid numeric field values can be submitted as strings.\n   Evidence: The conversion regex rejects exponent notation such as `1e1`, which is valid in an HTML number input and represents the valid steps value 10. The form sends `\"1e1\"` as a string, causing the API to reject it.\n   Fix: Convert nonempty valid number-input values using `valueAsNumber` or `Number`, while preserving API rejection of invalid values.\n\n4. [minor] src/server.ts:119 — An undocumented body-size limit rejects otherwise valid submissions.\n   Evidence: `{\"input\":\"hello\"}` followed by 17,000 spaces is valid JSON satisfying every specified validation rule, but the 16 KiB check returns `400 invalid_request`.\n   Fix: Remove the extra request-size restriction so valid JSON whitespace and formatting do not change whether a conforming payload is accepted.",
+  "usage": {
+    "source": "codex exec --json turn.completed.usage",
+    "semantics": "turn.completed usage summed within this invocation; per-turn vs session-cumulative on resume is unverified until the pilot (methodology 9)",
+    "completeness": "complete",
+    "raw": [
+      {
+        "input_tokens": 167031,
+        "cached_input_tokens": 150784,
+        "cache_write_input_tokens": 0,
+        "output_tokens": 1554,
+        "reasoning_output_tokens": 164
+      }
+    ],
+    "supplementary": {
+      "rolloutCumulativeBefore": null,
+      "rolloutCumulativeAfter": {
+        "input_tokens": 167031,
+        "cached_input_tokens": 150784,
+        "cache_write_input_tokens": 0,
+        "output_tokens": 1554,
+        "reasoning_output_tokens": 164,
+        "total_tokens": 168585
+      },
+      "rolloutFound": true,
+      "malformedEventLines": 0,
+      "turnsStarted": 1,
+      "turnsCompleted": 1,
+      "signalsSent": []
+    }
+  },
+  "recordFiles": [
+    "prompt.md",
+    "events.jsonl",
+    "stderr.txt",
+    "last-message.md",
+    "stage.json"
+  ],
+  "settings": {
+    "model": "gpt-6-astra",
+    "model_reasoning_effort": "low",
+    "approval_policy": "never",
+    "sandbox_mode": "read-only",
+    "stage_permission": "read-only",
+    "outer_isolation": "bwrap",
+    "sandbox_workspace_write.network_access": "false",
+    "ignoreUserConfig": true,
+    "ignoreRules": true,
+    "ephemeral": false,
+    "resumeLatest": "never",
+    "fallbackModel": "none (Codex has no fallback option)",
+    "env": [
+      "CODEX_HOME",
+      "HOME",
+      "LANG",
+      "NO_COLOR",
+      "PATH",
+      "TMPDIR",
+      "npm_config_audit",
+      "npm_config_cache",
+      "npm_config_fund",
+      "npm_config_update_notifier"
+    ],
+    "isolation": {
+      "mechanism": "bwrap",
+      "hidden": [
+        ".",
+        "~"
+      ],
+      "writable": [
+        ".runs/campaign/cohort-03/block-06/slot-04-irf.AC-CF-AC.on/attempt-1/homes/s2-review"
+      ],
+      "readable": [
+        "node_modules",
+        "../../node-v22.23.4",
+        ".runs/campaign/cohort-03/block-06/slot-04-irf.AC-CF-AC.on/attempt-1/snapshots/s2-review"
+      ],
+      "network": "shared host network namespace (provider API)"
+    },
+    "argv": [
+      "exec",
+      "--json",
+      "--ignore-user-config",
+      "--ignore-rules",
+      "-m",
+      "gpt-6-astra",
+      "-c",
+      "model_reasoning_effort=\"low\"",
+      "-c",
+      "approval_policy=\"never\"",
+      "-c",
+      "sandbox_workspace_write.network_access=false",
+      "-o",
+      "<capture>/last-message.md",
+      "--sandbox",
+      "read-only",
+      "-C",
+      "<workspace>",
+      "-"
+    ]
+  }
+}

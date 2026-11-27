@@ -1,0 +1,5 @@
+Implemented the SQLite-backed job API, separate worker with retries and restart recovery, idempotent submissions, health checks, and a polling browser UI.
+
+`npm run build` passes. The worker completed a direct SQLite processing check. The smoke suite and server startup could not run here because socket binding is blocked with `EPERM`.
+
+Changed [src/db.ts](/opt/harness/work/.runs/campaign/cohort-03/block-07/slot-01-irf.CC-CF-CC.off/attempt-1/workspace/src/db.ts), [src/server.ts](/opt/harness/work/.runs/campaign/cohort-03/block-07/slot-01-irf.CC-CF-CC.off/attempt-1/workspace/src/server.ts), [src/worker.ts](/opt/harness/work/.runs/campaign/cohort-03/block-07/slot-01-irf.CC-CF-CC.off/attempt-1/workspace/src/worker.ts), and [ui/index.html](/opt/harness/work/.runs/campaign/cohort-03/block-07/slot-01-irf.CC-CF-CC.off/attempt-1/workspace/ui/index.html).

@@ -1,0 +1,11 @@
+# Review findings
+
+1. [minor] src/worker.ts:28 — Restarting a job after a worker crash or a graceful stop can push `attempts` past 3, which breaks the "up to 3 attempts in total" rule. `claim` adds 1 to `attempts` on every pickup. `recover` (line 28) and the requeue on `stopping` (line 56) put the job back in the queue without taking that count back. Take a `failAttempts: 2` job that is killed during attempt 3: on restart it is claimed as attempt 4, passes the `attempts <= fail_attempts` check and completes with `attempts: 4`. A job interrupted by SIGTERM more than once has the same problem.
+   Evidence: `claim` sets `attempts = attempts + 1` with no upper bound. `recover` and `requeue(0, …)` leave `attempts` unchanged. `runAttempt` only checks `MAX_ATTEMPTS` on the failure path.
+   Fix: Don't count an interrupted attempt. Use `attempts = MAX(attempts - 1, 0)` in the graceful-stop requeue and in `recover`. Alternatively, make the requeue paths cap `attempts` at `MAX_ATTEMPTS`, so a recovered job can never be claimed with `attempts > 3`.
+
+2. [minor] src/worker.ts:69 — The heartbeat timer calls `beat()` with no `try/catch`. If SQLite throws there (for example `SQLITE_BUSY` after the 5 s busy timeout while the server holds a write lock, or a disk error), it becomes an uncaught exception and the worker process dies. `/health` then reports `down`, and queued jobs stop being processed.
+   Evidence: `setInterval(beat, HEARTBEAT_INTERVAL_MS)`. `beat` runs `stmts.beat.run(...)` directly, outside the `try` in the main loop.
+   Fix: Wrap the body of `beat` in `try { … } catch (e) { console.error(e); }` and let the next tick retry.
+
+Everything else I read follows the spec: routing (404/405), validation and field names, idempotency done in a `BEGIN IMMEDIATE` transaction, durability, retry timing, health freshness, SIGTERM handling, and the UI test IDs, polling and number conversion. This was a code reading only: I couldn't build or run anything in this environment, so none of it is confirmed at runtime.

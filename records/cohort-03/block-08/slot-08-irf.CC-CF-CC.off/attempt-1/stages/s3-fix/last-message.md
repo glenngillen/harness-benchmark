@@ -1,0 +1,3 @@
+Addressed all four findings: interrupted jobs resume the same attempt, request bodies decode UTF-8 safely across chunks, malformed job IDs return JSON 404s without terminating the server, and the form lets invalid values reach API validation.
+
+`npm run build` passes. I verified a recovered job at attempt three becomes `failed` with `attempts: 3`. The smoke and contract checks remain blocked by the environment’s socket restriction (`listen EPERM`).

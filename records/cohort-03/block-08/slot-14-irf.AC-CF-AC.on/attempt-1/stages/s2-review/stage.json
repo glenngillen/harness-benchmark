@@ -1,0 +1,122 @@
+{
+  "stageId": "cohort-03-b08-s14-a1--s2-review",
+  "role": "CF",
+  "provider": "openai",
+  "tool": "codex",
+  "toolVersion": "0.169.0",
+  "mode": "fresh",
+  "requestedModel": "gpt-6-astra",
+  "resolvedModel": "gpt-6-astra",
+  "resolvedModelSource": "session rollout turn_context",
+  "requestedEffort": "low",
+  "appliedEffort": "low",
+  "sessionId": "01a21161-07cd-7a42-929b-969ba3bec785",
+  "termination": "completed",
+  "terminationDetail": null,
+  "exitCode": 0,
+  "signal": null,
+  "startedAt": "2026-11-25T06:25:00.830Z",
+  "endedAt": "2026-11-25T06:26:06.158Z",
+  "durationMs": 65328,
+  "finalMessage": "# Review findings\n\n1. [major] src/worker.ts:40 — Graceful shutdown can bypass the three-attempt failure limit.\n   Evidence: If SIGTERM arrives during the first step of attempt 3 with `failAttempts: 3`, this branch requeues the job before recording its terminal failure. Startup recovery only examines `running` jobs, so restarting claims attempt 4, which succeeds because `4 > failAttempts`. Reproducing these database transitions produced `attempts: 4`.\n   Fix: Handle the terminal simulated failure before the shutdown requeue branch, so an interrupted third failing attempt cannot return to the queue and later succeed.\n\n2. [major] src/jobs.ts:109 — Storing input directly as SQLite TEXT corrupts some valid JavaScript strings.\n   Evidence: An in-memory test using the actual submission functions stored `\"a\\u0000b\"` but returned `\"a\"`; `\"a\\ud800b\"` returned `\"a�b\"`. Replaying either original payload with its original key returned `conflict`. These inputs pass validation, but exact input preservation, uppercase output, and idempotency are broken.\n   Fix: Store input and result strings in a lossless encoding, such as JSON-encoded text, and decode them when reading rows before comparison, processing, or returning API responses.",
+  "usage": {
+    "source": "codex exec --json turn.completed.usage",
+    "semantics": "turn.completed usage summed within this invocation; per-turn vs session-cumulative on resume is unverified until the pilot (methodology 9)",
+    "completeness": "complete",
+    "raw": [
+      {
+        "input_tokens": 182770,
+        "cached_input_tokens": 163584,
+        "cache_write_input_tokens": 0,
+        "output_tokens": 1668,
+        "reasoning_output_tokens": 340
+      }
+    ],
+    "supplementary": {
+      "rolloutCumulativeBefore": null,
+      "rolloutCumulativeAfter": {
+        "input_tokens": 182770,
+        "cached_input_tokens": 163584,
+        "cache_write_input_tokens": 0,
+        "output_tokens": 1668,
+        "reasoning_output_tokens": 340,
+        "total_tokens": 184438
+      },
+      "rolloutFound": true,
+      "malformedEventLines": 0,
+      "turnsStarted": 1,
+      "turnsCompleted": 1,
+      "signalsSent": []
+    }
+  },
+  "recordFiles": [
+    "prompt.md",
+    "events.jsonl",
+    "stderr.txt",
+    "last-message.md",
+    "stage.json"
+  ],
+  "settings": {
+    "model": "gpt-6-astra",
+    "model_reasoning_effort": "low",
+    "approval_policy": "never",
+    "sandbox_mode": "read-only",
+    "stage_permission": "read-only",
+    "outer_isolation": "bwrap",
+    "sandbox_workspace_write.network_access": "false",
+    "ignoreUserConfig": true,
+    "ignoreRules": true,
+    "ephemeral": false,
+    "resumeLatest": "never",
+    "fallbackModel": "none (Codex has no fallback option)",
+    "env": [
+      "CODEX_HOME",
+      "HOME",
+      "LANG",
+      "NO_COLOR",
+      "PATH",
+      "TMPDIR",
+      "npm_config_audit",
+      "npm_config_cache",
+      "npm_config_fund",
+      "npm_config_update_notifier"
+    ],
+    "isolation": {
+      "mechanism": "bwrap",
+      "hidden": [
+        ".",
+        "~"
+      ],
+      "writable": [
+        ".runs/campaign/cohort-03/block-08/slot-14-irf.AC-CF-AC.on/attempt-1/homes/s2-review"
+      ],
+      "readable": [
+        "node_modules",
+        "../../node-v22.23.4",
+        ".runs/campaign/cohort-03/block-08/slot-14-irf.AC-CF-AC.on/attempt-1/snapshots/s2-review"
+      ],
+      "network": "shared host network namespace (provider API)"
+    },
+    "argv": [
+      "exec",
+      "--json",
+      "--ignore-user-config",
+      "--ignore-rules",
+      "-m",
+      "gpt-6-astra",
+      "-c",
+      "model_reasoning_effort=\"low\"",
+      "-c",
+      "approval_policy=\"never\"",
+      "-c",
+      "sandbox_workspace_write.network_access=false",
+      "-o",
+      "<capture>/last-message.md",
+      "--sandbox",
+      "read-only",
+      "-C",
+      "<workspace>",
+      "-"
+    ]
+  }
+}

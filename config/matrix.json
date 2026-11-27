@@ -1,0 +1,58 @@
+{
+  "$comment": "Frozen factorial matrix for cohort-03. Canonical condition order below is the input to the seeded block shuffle (methodology.md section 6).",
+  "cohort": "cohort-03",
+  "repetitions": 10,
+  "checkConditions": ["off", "on"],
+  "workflows": {
+    "solo": {
+      "stages": ["implement"],
+      "assignments": [["CF"], ["CC"], ["AF"], ["AC"]]
+    },
+    "pi": {
+      "label": "plan -> implement",
+      "stages": ["plan", "implement"],
+      "assignments": [["CF", "CC"], ["CF", "AC"], ["AF", "CC"], ["AF", "AC"]]
+    },
+    "irf": {
+      "label": "implement -> review -> fix",
+      "stages": ["implement", "review", "fix"],
+      "fixResumesStage": "implement",
+      "assignments": [["CC", "CF", "CC"], ["CC", "AF", "CC"], ["AC", "CF", "AC"], ["AC", "AF", "AC"]]
+    }
+  },
+  "canonicalConditionOrder": [
+    "solo.CF.off", "solo.CF.on",
+    "solo.CC.off", "solo.CC.on",
+    "solo.AF.off", "solo.AF.on",
+    "solo.AC.off", "solo.AC.on",
+    "pi.CF-CC.off", "pi.CF-CC.on",
+    "pi.CF-AC.off", "pi.CF-AC.on",
+    "pi.AF-CC.off", "pi.AF-CC.on",
+    "pi.AF-AC.off", "pi.AF-AC.on",
+    "irf.CC-CF-CC.off", "irf.CC-CF-CC.on",
+    "irf.CC-AF-CC.off", "irf.CC-AF-CC.on",
+    "irf.AC-CF-AC.off", "irf.AC-CF-AC.on",
+    "irf.AC-AF-AC.off", "irf.AC-AF-AC.on"
+  ],
+  "totals": {
+    "conditions": 24,
+    "scoredWorkflows": 240,
+    "scheduledPrincipalStages": 480
+  },
+  "schedule": {
+    "seed": 20261114,
+    "blocks": 10,
+    "prng": "mulberry32",
+    "shuffle": "Fisher-Yates, i from n-1 down to 1, j = floor(rand() * (i + 1)); each block restarts from canonicalConditionOrder and continues the single PRNG stream",
+    "concurrency": 1,
+    "output": "config/schedule.json (generated and committed by the orchestration slice before pilots; must reproduce exactly from this seed)"
+  },
+  "untested": [
+    "tier-matched pairings (frontier/frontier, cheaper/cheaper)",
+    "cheap-leads pairings (cheaper plans or reviews, frontier implements)",
+    "combined plan -> implement -> review -> fix",
+    "feedback-frequency variants",
+    "providers other than OpenAI (Codex) and Anthropic (Claude Code)",
+    "effort levels other than the fixed level per model"
+  ]
+}

@@ -1,0 +1,3 @@
+Implemented the SQLite-backed job API, worker, and browser UI. Jobs, retries, and idempotency keys persist in SQLite; the worker records a heartbeat and recovers jobs left running after a restart.
+
+`npm run build` passes, and the worker starts successfully. The smoke and contract checks could not run because this environment blocks localhost port binding (`listen EPERM`), before either check could launch the server.

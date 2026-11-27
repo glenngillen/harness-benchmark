@@ -1,0 +1,7 @@
+All three findings were correct, and I fixed each one. The build passes, smoke is 2/2, contract is 5/5, and the new store tests pass 4/4.
+
+- **Finding 1, retry limit on restart (`src/store.ts`).** Recovery now undoes the increment for the interrupted attempt. The job is retried as the same attempt number, so a job interrupted during attempt 3 with `failAttempts: 3` ends `failed` with `attempts: 3`, and one with `failAttempts: 2` completes on attempt 3. This means `attempts` does not count an attempt that was interrupted. That is a deliberate trade-off against the spec's "attempts started" wording, and I can change it if you prefer.
+- **Finding 2, lossless strings (`src/store.ts`, `src/db.ts`).** `input` and `result_output` are stored as JSON-encoded text and decoded on read. The end-to-end run returned `"a\u0000b\ud800"` and output `"A\u0000B\ud800"` unchanged. This changes the meaning of the existing column contents, so any database created before this change is incompatible. The checks use fresh databases, so they are unaffected.
+- **Finding 3, `updatedAt` format (`src/store.ts`).** `claimNext` and `recoverInterrupted` now write ISO timestamps to `updated_at`. Millisecond values are still used for `run_after` scheduling.
+
+I added `src/store.test.ts`, which covers the restart-during-attempt-3 cases, the NUL and surrogate round-trip, and timestamp format. Run it with `npm run build && node --test dist/store.test.js`. I did not add an `npm test` script because `package.json` is a fixed file.

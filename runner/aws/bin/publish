@@ -1,0 +1,37 @@
+#!/bin/bash
+# Upload a source bundle of the benchmark directory at one committed revision.
+#
+#   runner/aws/bin/publish [<revision>]      default HEAD
+#
+# Builds `git archive` of the benchmark directory at that commit (uncommitted changes are never
+# included), writes its manifest (src/runner/bundle.ts) and uploads both to
+# s3://<bucket>/bundles/<sha>.{tar.gz,json}, then points bundles/latest.json at it.
+source "$(dirname "$0")/_common.sh"
+need git
+load_target
+
+rev="${1:-HEAD}"
+sha="$(git -C "$BENCH_ROOT" rev-parse --verify "$rev^{commit}")" || die "unknown revision $rev"
+# The benchmark may be a subdirectory (examples/harness-benchmark in the site repository) or the
+# root of a standalone clone, where the prefix is empty and the bundle is the whole commit.
+prefix="$(git -C "$BENCH_ROOT" rev-parse --show-prefix)"
+prefix="${prefix%/}"
+# git archive / ls-tree filter a <rev>:<path> tree by the current subdirectory, which empties it,
+# so run them from the repository root.
+top="$(git -C "$BENCH_ROOT" rev-parse --show-toplevel)"
+tree="$(git -C "$BENCH_ROOT" rev-parse "$sha:$prefix")" || die "${prefix:-the repository root} does not exist at $sha"
+if [ -n "$(git -C "$BENCH_ROOT" status --porcelain -- .)" ] && [ "$(git -C "$BENCH_ROOT" rev-parse HEAD)" = "$sha" ]; then
+  echo "note: uncommitted changes under ${prefix:-the benchmark} are NOT in the bundle; commit them first if they matter" >&2
+fi
+
+out="$BENCH_ROOT/.runs/publish/$sha"
+mkdir -p "$out"
+git -C "$top" archive --format=tar.gz --prefix=harness-benchmark/ -o "$out/bundle.tar.gz" "$sha:$prefix"
+git -C "$top" ls-tree -r --name-only "$sha:$prefix" > "$out/files.txt"
+[ -s "$out/files.txt" ] || die "empty file list for ${prefix:-the repository root} at $sha"
+(cd "$BENCH_ROOT" && npm run --silent runner -- manifest --revision "$sha" --tree "$tree" --archive "$out/bundle.tar.gz" --files-from "$out/files.txt") > "$out/manifest.json"
+
+aws s3 cp --only-show-errors "$out/bundle.tar.gz" "s3://$HARNESS_BUCKET/bundles/$sha.tar.gz"
+aws s3 cp --only-show-errors --content-type application/json "$out/manifest.json" "s3://$HARNESS_BUCKET/bundles/$sha.json"
+aws s3 cp --only-show-errors --content-type application/json "$out/manifest.json" "s3://$HARNESS_BUCKET/bundles/latest.json"
+echo "published $sha ($(wc -c < "$out/bundle.tar.gz" | tr -d ' ') bytes) to s3://$HARNESS_BUCKET/bundles/"

@@ -1,0 +1,3 @@
+Implemented the HTTP API, durable SQLite job state and idempotency, worker retries and restart recovery, and browser submission and polling UI.
+
+`npm run build` and `git diff --check` pass. The worker starts and exits cleanly on `SIGTERM`. The smoke and contract checks, and a direct server launch, were blocked because this environment rejects network listeners with `EPERM`; the server could not be verified here.

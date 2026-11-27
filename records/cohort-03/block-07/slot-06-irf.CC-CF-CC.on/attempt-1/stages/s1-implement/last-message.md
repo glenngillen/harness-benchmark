@@ -1,0 +1,3 @@
+Implemented the SQLite-backed job API and worker, including validation, idempotency, progress updates, retries, restart recovery, health heartbeats, and a polling browser UI.
+
+`npm run build` and `git diff --check` pass. The worker starts and handles termination. The smoke and contract checks, and the server startup check, could not run because this environment rejects local TCP listeners with `EPERM`.

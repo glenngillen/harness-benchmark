@@ -1,0 +1,17 @@
+cohort,dataset,condition,stage_role,stages,cost_status,cost_usd,cost_lower_usd,cost_upper_usd,input_tokens_lower,input_tokens_upper,cached_input_tokens_lower,cached_input_tokens_upper,cache_write_5m_tokens_lower,cache_write_5m_tokens_upper,cache_write_1h_tokens_lower,cache_write_1h_tokens_upper,output_tokens_lower,output_tokens_upper,cache_write_unsplit_tokens_lower,cache_write_unsplit_tokens_upper
+cohort-03,observed,pi.CF-CC.off,plan:CF,10,lower-bound,,3.422924,,149129,149129,454784,454784,0,unbounded,0,0,29537,29537,0,0
+cohort-03,observed,pi.CF-CC.off,implement:CC,10,lower-bound,,0.1390351,,370981,370981,5241600,5241600,0,unbounded,0,0,99042,99042,0,0
+cohort-03,observed,pi.CF-CC.on,plan:CF,10,lower-bound,,3.326042,,140155,140155,488192,488192,0,unbounded,0,0,28726,28726,0,0
+cohort-03,observed,pi.CF-CC.on,implement:CC,10,lower-bound,,0.14396912,,443144,443144,5263872,5263872,0,unbounded,0,0,94032,94032,0,0
+cohort-03,observed,pi.CF-AC.off,plan:CF,10,lower-bound,,3.354766,,140254,140254,488576,488576,0,unbounded,0,0,29273,29273,0,0
+cohort-03,observed,pi.CF-AC.off,implement:AC,10,exact,0.43208302,0.43208302,0.43208302,304,304,7852122,7852122,0,0,707192,707192,424186,424186,0,0
+cohort-03,observed,pi.CF-AC.on,plan:CF,10,lower-bound,,3.46158,,145918,145918,508800,508800,0,unbounded,0,0,29872,29872,0,0
+cohort-03,observed,pi.CF-AC.on,implement:AC,10,exact,0.45962331,0.45962331,0.45962331,344,344,9413401,9413401,0,0,710572,710572,446681,446681,0,0
+cohort-03,observed,pi.AF-CC.off,plan:AF,10,exact,2.1808808,2.1808808,2.1808808,80,80,360884,360884,0,0,85673,85673,71150,71150,0,0
+cohort-03,observed,pi.AF-CC.off,implement:CC,10,lower-bound,,0.14227112,,427271,427271,5165952,5165952,0,unbounded,0,0,95769,95769,0,0
+cohort-03,observed,pi.AF-CC.on,plan:AF,10,exact,2.276945,2.276945,2.276945,86,86,408725,408725,0,0,86852,86852,75002,75002,0,0
+cohort-03,observed,pi.AF-CC.on,implement:CC,10,lower-bound,,0.12720096,,315278,315278,4825216,4825216,0,unbounded,0,0,94842,94842,0,0
+cohort-03,observed,pi.AF-AC.off,plan:AF,10,exact,2.2110952,2.2110952,2.2110952,82,82,385456,385456,0,0,82947,82947,73505,73505,0,0
+cohort-03,observed,pi.AF-AC.off,implement:AC,10,exact,0.36768229,0.36768229,0.36768229,330,330,7784869,7784869,0,0,608673,608673,336132,336132,0,0
+cohort-03,observed,pi.AF-AC.on,plan:AF,10,exact,2.463271,2.463271,2.463271,84,84,393615,393615,0,0,102244,102244,78313,78313,0,0
+cohort-03,observed,pi.AF-AC.on,implement:AC,10,exact,0.4018469,0.4018469,0.4018469,344,344,8701680,8701680,0,0,674606,674606,359749,359749,0,0

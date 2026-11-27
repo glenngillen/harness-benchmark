@@ -1,0 +1,3 @@
+Addressed all six findings: invalid form values now reach the API, job elements persist across polls, worker recovery caps attempts and retries after loop errors, body-read failures return `invalid_request`, and the server listens on all interfaces.
+
+`npm run build` passes, and the worker starts. I couldn’t verify server startup or run the smoke/contract checks because this environment blocks socket binding (`listen EPERM`).

@@ -1,0 +1,1260 @@
+{
+  "schema": "harness-benchmark/schedule@1",
+  "cohort": "cohort-03",
+  "seed": 20261114,
+  "prng": "mulberry32",
+  "shuffle": "fisher-yates-descending",
+  "concurrency": 1,
+  "blocks": [
+    {
+      "block": 1,
+      "slots": [
+        {
+          "block": 1,
+          "slot": 1,
+          "conditionId": "pi.AF-AC.on"
+        },
+        {
+          "block": 1,
+          "slot": 2,
+          "conditionId": "irf.AC-AF-AC.on"
+        },
+        {
+          "block": 1,
+          "slot": 3,
+          "conditionId": "irf.AC-AF-AC.off"
+        },
+        {
+          "block": 1,
+          "slot": 4,
+          "conditionId": "pi.AF-AC.off"
+        },
+        {
+          "block": 1,
+          "slot": 5,
+          "conditionId": "solo.AC.off"
+        },
+        {
+          "block": 1,
+          "slot": 6,
+          "conditionId": "pi.AF-CC.off"
+        },
+        {
+          "block": 1,
+          "slot": 7,
+          "conditionId": "pi.CF-CC.on"
+        },
+        {
+          "block": 1,
+          "slot": 8,
+          "conditionId": "irf.CC-AF-CC.off"
+        },
+        {
+          "block": 1,
+          "slot": 9,
+          "conditionId": "irf.AC-CF-AC.on"
+        },
+        {
+          "block": 1,
+          "slot": 10,
+          "conditionId": "pi.CF-AC.off"
+        },
+        {
+          "block": 1,
+          "slot": 11,
+          "conditionId": "solo.AF.on"
+        },
+        {
+          "block": 1,
+          "slot": 12,
+          "conditionId": "irf.CC-CF-CC.on"
+        },
+        {
+          "block": 1,
+          "slot": 13,
+          "conditionId": "solo.CF.on"
+        },
+        {
+          "block": 1,
+          "slot": 14,
+          "conditionId": "solo.CF.off"
+        },
+        {
+          "block": 1,
+          "slot": 15,
+          "conditionId": "solo.CC.off"
+        },
+        {
+          "block": 1,
+          "slot": 16,
+          "conditionId": "pi.CF-AC.on"
+        },
+        {
+          "block": 1,
+          "slot": 17,
+          "conditionId": "solo.AC.on"
+        },
+        {
+          "block": 1,
+          "slot": 18,
+          "conditionId": "pi.AF-CC.on"
+        },
+        {
+          "block": 1,
+          "slot": 19,
+          "conditionId": "irf.CC-AF-CC.on"
+        },
+        {
+          "block": 1,
+          "slot": 20,
+          "conditionId": "irf.AC-CF-AC.off"
+        },
+        {
+          "block": 1,
+          "slot": 21,
+          "conditionId": "solo.AF.off"
+        },
+        {
+          "block": 1,
+          "slot": 22,
+          "conditionId": "irf.CC-CF-CC.off"
+        },
+        {
+          "block": 1,
+          "slot": 23,
+          "conditionId": "pi.CF-CC.off"
+        },
+        {
+          "block": 1,
+          "slot": 24,
+          "conditionId": "solo.CC.on"
+        }
+      ]
+    },
+    {
+      "block": 2,
+      "slots": [
+        {
+          "block": 2,
+          "slot": 1,
+          "conditionId": "pi.AF-AC.off"
+        },
+        {
+          "block": 2,
+          "slot": 2,
+          "conditionId": "solo.AF.off"
+        },
+        {
+          "block": 2,
+          "slot": 3,
+          "conditionId": "solo.AC.off"
+        },
+        {
+          "block": 2,
+          "slot": 4,
+          "conditionId": "irf.AC-CF-AC.off"
+        },
+        {
+          "block": 2,
+          "slot": 5,
+          "conditionId": "irf.CC-CF-CC.on"
+        },
+        {
+          "block": 2,
+          "slot": 6,
+          "conditionId": "irf.AC-CF-AC.on"
+        },
+        {
+          "block": 2,
+          "slot": 7,
+          "conditionId": "pi.AF-CC.on"
+        },
+        {
+          "block": 2,
+          "slot": 8,
+          "conditionId": "solo.CF.off"
+        },
+        {
+          "block": 2,
+          "slot": 9,
+          "conditionId": "irf.AC-AF-AC.off"
+        },
+        {
+          "block": 2,
+          "slot": 10,
+          "conditionId": "pi.CF-CC.off"
+        },
+        {
+          "block": 2,
+          "slot": 11,
+          "conditionId": "pi.CF-AC.on"
+        },
+        {
+          "block": 2,
+          "slot": 12,
+          "conditionId": "pi.CF-AC.off"
+        },
+        {
+          "block": 2,
+          "slot": 13,
+          "conditionId": "irf.CC-CF-CC.off"
+        },
+        {
+          "block": 2,
+          "slot": 14,
+          "conditionId": "solo.CF.on"
+        },
+        {
+          "block": 2,
+          "slot": 15,
+          "conditionId": "irf.CC-AF-CC.off"
+        },
+        {
+          "block": 2,
+          "slot": 16,
+          "conditionId": "irf.AC-AF-AC.on"
+        },
+        {
+          "block": 2,
+          "slot": 17,
+          "conditionId": "irf.CC-AF-CC.on"
+        },
+        {
+          "block": 2,
+          "slot": 18,
+          "conditionId": "solo.AF.on"
+        },
+        {
+          "block": 2,
+          "slot": 19,
+          "conditionId": "pi.AF-AC.on"
+        },
+        {
+          "block": 2,
+          "slot": 20,
+          "conditionId": "solo.CC.on"
+        },
+        {
+          "block": 2,
+          "slot": 21,
+          "conditionId": "solo.CC.off"
+        },
+        {
+          "block": 2,
+          "slot": 22,
+          "conditionId": "pi.CF-CC.on"
+        },
+        {
+          "block": 2,
+          "slot": 23,
+          "conditionId": "solo.AC.on"
+        },
+        {
+          "block": 2,
+          "slot": 24,
+          "conditionId": "pi.AF-CC.off"
+        }
+      ]
+    },
+    {
+      "block": 3,
+      "slots": [
+        {
+          "block": 3,
+          "slot": 1,
+          "conditionId": "irf.AC-AF-AC.on"
+        },
+        {
+          "block": 3,
+          "slot": 2,
+          "conditionId": "pi.CF-CC.off"
+        },
+        {
+          "block": 3,
+          "slot": 3,
+          "conditionId": "solo.CF.off"
+        },
+        {
+          "block": 3,
+          "slot": 4,
+          "conditionId": "pi.CF-CC.on"
+        },
+        {
+          "block": 3,
+          "slot": 5,
+          "conditionId": "solo.CC.off"
+        },
+        {
+          "block": 3,
+          "slot": 6,
+          "conditionId": "pi.CF-AC.off"
+        },
+        {
+          "block": 3,
+          "slot": 7,
+          "conditionId": "solo.AF.on"
+        },
+        {
+          "block": 3,
+          "slot": 8,
+          "conditionId": "solo.CC.on"
+        },
+        {
+          "block": 3,
+          "slot": 9,
+          "conditionId": "pi.CF-AC.on"
+        },
+        {
+          "block": 3,
+          "slot": 10,
+          "conditionId": "irf.CC-AF-CC.off"
+        },
+        {
+          "block": 3,
+          "slot": 11,
+          "conditionId": "irf.AC-CF-AC.on"
+        },
+        {
+          "block": 3,
+          "slot": 12,
+          "conditionId": "pi.AF-AC.on"
+        },
+        {
+          "block": 3,
+          "slot": 13,
+          "conditionId": "pi.AF-CC.on"
+        },
+        {
+          "block": 3,
+          "slot": 14,
+          "conditionId": "solo.AC.off"
+        },
+        {
+          "block": 3,
+          "slot": 15,
+          "conditionId": "irf.CC-CF-CC.off"
+        },
+        {
+          "block": 3,
+          "slot": 16,
+          "conditionId": "solo.CF.on"
+        },
+        {
+          "block": 3,
+          "slot": 17,
+          "conditionId": "irf.AC-CF-AC.off"
+        },
+        {
+          "block": 3,
+          "slot": 18,
+          "conditionId": "solo.AF.off"
+        },
+        {
+          "block": 3,
+          "slot": 19,
+          "conditionId": "irf.CC-CF-CC.on"
+        },
+        {
+          "block": 3,
+          "slot": 20,
+          "conditionId": "irf.AC-AF-AC.off"
+        },
+        {
+          "block": 3,
+          "slot": 21,
+          "conditionId": "pi.AF-CC.off"
+        },
+        {
+          "block": 3,
+          "slot": 22,
+          "conditionId": "irf.CC-AF-CC.on"
+        },
+        {
+          "block": 3,
+          "slot": 23,
+          "conditionId": "solo.AC.on"
+        },
+        {
+          "block": 3,
+          "slot": 24,
+          "conditionId": "pi.AF-AC.off"
+        }
+      ]
+    },
+    {
+      "block": 4,
+      "slots": [
+        {
+          "block": 4,
+          "slot": 1,
+          "conditionId": "pi.CF-CC.on"
+        },
+        {
+          "block": 4,
+          "slot": 2,
+          "conditionId": "pi.CF-AC.on"
+        },
+        {
+          "block": 4,
+          "slot": 3,
+          "conditionId": "solo.CF.on"
+        },
+        {
+          "block": 4,
+          "slot": 4,
+          "conditionId": "irf.AC-AF-AC.off"
+        },
+        {
+          "block": 4,
+          "slot": 5,
+          "conditionId": "solo.AF.off"
+        },
+        {
+          "block": 4,
+          "slot": 6,
+          "conditionId": "pi.AF-AC.off"
+        },
+        {
+          "block": 4,
+          "slot": 7,
+          "conditionId": "irf.CC-CF-CC.on"
+        },
+        {
+          "block": 4,
+          "slot": 8,
+          "conditionId": "irf.CC-AF-CC.off"
+        },
+        {
+          "block": 4,
+          "slot": 9,
+          "conditionId": "solo.AC.on"
+        },
+        {
+          "block": 4,
+          "slot": 10,
+          "conditionId": "pi.AF-CC.on"
+        },
+        {
+          "block": 4,
+          "slot": 11,
+          "conditionId": "solo.AC.off"
+        },
+        {
+          "block": 4,
+          "slot": 12,
+          "conditionId": "pi.AF-AC.on"
+        },
+        {
+          "block": 4,
+          "slot": 13,
+          "conditionId": "irf.AC-AF-AC.on"
+        },
+        {
+          "block": 4,
+          "slot": 14,
+          "conditionId": "irf.AC-CF-AC.on"
+        },
+        {
+          "block": 4,
+          "slot": 15,
+          "conditionId": "pi.CF-CC.off"
+        },
+        {
+          "block": 4,
+          "slot": 16,
+          "conditionId": "solo.CC.on"
+        },
+        {
+          "block": 4,
+          "slot": 17,
+          "conditionId": "solo.AF.on"
+        },
+        {
+          "block": 4,
+          "slot": 18,
+          "conditionId": "pi.CF-AC.off"
+        },
+        {
+          "block": 4,
+          "slot": 19,
+          "conditionId": "solo.CF.off"
+        },
+        {
+          "block": 4,
+          "slot": 20,
+          "conditionId": "irf.CC-AF-CC.on"
+        },
+        {
+          "block": 4,
+          "slot": 21,
+          "conditionId": "irf.CC-CF-CC.off"
+        },
+        {
+          "block": 4,
+          "slot": 22,
+          "conditionId": "irf.AC-CF-AC.off"
+        },
+        {
+          "block": 4,
+          "slot": 23,
+          "conditionId": "pi.AF-CC.off"
+        },
+        {
+          "block": 4,
+          "slot": 24,
+          "conditionId": "solo.CC.off"
+        }
+      ]
+    },
+    {
+      "block": 5,
+      "slots": [
+        {
+          "block": 5,
+          "slot": 1,
+          "conditionId": "pi.AF-AC.on"
+        },
+        {
+          "block": 5,
+          "slot": 2,
+          "conditionId": "solo.AF.on"
+        },
+        {
+          "block": 5,
+          "slot": 3,
+          "conditionId": "irf.AC-CF-AC.off"
+        },
+        {
+          "block": 5,
+          "slot": 4,
+          "conditionId": "irf.CC-AF-CC.on"
+        },
+        {
+          "block": 5,
+          "slot": 5,
+          "conditionId": "solo.CC.off"
+        },
+        {
+          "block": 5,
+          "slot": 6,
+          "conditionId": "pi.CF-AC.off"
+        },
+        {
+          "block": 5,
+          "slot": 7,
+          "conditionId": "irf.CC-CF-CC.off"
+        },
+        {
+          "block": 5,
+          "slot": 8,
+          "conditionId": "solo.AC.on"
+        },
+        {
+          "block": 5,
+          "slot": 9,
+          "conditionId": "solo.CF.on"
+        },
+        {
+          "block": 5,
+          "slot": 10,
+          "conditionId": "solo.AC.off"
+        },
+        {
+          "block": 5,
+          "slot": 11,
+          "conditionId": "irf.AC-CF-AC.on"
+        },
+        {
+          "block": 5,
+          "slot": 12,
+          "conditionId": "solo.CC.on"
+        },
+        {
+          "block": 5,
+          "slot": 13,
+          "conditionId": "pi.CF-CC.on"
+        },
+        {
+          "block": 5,
+          "slot": 14,
+          "conditionId": "pi.AF-CC.off"
+        },
+        {
+          "block": 5,
+          "slot": 15,
+          "conditionId": "irf.AC-AF-AC.off"
+        },
+        {
+          "block": 5,
+          "slot": 16,
+          "conditionId": "irf.AC-AF-AC.on"
+        },
+        {
+          "block": 5,
+          "slot": 17,
+          "conditionId": "irf.CC-AF-CC.off"
+        },
+        {
+          "block": 5,
+          "slot": 18,
+          "conditionId": "pi.CF-AC.on"
+        },
+        {
+          "block": 5,
+          "slot": 19,
+          "conditionId": "solo.AF.off"
+        },
+        {
+          "block": 5,
+          "slot": 20,
+          "conditionId": "pi.AF-CC.on"
+        },
+        {
+          "block": 5,
+          "slot": 21,
+          "conditionId": "solo.CF.off"
+        },
+        {
+          "block": 5,
+          "slot": 22,
+          "conditionId": "irf.CC-CF-CC.on"
+        },
+        {
+          "block": 5,
+          "slot": 23,
+          "conditionId": "pi.CF-CC.off"
+        },
+        {
+          "block": 5,
+          "slot": 24,
+          "conditionId": "pi.AF-AC.off"
+        }
+      ]
+    },
+    {
+      "block": 6,
+      "slots": [
+        {
+          "block": 6,
+          "slot": 1,
+          "conditionId": "pi.CF-CC.off"
+        },
+        {
+          "block": 6,
+          "slot": 2,
+          "conditionId": "irf.CC-AF-CC.off"
+        },
+        {
+          "block": 6,
+          "slot": 3,
+          "conditionId": "solo.CC.on"
+        },
+        {
+          "block": 6,
+          "slot": 4,
+          "conditionId": "irf.AC-CF-AC.on"
+        },
+        {
+          "block": 6,
+          "slot": 5,
+          "conditionId": "irf.AC-CF-AC.off"
+        },
+        {
+          "block": 6,
+          "slot": 6,
+          "conditionId": "pi.CF-CC.on"
+        },
+        {
+          "block": 6,
+          "slot": 7,
+          "conditionId": "solo.AF.on"
+        },
+        {
+          "block": 6,
+          "slot": 8,
+          "conditionId": "solo.AF.off"
+        },
+        {
+          "block": 6,
+          "slot": 9,
+          "conditionId": "irf.CC-CF-CC.off"
+        },
+        {
+          "block": 6,
+          "slot": 10,
+          "conditionId": "pi.AF-CC.on"
+        },
+        {
+          "block": 6,
+          "slot": 11,
+          "conditionId": "pi.AF-AC.on"
+        },
+        {
+          "block": 6,
+          "slot": 12,
+          "conditionId": "irf.CC-CF-CC.on"
+        },
+        {
+          "block": 6,
+          "slot": 13,
+          "conditionId": "pi.AF-CC.off"
+        },
+        {
+          "block": 6,
+          "slot": 14,
+          "conditionId": "irf.AC-AF-AC.off"
+        },
+        {
+          "block": 6,
+          "slot": 15,
+          "conditionId": "solo.AC.on"
+        },
+        {
+          "block": 6,
+          "slot": 16,
+          "conditionId": "solo.AC.off"
+        },
+        {
+          "block": 6,
+          "slot": 17,
+          "conditionId": "irf.CC-AF-CC.on"
+        },
+        {
+          "block": 6,
+          "slot": 18,
+          "conditionId": "pi.AF-AC.off"
+        },
+        {
+          "block": 6,
+          "slot": 19,
+          "conditionId": "solo.CC.off"
+        },
+        {
+          "block": 6,
+          "slot": 20,
+          "conditionId": "solo.CF.off"
+        },
+        {
+          "block": 6,
+          "slot": 21,
+          "conditionId": "pi.CF-AC.off"
+        },
+        {
+          "block": 6,
+          "slot": 22,
+          "conditionId": "solo.CF.on"
+        },
+        {
+          "block": 6,
+          "slot": 23,
+          "conditionId": "pi.CF-AC.on"
+        },
+        {
+          "block": 6,
+          "slot": 24,
+          "conditionId": "irf.AC-AF-AC.on"
+        }
+      ]
+    },
+    {
+      "block": 7,
+      "slots": [
+        {
+          "block": 7,
+          "slot": 1,
+          "conditionId": "irf.CC-CF-CC.off"
+        },
+        {
+          "block": 7,
+          "slot": 2,
+          "conditionId": "solo.AC.on"
+        },
+        {
+          "block": 7,
+          "slot": 3,
+          "conditionId": "irf.AC-AF-AC.off"
+        },
+        {
+          "block": 7,
+          "slot": 4,
+          "conditionId": "pi.CF-AC.off"
+        },
+        {
+          "block": 7,
+          "slot": 5,
+          "conditionId": "irf.AC-CF-AC.off"
+        },
+        {
+          "block": 7,
+          "slot": 6,
+          "conditionId": "irf.CC-CF-CC.on"
+        },
+        {
+          "block": 7,
+          "slot": 7,
+          "conditionId": "pi.CF-AC.on"
+        },
+        {
+          "block": 7,
+          "slot": 8,
+          "conditionId": "solo.AF.off"
+        },
+        {
+          "block": 7,
+          "slot": 9,
+          "conditionId": "solo.AF.on"
+        },
+        {
+          "block": 7,
+          "slot": 10,
+          "conditionId": "irf.CC-AF-CC.on"
+        },
+        {
+          "block": 7,
+          "slot": 11,
+          "conditionId": "pi.AF-CC.on"
+        },
+        {
+          "block": 7,
+          "slot": 12,
+          "conditionId": "pi.CF-CC.on"
+        },
+        {
+          "block": 7,
+          "slot": 13,
+          "conditionId": "pi.AF-CC.off"
+        },
+        {
+          "block": 7,
+          "slot": 14,
+          "conditionId": "solo.CC.on"
+        },
+        {
+          "block": 7,
+          "slot": 15,
+          "conditionId": "pi.AF-AC.off"
+        },
+        {
+          "block": 7,
+          "slot": 16,
+          "conditionId": "pi.AF-AC.on"
+        },
+        {
+          "block": 7,
+          "slot": 17,
+          "conditionId": "irf.CC-AF-CC.off"
+        },
+        {
+          "block": 7,
+          "slot": 18,
+          "conditionId": "irf.AC-AF-AC.on"
+        },
+        {
+          "block": 7,
+          "slot": 19,
+          "conditionId": "solo.CF.off"
+        },
+        {
+          "block": 7,
+          "slot": 20,
+          "conditionId": "irf.AC-CF-AC.on"
+        },
+        {
+          "block": 7,
+          "slot": 21,
+          "conditionId": "solo.CC.off"
+        },
+        {
+          "block": 7,
+          "slot": 22,
+          "conditionId": "pi.CF-CC.off"
+        },
+        {
+          "block": 7,
+          "slot": 23,
+          "conditionId": "solo.AC.off"
+        },
+        {
+          "block": 7,
+          "slot": 24,
+          "conditionId": "solo.CF.on"
+        }
+      ]
+    },
+    {
+      "block": 8,
+      "slots": [
+        {
+          "block": 8,
+          "slot": 1,
+          "conditionId": "irf.CC-AF-CC.on"
+        },
+        {
+          "block": 8,
+          "slot": 2,
+          "conditionId": "solo.CC.off"
+        },
+        {
+          "block": 8,
+          "slot": 3,
+          "conditionId": "solo.CF.on"
+        },
+        {
+          "block": 8,
+          "slot": 4,
+          "conditionId": "solo.CC.on"
+        },
+        {
+          "block": 8,
+          "slot": 5,
+          "conditionId": "pi.AF-CC.off"
+        },
+        {
+          "block": 8,
+          "slot": 6,
+          "conditionId": "solo.AF.on"
+        },
+        {
+          "block": 8,
+          "slot": 7,
+          "conditionId": "irf.AC-AF-AC.off"
+        },
+        {
+          "block": 8,
+          "slot": 8,
+          "conditionId": "irf.CC-CF-CC.off"
+        },
+        {
+          "block": 8,
+          "slot": 9,
+          "conditionId": "pi.CF-AC.off"
+        },
+        {
+          "block": 8,
+          "slot": 10,
+          "conditionId": "pi.CF-CC.on"
+        },
+        {
+          "block": 8,
+          "slot": 11,
+          "conditionId": "pi.AF-CC.on"
+        },
+        {
+          "block": 8,
+          "slot": 12,
+          "conditionId": "irf.CC-AF-CC.off"
+        },
+        {
+          "block": 8,
+          "slot": 13,
+          "conditionId": "pi.AF-AC.on"
+        },
+        {
+          "block": 8,
+          "slot": 14,
+          "conditionId": "irf.AC-CF-AC.on"
+        },
+        {
+          "block": 8,
+          "slot": 15,
+          "conditionId": "solo.AC.on"
+        },
+        {
+          "block": 8,
+          "slot": 16,
+          "conditionId": "irf.AC-AF-AC.on"
+        },
+        {
+          "block": 8,
+          "slot": 17,
+          "conditionId": "irf.AC-CF-AC.off"
+        },
+        {
+          "block": 8,
+          "slot": 18,
+          "conditionId": "solo.AF.off"
+        },
+        {
+          "block": 8,
+          "slot": 19,
+          "conditionId": "pi.CF-AC.on"
+        },
+        {
+          "block": 8,
+          "slot": 20,
+          "conditionId": "solo.AC.off"
+        },
+        {
+          "block": 8,
+          "slot": 21,
+          "conditionId": "pi.CF-CC.off"
+        },
+        {
+          "block": 8,
+          "slot": 22,
+          "conditionId": "solo.CF.off"
+        },
+        {
+          "block": 8,
+          "slot": 23,
+          "conditionId": "pi.AF-AC.off"
+        },
+        {
+          "block": 8,
+          "slot": 24,
+          "conditionId": "irf.CC-CF-CC.on"
+        }
+      ]
+    },
+    {
+      "block": 9,
+      "slots": [
+        {
+          "block": 9,
+          "slot": 1,
+          "conditionId": "irf.AC-AF-AC.on"
+        },
+        {
+          "block": 9,
+          "slot": 2,
+          "conditionId": "solo.AF.on"
+        },
+        {
+          "block": 9,
+          "slot": 3,
+          "conditionId": "solo.CF.on"
+        },
+        {
+          "block": 9,
+          "slot": 4,
+          "conditionId": "solo.AF.off"
+        },
+        {
+          "block": 9,
+          "slot": 5,
+          "conditionId": "pi.CF-CC.off"
+        },
+        {
+          "block": 9,
+          "slot": 6,
+          "conditionId": "irf.CC-AF-CC.off"
+        },
+        {
+          "block": 9,
+          "slot": 7,
+          "conditionId": "irf.CC-AF-CC.on"
+        },
+        {
+          "block": 9,
+          "slot": 8,
+          "conditionId": "solo.AC.on"
+        },
+        {
+          "block": 9,
+          "slot": 9,
+          "conditionId": "pi.CF-AC.off"
+        },
+        {
+          "block": 9,
+          "slot": 10,
+          "conditionId": "pi.CF-CC.on"
+        },
+        {
+          "block": 9,
+          "slot": 11,
+          "conditionId": "pi.AF-CC.off"
+        },
+        {
+          "block": 9,
+          "slot": 12,
+          "conditionId": "irf.AC-CF-AC.on"
+        },
+        {
+          "block": 9,
+          "slot": 13,
+          "conditionId": "irf.AC-CF-AC.off"
+        },
+        {
+          "block": 9,
+          "slot": 14,
+          "conditionId": "pi.CF-AC.on"
+        },
+        {
+          "block": 9,
+          "slot": 15,
+          "conditionId": "pi.AF-CC.on"
+        },
+        {
+          "block": 9,
+          "slot": 16,
+          "conditionId": "solo.CC.off"
+        },
+        {
+          "block": 9,
+          "slot": 17,
+          "conditionId": "solo.AC.off"
+        },
+        {
+          "block": 9,
+          "slot": 18,
+          "conditionId": "irf.CC-CF-CC.off"
+        },
+        {
+          "block": 9,
+          "slot": 19,
+          "conditionId": "irf.AC-AF-AC.off"
+        },
+        {
+          "block": 9,
+          "slot": 20,
+          "conditionId": "irf.CC-CF-CC.on"
+        },
+        {
+          "block": 9,
+          "slot": 21,
+          "conditionId": "pi.AF-AC.off"
+        },
+        {
+          "block": 9,
+          "slot": 22,
+          "conditionId": "pi.AF-AC.on"
+        },
+        {
+          "block": 9,
+          "slot": 23,
+          "conditionId": "solo.CF.off"
+        },
+        {
+          "block": 9,
+          "slot": 24,
+          "conditionId": "solo.CC.on"
+        }
+      ]
+    },
+    {
+      "block": 10,
+      "slots": [
+        {
+          "block": 10,
+          "slot": 1,
+          "conditionId": "solo.AF.on"
+        },
+        {
+          "block": 10,
+          "slot": 2,
+          "conditionId": "irf.AC-CF-AC.off"
+        },
+        {
+          "block": 10,
+          "slot": 3,
+          "conditionId": "pi.AF-AC.on"
+        },
+        {
+          "block": 10,
+          "slot": 4,
+          "conditionId": "solo.CF.off"
+        },
+        {
+          "block": 10,
+          "slot": 5,
+          "conditionId": "irf.CC-CF-CC.off"
+        },
+        {
+          "block": 10,
+          "slot": 6,
+          "conditionId": "irf.AC-CF-AC.on"
+        },
+        {
+          "block": 10,
+          "slot": 7,
+          "conditionId": "irf.CC-AF-CC.on"
+        },
+        {
+          "block": 10,
+          "slot": 8,
+          "conditionId": "pi.CF-AC.on"
+        },
+        {
+          "block": 10,
+          "slot": 9,
+          "conditionId": "solo.CC.off"
+        },
+        {
+          "block": 10,
+          "slot": 10,
+          "conditionId": "irf.CC-AF-CC.off"
+        },
+        {
+          "block": 10,
+          "slot": 11,
+          "conditionId": "solo.AC.off"
+        },
+        {
+          "block": 10,
+          "slot": 12,
+          "conditionId": "irf.AC-AF-AC.off"
+        },
+        {
+          "block": 10,
+          "slot": 13,
+          "conditionId": "pi.AF-CC.off"
+        },
+        {
+          "block": 10,
+          "slot": 14,
+          "conditionId": "pi.AF-CC.on"
+        },
+        {
+          "block": 10,
+          "slot": 15,
+          "conditionId": "irf.CC-CF-CC.on"
+        },
+        {
+          "block": 10,
+          "slot": 16,
+          "conditionId": "pi.CF-CC.on"
+        },
+        {
+          "block": 10,
+          "slot": 17,
+          "conditionId": "irf.AC-AF-AC.on"
+        },
+        {
+          "block": 10,
+          "slot": 18,
+          "conditionId": "solo.CC.on"
+        },
+        {
+          "block": 10,
+          "slot": 19,
+          "conditionId": "pi.CF-CC.off"
+        },
+        {
+          "block": 10,
+          "slot": 20,
+          "conditionId": "solo.CF.on"
+        },
+        {
+          "block": 10,
+          "slot": 21,
+          "conditionId": "solo.AF.off"
+        },
+        {
+          "block": 10,
+          "slot": 22,
+          "conditionId": "pi.AF-AC.off"
+        },
+        {
+          "block": 10,
+          "slot": 23,
+          "conditionId": "solo.AC.on"
+        },
+        {
+          "block": 10,
+          "slot": 24,
+          "conditionId": "pi.CF-AC.off"
+        }
+      ]
+    }
+  ]
+}

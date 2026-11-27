@@ -1,0 +1,122 @@
+{
+  "stageId": "cohort-03-b02-s13-a1--s2-review",
+  "role": "CF",
+  "provider": "openai",
+  "tool": "codex",
+  "toolVersion": "0.169.0",
+  "mode": "fresh",
+  "requestedModel": "gpt-6-astra",
+  "resolvedModel": "gpt-6-astra",
+  "resolvedModelSource": "session rollout turn_context",
+  "requestedEffort": "low",
+  "appliedEffort": "low",
+  "sessionId": "01a20eb4-c387-7dc2-bf1c-88b23309bf67",
+  "termination": "completed",
+  "terminationDetail": null,
+  "exitCode": 0,
+  "signal": null,
+  "startedAt": "2026-11-24T17:57:36.941Z",
+  "endedAt": "2026-11-24T17:58:28.872Z",
+  "durationMs": 51931,
+  "finalMessage": "# Review findings\n\n1. [major] ui/index.html:56 — Successful submissions incorrectly display “Unable to submit job.”\n   Evidence: The success branch accesses `event.currentTarget` after awaiting the HTTP response. Browsers clear `currentTarget` after event dispatch, so `.reset()` throws and the catch block displays an error despite the job being created. Executing the handler with a successful mocked response and browser-equivalent event cleanup reproduced this.\n   Fix: Save the form element before the first `await` and use that reference for both `FormData` and `reset()`.\n\n2. [major] src/worker.ts:10 — Restart recovery erases processing attempts.\n   Evidence: Both startup recovery and graceful shutdown (line 67) decrement `attempts` for interrupted running jobs. A job interrupted during attempt 1 starts processing again with `attempts: 1`, although two attempts have started. Repeated interruptions can indefinitely replay the same simulated failure without reaching the three-attempt limit.\n   Fix: Preserve the durable attempt count when recovering interrupted work. Count each newly started attempt and enforce the retry limit consistently during recovery.\n\n3. [major] ui/index.html:19 — Native form validation prevents invalid values from reaching the API.\n   Evidence: The form lacks `novalidate`, and its inputs have `required`, range constraints, and the default integer step constraint. Submitting values such as `steps: 0`, `steps: 1.5`, or `failAttempts: 6` never triggers the submit handler, so no API request occurs and `form-error` does not show the offending field as required.\n   Fix: Add `novalidate` to the form so submissions reach the existing API validation and its field errors appear in `form-error`.",
+  "usage": {
+    "source": "codex exec --json turn.completed.usage",
+    "semantics": "turn.completed usage summed within this invocation; per-turn vs session-cumulative on resume is unverified until the pilot (methodology 9)",
+    "completeness": "complete",
+    "raw": [
+      {
+        "input_tokens": 132930,
+        "cached_input_tokens": 104832,
+        "cache_write_input_tokens": 0,
+        "output_tokens": 1435,
+        "reasoning_output_tokens": 183
+      }
+    ],
+    "supplementary": {
+      "rolloutCumulativeBefore": null,
+      "rolloutCumulativeAfter": {
+        "input_tokens": 132930,
+        "cached_input_tokens": 104832,
+        "cache_write_input_tokens": 0,
+        "output_tokens": 1435,
+        "reasoning_output_tokens": 183,
+        "total_tokens": 134365
+      },
+      "rolloutFound": true,
+      "malformedEventLines": 0,
+      "turnsStarted": 1,
+      "turnsCompleted": 1,
+      "signalsSent": []
+    }
+  },
+  "recordFiles": [
+    "prompt.md",
+    "events.jsonl",
+    "stderr.txt",
+    "last-message.md",
+    "stage.json"
+  ],
+  "settings": {
+    "model": "gpt-6-astra",
+    "model_reasoning_effort": "low",
+    "approval_policy": "never",
+    "sandbox_mode": "read-only",
+    "stage_permission": "read-only",
+    "outer_isolation": "bwrap",
+    "sandbox_workspace_write.network_access": "false",
+    "ignoreUserConfig": true,
+    "ignoreRules": true,
+    "ephemeral": false,
+    "resumeLatest": "never",
+    "fallbackModel": "none (Codex has no fallback option)",
+    "env": [
+      "CODEX_HOME",
+      "HOME",
+      "LANG",
+      "NO_COLOR",
+      "PATH",
+      "TMPDIR",
+      "npm_config_audit",
+      "npm_config_cache",
+      "npm_config_fund",
+      "npm_config_update_notifier"
+    ],
+    "isolation": {
+      "mechanism": "bwrap",
+      "hidden": [
+        ".",
+        "~"
+      ],
+      "writable": [
+        ".runs/campaign/cohort-03/block-02/slot-13-irf.CC-CF-CC.off/attempt-1/homes/s2-review"
+      ],
+      "readable": [
+        "node_modules",
+        "../../node-v22.23.4",
+        ".runs/campaign/cohort-03/block-02/slot-13-irf.CC-CF-CC.off/attempt-1/snapshots/s2-review"
+      ],
+      "network": "shared host network namespace (provider API)"
+    },
+    "argv": [
+      "exec",
+      "--json",
+      "--ignore-user-config",
+      "--ignore-rules",
+      "-m",
+      "gpt-6-astra",
+      "-c",
+      "model_reasoning_effort=\"low\"",
+      "-c",
+      "approval_policy=\"never\"",
+      "-c",
+      "sandbox_workspace_write.network_access=false",
+      "-o",
+      "<capture>/last-message.md",
+      "--sandbox",
+      "read-only",
+      "-C",
+      "<workspace>",
+      "-"
+    ]
+  }
+}

@@ -1,0 +1,122 @@
+{
+  "stageId": "cohort-03-pilots-b00-s21-a1--s2-review",
+  "role": "CF",
+  "provider": "openai",
+  "tool": "codex",
+  "toolVersion": "0.169.0",
+  "mode": "fresh",
+  "requestedModel": "gpt-6-astra",
+  "resolvedModel": "gpt-6-astra",
+  "resolvedModelSource": "session rollout turn_context",
+  "requestedEffort": "low",
+  "appliedEffort": "low",
+  "sessionId": "01a20d77-16af-7680-94d9-104e72b93a68",
+  "termination": "completed",
+  "terminationDetail": null,
+  "exitCode": 0,
+  "signal": null,
+  "startedAt": "2026-11-24T12:10:37.668Z",
+  "endedAt": "2026-11-24T12:12:09.683Z",
+  "durationMs": 92015,
+  "finalMessage": "# Review findings\n\n1. [major] src/db.ts:64 — Valid input strings do not round-trip through SQLite unchanged.\n   Evidence: Using the application's database connection under Node 22, storing and reading `\"hello\\u0000world\"` returned `\"hello\"`; `\"\\ud800\"` returned `\"�\"`. Both inputs pass validation. This corrupts the returned input and worker output, and an identical idempotent replay can incorrectly return a conflict because the stored input differs.\n   Fix: Encode input and result strings losslessly before storing them, for example with JSON.stringify, and decode them before comparison, processing, and API serialization.\n\n2. [minor] src/validate.ts:32 — Early body-validation returns omit other independently invalid fields.\n   Evidence: `parseSubmission('application/json', '{', 'bad key')` reports only `\"body\"`, omitting `\"Idempotency-Key\"`. A non-JSON Content-Type likewise bypasses key validation. The task requires each offending field to be listed.\n   Fix: Validate the idempotency header independently and accumulate its error alongside body errors; validate payload fields whenever the body can be parsed as an object.\n\n3. [minor] src/worker.ts:87 — Simulated failures skip the required first-step duration.\n   Evidence: An instrumented execution with an in-memory database and `failAttempts: 1` finished its first attempt and requeued in approximately 0.13 ms. The failure branch runs before the 100 ms step delay, although each step must take between 50 and 500 ms.\n   Fix: Wait for the first step's duration before applying the simulated failure, keeping progress at zero and preserving the separate retry delay.\n\n4. [minor] src/server.ts:44 — The request-size limit rejects otherwise valid submissions.\n   Evidence: A JSON body containing 65,536 spaces followed by `{\"input\":\"hello\"}` satisfies the specified validation rules, but `readBody` returns `undefined` and validation rejects it as too large. The task limits input length, not JSON body size.\n   Fix: Remove the undocumented body-size rejection so valid JSON whitespace does not cause an otherwise valid submission to fail.",
+  "usage": {
+    "source": "codex exec --json turn.completed.usage",
+    "semantics": "turn.completed usage summed within this invocation; per-turn vs session-cumulative on resume is unverified until the pilot (methodology 9)",
+    "completeness": "complete",
+    "raw": [
+      {
+        "input_tokens": 234783,
+        "cached_input_tokens": 216832,
+        "cache_write_input_tokens": 0,
+        "output_tokens": 2366,
+        "reasoning_output_tokens": 554
+      }
+    ],
+    "supplementary": {
+      "rolloutCumulativeBefore": null,
+      "rolloutCumulativeAfter": {
+        "input_tokens": 234783,
+        "cached_input_tokens": 216832,
+        "cache_write_input_tokens": 0,
+        "output_tokens": 2366,
+        "reasoning_output_tokens": 554,
+        "total_tokens": 237149
+      },
+      "rolloutFound": true,
+      "malformedEventLines": 0,
+      "turnsStarted": 1,
+      "turnsCompleted": 1,
+      "signalsSent": []
+    }
+  },
+  "recordFiles": [
+    "prompt.md",
+    "events.jsonl",
+    "stderr.txt",
+    "last-message.md",
+    "stage.json"
+  ],
+  "settings": {
+    "model": "gpt-6-astra",
+    "model_reasoning_effort": "low",
+    "approval_policy": "never",
+    "sandbox_mode": "read-only",
+    "stage_permission": "read-only",
+    "outer_isolation": "bwrap",
+    "sandbox_workspace_write.network_access": "false",
+    "ignoreUserConfig": true,
+    "ignoreRules": true,
+    "ephemeral": false,
+    "resumeLatest": "never",
+    "fallbackModel": "none (Codex has no fallback option)",
+    "env": [
+      "CODEX_HOME",
+      "HOME",
+      "LANG",
+      "NO_COLOR",
+      "PATH",
+      "TMPDIR",
+      "npm_config_audit",
+      "npm_config_cache",
+      "npm_config_fund",
+      "npm_config_update_notifier"
+    ],
+    "isolation": {
+      "mechanism": "bwrap",
+      "hidden": [
+        ".",
+        "~"
+      ],
+      "writable": [
+        ".runs/campaign/cohort-03-pilots/pilot/slot-21-irf.AC-CF-AC.off/attempt-1/homes/s2-review"
+      ],
+      "readable": [
+        "node_modules",
+        "../../node-v22.23.4",
+        ".runs/campaign/cohort-03-pilots/pilot/slot-21-irf.AC-CF-AC.off/attempt-1/snapshots/s2-review"
+      ],
+      "network": "shared host network namespace (provider API)"
+    },
+    "argv": [
+      "exec",
+      "--json",
+      "--ignore-user-config",
+      "--ignore-rules",
+      "-m",
+      "gpt-6-astra",
+      "-c",
+      "model_reasoning_effort=\"low\"",
+      "-c",
+      "approval_policy=\"never\"",
+      "-c",
+      "sandbox_workspace_write.network_access=false",
+      "-o",
+      "<capture>/last-message.md",
+      "--sandbox",
+      "read-only",
+      "-C",
+      "<workspace>",
+      "-"
+    ]
+  }
+}

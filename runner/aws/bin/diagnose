@@ -1,0 +1,32 @@
+#!/bin/bash
+# Collect the details of the last shell preflight (and the runner's state) into diagnose.out.
+#
+#   runner/aws/bin/diagnose
+#
+# Writes diagnose.out in the benchmark directory on your machine (delete it after use). Contains the preflight summary, each client's stderr, final message and the tail of its
+# event stream, the host evidence preflights, and the login preflights. Records are already scrubbed
+# of credentials by the adapters; nothing here prints a token.
+source "$(dirname "$0")/_common.sh"
+load_target
+require_instance
+
+out="$BENCH_ROOT/diagnose.out"
+ssm_run 300 '
+W=/opt/harness/work
+cd "$W" || exit 1
+echo "===== shell-preflight.json"; cat .runs/runner/shell-preflight.json 2>/dev/null || echo "(none)"
+d="$(ls -1dt .runs/preflight/shell-* 2>/dev/null | head -n 1)"
+echo "===== latest preflight dir: ${d:-none}"
+for c in claude codex; do
+  r="$d/$c/record"
+  echo "===== $c: files"; ls -la "$r" 2>/dev/null
+  echo "===== $c: stage.json (termination, detail, exit)"; jq -c "{termination, terminationDetail, exitCode, signal, resolvedModel, toolVersion, durationMs}" "$r/stage.json" 2>/dev/null
+  echo "===== $c: stderr.txt (last 60 lines)"; tail -n 60 "$r/stderr.txt" 2>/dev/null
+  echo "===== $c: last-message.md"; head -c 2000 "$r/last-message.md" 2>/dev/null; echo
+  echo "===== $c: events.jsonl (last 25 lines, 600 chars each)"; tail -n 25 "$r/events.jsonl" 2>/dev/null | cut -c1-600
+done
+echo "===== login preflights (as bench)"
+sudo -u bench -H env PATH=/usr/local/bin:/usr/bin:/bin bash -c "cd $W && npm run --silent codex:preflight 2>&1 | tail -n 30; npm run --silent claude:preflight 2>&1 | tail -n 30"
+echo "===== socat / bwrap"; command -v socat bwrap; socat -V 2>&1 | head -n 2
+' > "$out" 2>&1 || true
+echo "wrote ${out#"$BENCH_ROOT"/} ($(wc -l < "$out") lines)"

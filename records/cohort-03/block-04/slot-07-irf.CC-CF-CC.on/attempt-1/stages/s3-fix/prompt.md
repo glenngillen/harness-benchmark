@@ -1,0 +1,21 @@
+A reviewer has examined your implementation. Their findings are below. Address the ones that are correct; you may decline a finding you are confident is wrong, but say why in your summary.
+
+## Findings
+
+# Review findings
+
+1. [major] src/worker.ts:25 — Restarted processing attempts are not counted.
+   Evidence: Startup marks interrupted jobs with `recovery=1`, and claiming them adds zero to `attempts`. A job killed during attempt 1 restarts processing from step zero and completes with `attempts: 1`, despite having started twice. This contradicts the required attempt counter and permits repeated restarts without consuming attempts.
+   Fix: Count recovered processing starts as attempts, and handle recovery at the attempt limit explicitly so the three-attempt maximum is preserved.
+
+2. [major] ui/index.html:27 — Native form validation prevents invalid numeric submissions from reaching the API.
+   Evidence: The numeric fields have `min`, `max`, and `step` constraints, but the form lacks `novalidate`. Entering `steps=0`, `steps=1.5`, or `failAttempts=6` blocks the submit event before the fetch handler runs. Consequently, the API cannot validate these submissions and `form-error` does not display the offending field names.
+   Fix: Add `novalidate` to the form so submissions reach the existing API validation and error-rendering handler.
+
+## Rules
+
+- The same rules as before apply: work only inside this repository and do not modify anything under `checks/` or the fixed files.
+- You have at most 10 minutes for this stage.
+- When you are done, make sure the application builds and starts as the task describes, then stop. Reply with a short summary of what you changed.
+
+The repository includes fixed build, smoke, and contract checks (`npm run build`, `npm run check:smoke`, `npm run check:contract`). You may run them yourself. When you finish, the runner will also run them, and if any fail you may receive their output and a limited number of chances to repair. Passing these checks does not guarantee acceptance: a separate, hidden evaluation decides that.

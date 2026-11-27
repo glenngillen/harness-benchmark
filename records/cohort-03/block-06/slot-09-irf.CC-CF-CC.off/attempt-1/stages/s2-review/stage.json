@@ -1,0 +1,122 @@
+{
+  "stageId": "cohort-03-b06-s09-a1--s2-review",
+  "role": "CF",
+  "provider": "openai",
+  "tool": "codex",
+  "toolVersion": "0.169.0",
+  "mode": "fresh",
+  "requestedModel": "gpt-6-astra",
+  "resolvedModel": "gpt-6-astra",
+  "resolvedModelSource": "session rollout turn_context",
+  "requestedEffort": "low",
+  "appliedEffort": "low",
+  "sessionId": "01a21061-f9fd-77f3-b5a0-9d2889ae2640",
+  "termination": "completed",
+  "terminationDetail": null,
+  "exitCode": 0,
+  "signal": null,
+  "startedAt": "2026-11-25T01:46:25.817Z",
+  "endedAt": "2026-11-25T01:47:23.328Z",
+  "durationMs": 57511,
+  "finalMessage": "# Review findings\n\n1. [major] src/worker.ts:10 — Restart recovery can exceed the three-attempt limit and complete a job that should fail.\n   Evidence: Recovery unconditionally requeues running jobs, and claiming increments attempts again. Executing the worker with a recovered `running` job having `attempts: 3` and `failAttempts: 3` produced `completed`, `attempts: 4`, and output `\"HELLO\"`. This state can arise when the worker stops during the third attempt’s initial delay.\n   Fix: Make recovery respect the attempt limit. A recovered job whose third attempt must transiently fail should become `failed` with `\"transient failure\"` and attempts remaining 3.\n\n2. [major] src/server.ts:23 — Request decoding corrupts Unicode characters split across HTTP chunks.\n   Evidence: The handler decodes each buffer separately with `chunk.toString()`. Passing valid JSON containing `\"é\"` with its UTF-8 bytes split across two chunks returned `201` with input `\"��\"`. This violates exact input preservation and can also break idempotency comparisons.\n   Fix: Collect buffers and decode once with `Buffer.concat(...).toString('utf8')`, or use streaming UTF-8 decoding.\n\n3. [major] ui/index.html:18 — Browser validation prevents invalid form submissions from reaching the API.\n   Evidence: The form has native validation enabled, with `required`, `maxlength`, numeric bounds, and the default integer step constraint. Submitting steps `21` or `1.5`, for example, prevents the submit handler from running, so the API’s field-specific rejection never appears in `form-error`.\n   Fix: Add `novalidate` to the form so its handler submits the values and displays API validation errors.\n\n4. [minor] src/server.ts:97 — Unknown nested paths return 405 for non-GET requests.\n   Evidence: Directly invoking the handler for `POST /api/jobs/foo/bar` returned `405 method_not_allowed`. This path matches no endpoint and must return `404 not_found`. The method check runs before checking whether the suffix is a valid single path segment.\n   Fix: Validate the route shape before checking its method; return 405 only for paths matching a defined endpoint.",
+  "usage": {
+    "source": "codex exec --json turn.completed.usage",
+    "semantics": "turn.completed usage summed within this invocation; per-turn vs session-cumulative on resume is unverified until the pilot (methodology 9)",
+    "completeness": "complete",
+    "raw": [
+      {
+        "input_tokens": 161935,
+        "cached_input_tokens": 146944,
+        "cache_write_input_tokens": 0,
+        "output_tokens": 1837,
+        "reasoning_output_tokens": 234
+      }
+    ],
+    "supplementary": {
+      "rolloutCumulativeBefore": null,
+      "rolloutCumulativeAfter": {
+        "input_tokens": 161935,
+        "cached_input_tokens": 146944,
+        "cache_write_input_tokens": 0,
+        "output_tokens": 1837,
+        "reasoning_output_tokens": 234,
+        "total_tokens": 163772
+      },
+      "rolloutFound": true,
+      "malformedEventLines": 0,
+      "turnsStarted": 1,
+      "turnsCompleted": 1,
+      "signalsSent": []
+    }
+  },
+  "recordFiles": [
+    "prompt.md",
+    "events.jsonl",
+    "stderr.txt",
+    "last-message.md",
+    "stage.json"
+  ],
+  "settings": {
+    "model": "gpt-6-astra",
+    "model_reasoning_effort": "low",
+    "approval_policy": "never",
+    "sandbox_mode": "read-only",
+    "stage_permission": "read-only",
+    "outer_isolation": "bwrap",
+    "sandbox_workspace_write.network_access": "false",
+    "ignoreUserConfig": true,
+    "ignoreRules": true,
+    "ephemeral": false,
+    "resumeLatest": "never",
+    "fallbackModel": "none (Codex has no fallback option)",
+    "env": [
+      "CODEX_HOME",
+      "HOME",
+      "LANG",
+      "NO_COLOR",
+      "PATH",
+      "TMPDIR",
+      "npm_config_audit",
+      "npm_config_cache",
+      "npm_config_fund",
+      "npm_config_update_notifier"
+    ],
+    "isolation": {
+      "mechanism": "bwrap",
+      "hidden": [
+        ".",
+        "~"
+      ],
+      "writable": [
+        ".runs/campaign/cohort-03/block-06/slot-09-irf.CC-CF-CC.off/attempt-1/homes/s2-review"
+      ],
+      "readable": [
+        "node_modules",
+        "../../node-v22.23.4",
+        ".runs/campaign/cohort-03/block-06/slot-09-irf.CC-CF-CC.off/attempt-1/snapshots/s2-review"
+      ],
+      "network": "shared host network namespace (provider API)"
+    },
+    "argv": [
+      "exec",
+      "--json",
+      "--ignore-user-config",
+      "--ignore-rules",
+      "-m",
+      "gpt-6-astra",
+      "-c",
+      "model_reasoning_effort=\"low\"",
+      "-c",
+      "approval_policy=\"never\"",
+      "-c",
+      "sandbox_workspace_write.network_access=false",
+      "-o",
+      "<capture>/last-message.md",
+      "--sandbox",
+      "read-only",
+      "-C",
+      "<workspace>",
+      "-"
+    ]
+  }
+}

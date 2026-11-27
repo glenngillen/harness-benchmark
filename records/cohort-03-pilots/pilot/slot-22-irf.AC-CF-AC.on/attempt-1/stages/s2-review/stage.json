@@ -1,0 +1,122 @@
+{
+  "stageId": "cohort-03-pilots-b00-s22-a1--s2-review",
+  "role": "CF",
+  "provider": "openai",
+  "tool": "codex",
+  "toolVersion": "0.169.0",
+  "mode": "fresh",
+  "requestedModel": "gpt-6-astra",
+  "resolvedModel": "gpt-6-astra",
+  "resolvedModelSource": "session rollout turn_context",
+  "requestedEffort": "low",
+  "appliedEffort": "low",
+  "sessionId": "01a20d7c-daa5-7523-a2b4-bd0c274992be",
+  "termination": "completed",
+  "terminationDetail": null,
+  "exitCode": 0,
+  "signal": null,
+  "startedAt": "2026-11-24T12:16:55.635Z",
+  "endedAt": "2026-11-24T12:17:52.603Z",
+  "durationMs": 56968,
+  "finalMessage": "# Review findings\n\n1. [major] src/jobs.ts:103 — SQLite string storage corrupts valid inputs and breaks idempotency.\n   Evidence: Using the repository functions with Node 22 and an in-memory database, submitting `\"a\\u0000b\"` returned `\"a\"` as the job input; submitting `\"\\ud800\"` returned a replacement character. Replaying either original payload with its original key returned `conflict`. Both inputs satisfy validation. The worker also processes the corrupted value, producing incorrect output.\n   Fix: Store input and output using a lossless encoding, such as JSON-encoded strings, and decode them when reading. Apply the same encoding to idempotency payload storage and comparisons.\n\n2. [major] src/jobs.ts:158 — Restart recovery can bypass the three-attempt limit and complete jobs that must fail.\n   Evidence: Recovery unconditionally requeues running jobs, and claiming increments attempts without a limit. Reproducing a `failAttempts: 3` job interrupted during attempt 3 yielded attempt 4 after recovery. In `src/worker.ts:33`, that attempt bypasses simulated failure because `4 > 3`, so the job completes instead of ending failed with `\"transient failure\"` and `attempts: 3`.\n   Fix: Make recovery respect the retry limit. In particular, recover an interrupted third attempt that is destined for simulated failure into the required failed state rather than starting attempt 4. Verify this with a worker restart during the third attempt.",
+  "usage": {
+    "source": "codex exec --json turn.completed.usage",
+    "semantics": "turn.completed usage summed within this invocation; per-turn vs session-cumulative on resume is unverified until the pilot (methodology 9)",
+    "completeness": "complete",
+    "raw": [
+      {
+        "input_tokens": 145450,
+        "cached_input_tokens": 126080,
+        "cache_write_input_tokens": 0,
+        "output_tokens": 1422,
+        "reasoning_output_tokens": 228
+      }
+    ],
+    "supplementary": {
+      "rolloutCumulativeBefore": null,
+      "rolloutCumulativeAfter": {
+        "input_tokens": 145450,
+        "cached_input_tokens": 126080,
+        "cache_write_input_tokens": 0,
+        "output_tokens": 1422,
+        "reasoning_output_tokens": 228,
+        "total_tokens": 146872
+      },
+      "rolloutFound": true,
+      "malformedEventLines": 0,
+      "turnsStarted": 1,
+      "turnsCompleted": 1,
+      "signalsSent": []
+    }
+  },
+  "recordFiles": [
+    "prompt.md",
+    "events.jsonl",
+    "stderr.txt",
+    "last-message.md",
+    "stage.json"
+  ],
+  "settings": {
+    "model": "gpt-6-astra",
+    "model_reasoning_effort": "low",
+    "approval_policy": "never",
+    "sandbox_mode": "read-only",
+    "stage_permission": "read-only",
+    "outer_isolation": "bwrap",
+    "sandbox_workspace_write.network_access": "false",
+    "ignoreUserConfig": true,
+    "ignoreRules": true,
+    "ephemeral": false,
+    "resumeLatest": "never",
+    "fallbackModel": "none (Codex has no fallback option)",
+    "env": [
+      "CODEX_HOME",
+      "HOME",
+      "LANG",
+      "NO_COLOR",
+      "PATH",
+      "TMPDIR",
+      "npm_config_audit",
+      "npm_config_cache",
+      "npm_config_fund",
+      "npm_config_update_notifier"
+    ],
+    "isolation": {
+      "mechanism": "bwrap",
+      "hidden": [
+        ".",
+        "~"
+      ],
+      "writable": [
+        ".runs/campaign/cohort-03-pilots/pilot/slot-22-irf.AC-CF-AC.on/attempt-1/homes/s2-review"
+      ],
+      "readable": [
+        "node_modules",
+        "../../node-v22.23.4",
+        ".runs/campaign/cohort-03-pilots/pilot/slot-22-irf.AC-CF-AC.on/attempt-1/snapshots/s2-review"
+      ],
+      "network": "shared host network namespace (provider API)"
+    },
+    "argv": [
+      "exec",
+      "--json",
+      "--ignore-user-config",
+      "--ignore-rules",
+      "-m",
+      "gpt-6-astra",
+      "-c",
+      "model_reasoning_effort=\"low\"",
+      "-c",
+      "approval_policy=\"never\"",
+      "-c",
+      "sandbox_workspace_write.network_access=false",
+      "-o",
+      "<capture>/last-message.md",
+      "--sandbox",
+      "read-only",
+      "-C",
+      "<workspace>",
+      "-"
+    ]
+  }
+}

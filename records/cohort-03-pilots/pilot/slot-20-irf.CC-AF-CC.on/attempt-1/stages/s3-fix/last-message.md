@@ -1,0 +1,3 @@
+Addressed all five findings: interrupted jobs are requeued without consuming an attempt, request errors return JSON, the worker retries after iteration errors, and server shutdown has a two-second fallback.
+
+`npm run build` passes, and the worker starts and shuts down cleanly. I couldn’t verify the server bind or run the smoke and contract checks because this environment blocks local network binds with `listen EPERM`.

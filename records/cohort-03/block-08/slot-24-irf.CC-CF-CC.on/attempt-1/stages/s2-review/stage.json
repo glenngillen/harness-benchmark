@@ -1,0 +1,122 @@
+{
+  "stageId": "cohort-03-b08-s24-a1--s2-review",
+  "role": "CF",
+  "provider": "openai",
+  "tool": "codex",
+  "toolVersion": "0.169.0",
+  "mode": "fresh",
+  "requestedModel": "gpt-6-astra",
+  "resolvedModel": "gpt-6-astra",
+  "resolvedModelSource": "session rollout turn_context",
+  "requestedEffort": "low",
+  "appliedEffort": "low",
+  "sessionId": "01a2118f-d22a-7821-9428-5bf317db293b",
+  "termination": "completed",
+  "terminationDetail": null,
+  "exitCode": 0,
+  "signal": null,
+  "startedAt": "2026-11-25T07:16:07.477Z",
+  "endedAt": "2026-11-25T07:17:17.031Z",
+  "durationMs": 69554,
+  "finalMessage": "# Review findings\n\n1. [major] src/worker.ts:10 — Restart recovery can exceed three attempts and complete a job that must fail.\n   Evidence: Recovery requeues every running job, and claiming it increments attempts unconditionally. Running the worker logic against an in-memory crash snapshot with `status=\"running\"`, `attempts=3`, and `failAttempts=3` produced `status=\"completed\"`, `attempts=4`, and output `\"HELLO\"`. This state can occur when the worker is killed just after starting attempt 3.\n   Fix: Handle exhausted attempts during recovery so jobs with `failAttempts >= 3` finish failed with `\"transient failure\"` and `attempts=3`, without starting attempt 4.\n\n2. [major] ui/index.html:18 — Native form validation prevents invalid values from reaching the API.\n   Evidence: The form lacks `novalidate`, while its inputs use `required`, range constraints, and the default integer step. Submitting an empty input or steps `0`, `21`, or `1.5` therefore never invokes the submit handler, sends no API request, and leaves `form-error` empty instead of displaying the API’s field errors.\n   Fix: Disable native submission validation and allow the handler to send entered values to the API, preserving numeric conversion and rendering its rejection.\n\n3. [minor] src/server.ts:67 — An invalid idempotency key hides other offending fields.\n   Evidence: Directly invoking the request handler with key `bad!` and body `{\"input\":\" \",\"steps\":\"3\",\"extra\":true}` returned only `Idempotency-Key` in `error.fields`. The required `input`, `steps`, and `extra` errors were omitted because the handler returns before payload validation.\n   Fix: Aggregate header errors and all applicable body-validation errors before returning `400`. Also collect independently detectable header errors when Content-Type is invalid.\n\n4. [minor] src/server.ts:87 — The creation response can contain a running job instead of the required queued job.\n   Evidence: The server commits the insertion before selecting the job for its `201` response. The separate worker can claim it between those operations, causing the response to contain `status=\"running\"` and `attempts=1`.\n   Fix: Capture the inserted job representation inside the transaction before committing, then return that queued snapshot after a successful commit.",
+  "usage": {
+    "source": "codex exec --json turn.completed.usage",
+    "semantics": "turn.completed usage summed within this invocation; per-turn vs session-cumulative on resume is unverified until the pilot (methodology 9)",
+    "completeness": "complete",
+    "raw": [
+      {
+        "input_tokens": 167121,
+        "cached_input_tokens": 134400,
+        "cache_write_input_tokens": 0,
+        "output_tokens": 1816,
+        "reasoning_output_tokens": 228
+      }
+    ],
+    "supplementary": {
+      "rolloutCumulativeBefore": null,
+      "rolloutCumulativeAfter": {
+        "input_tokens": 167121,
+        "cached_input_tokens": 134400,
+        "cache_write_input_tokens": 0,
+        "output_tokens": 1816,
+        "reasoning_output_tokens": 228,
+        "total_tokens": 168937
+      },
+      "rolloutFound": true,
+      "malformedEventLines": 0,
+      "turnsStarted": 1,
+      "turnsCompleted": 1,
+      "signalsSent": []
+    }
+  },
+  "recordFiles": [
+    "prompt.md",
+    "events.jsonl",
+    "stderr.txt",
+    "last-message.md",
+    "stage.json"
+  ],
+  "settings": {
+    "model": "gpt-6-astra",
+    "model_reasoning_effort": "low",
+    "approval_policy": "never",
+    "sandbox_mode": "read-only",
+    "stage_permission": "read-only",
+    "outer_isolation": "bwrap",
+    "sandbox_workspace_write.network_access": "false",
+    "ignoreUserConfig": true,
+    "ignoreRules": true,
+    "ephemeral": false,
+    "resumeLatest": "never",
+    "fallbackModel": "none (Codex has no fallback option)",
+    "env": [
+      "CODEX_HOME",
+      "HOME",
+      "LANG",
+      "NO_COLOR",
+      "PATH",
+      "TMPDIR",
+      "npm_config_audit",
+      "npm_config_cache",
+      "npm_config_fund",
+      "npm_config_update_notifier"
+    ],
+    "isolation": {
+      "mechanism": "bwrap",
+      "hidden": [
+        ".",
+        "~"
+      ],
+      "writable": [
+        ".runs/campaign/cohort-03/block-08/slot-24-irf.CC-CF-CC.on/attempt-1/homes/s2-review"
+      ],
+      "readable": [
+        "node_modules",
+        "../../node-v22.23.4",
+        ".runs/campaign/cohort-03/block-08/slot-24-irf.CC-CF-CC.on/attempt-1/snapshots/s2-review"
+      ],
+      "network": "shared host network namespace (provider API)"
+    },
+    "argv": [
+      "exec",
+      "--json",
+      "--ignore-user-config",
+      "--ignore-rules",
+      "-m",
+      "gpt-6-astra",
+      "-c",
+      "model_reasoning_effort=\"low\"",
+      "-c",
+      "approval_policy=\"never\"",
+      "-c",
+      "sandbox_workspace_write.network_access=false",
+      "-o",
+      "<capture>/last-message.md",
+      "--sandbox",
+      "read-only",
+      "-C",
+      "<workspace>",
+      "-"
+    ]
+  }
+}

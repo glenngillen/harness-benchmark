@@ -1,0 +1,3 @@
+Addressed findings 1–5: interrupted jobs resume without consuming an attempt, the worker enforces the three-attempt cap and refreshes its heartbeat while processing, and the server handles request errors, stale idempotency records, and shutdown more safely.
+
+I left finding 6 unchanged because the worker’s 200 ms poll already meets the specified pickup and retry timing. The build passes and the worker starts. The HTTP checks remain blocked by this environment’s `127.0.0.1` bind restriction (`listen EPERM`).

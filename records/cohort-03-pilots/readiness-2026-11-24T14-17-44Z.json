@@ -1,0 +1,460 @@
+{
+  "schema": "harness-benchmark/freeze-readiness@1",
+  "cohort": "cohort-03",
+  "checkedAt": "2026-11-24T14:17:44.868Z",
+  "evidenceSource": "recorded",
+  "ready": false,
+  "frozen": false,
+  "unmet": [
+    {
+      "id": "safeguard:paid-overflow-guard",
+      "detail": "no recorded evidence or human attestation"
+    },
+    {
+      "id": "safeguard:quota-pausing",
+      "detail": "no recorded evidence or human attestation"
+    },
+    {
+      "id": "safeguard:recovery",
+      "detail": "no recorded evidence or human attestation"
+    }
+  ],
+  "warnings": [],
+  "pilots": {
+    "configurations": 24,
+    "covered": 24,
+    "missing": [],
+    "operationalAttempts": [],
+    "exercised": [
+      {
+        "conditionId": "solo.CF.off",
+        "attempt": 1
+      },
+      {
+        "conditionId": "solo.CF.on",
+        "attempt": 1
+      },
+      {
+        "conditionId": "solo.CC.off",
+        "attempt": 1
+      },
+      {
+        "conditionId": "solo.CC.on",
+        "attempt": 1
+      },
+      {
+        "conditionId": "solo.AF.off",
+        "attempt": 1
+      },
+      {
+        "conditionId": "solo.AF.on",
+        "attempt": 1
+      },
+      {
+        "conditionId": "solo.AC.off",
+        "attempt": 1
+      },
+      {
+        "conditionId": "solo.AC.on",
+        "attempt": 1
+      },
+      {
+        "conditionId": "pi.CF-CC.off",
+        "attempt": 1
+      },
+      {
+        "conditionId": "pi.CF-CC.on",
+        "attempt": 1
+      },
+      {
+        "conditionId": "pi.CF-AC.off",
+        "attempt": 1
+      },
+      {
+        "conditionId": "pi.CF-AC.on",
+        "attempt": 1
+      },
+      {
+        "conditionId": "pi.AF-CC.off",
+        "attempt": 1
+      },
+      {
+        "conditionId": "pi.AF-CC.on",
+        "attempt": 1
+      },
+      {
+        "conditionId": "pi.AF-AC.off",
+        "attempt": 1
+      },
+      {
+        "conditionId": "pi.AF-AC.on",
+        "attempt": 1
+      },
+      {
+        "conditionId": "irf.CC-CF-CC.off",
+        "attempt": 1
+      },
+      {
+        "conditionId": "irf.CC-CF-CC.on",
+        "attempt": 1
+      },
+      {
+        "conditionId": "irf.CC-AF-CC.off",
+        "attempt": 1
+      },
+      {
+        "conditionId": "irf.CC-AF-CC.on",
+        "attempt": 1
+      },
+      {
+        "conditionId": "irf.AC-CF-AC.off",
+        "attempt": 1
+      },
+      {
+        "conditionId": "irf.AC-CF-AC.on",
+        "attempt": 1
+      },
+      {
+        "conditionId": "irf.AC-AF-AC.off",
+        "attempt": 1
+      },
+      {
+        "conditionId": "irf.AC-AF-AC.on",
+        "attempt": 2
+      }
+    ],
+    "unexercised": []
+  },
+  "pilotEstimate": {
+    "basis": "one exercised pilot per configuration (24), concurrency one, multiplied by 10 repetitions; excludes replacements, quota waits and manual handling",
+    "pilotActiveHours": 1.744788888888889,
+    "pilotEvaluationHours": 0.14266638888888888,
+    "activeHours": 17.44788888888889,
+    "evaluationHours": 1.4266638888888887,
+    "observations": [
+      {
+        "conditionId": "solo.CF.off",
+        "attempt": 1,
+        "activeMs": 152847,
+        "evaluationMs": 21025
+      },
+      {
+        "conditionId": "solo.CF.on",
+        "attempt": 1,
+        "activeMs": 171039,
+        "evaluationMs": 20512
+      },
+      {
+        "conditionId": "solo.CC.off",
+        "attempt": 1,
+        "activeMs": 229770,
+        "evaluationMs": 19292
+      },
+      {
+        "conditionId": "solo.CC.on",
+        "attempt": 1,
+        "activeMs": 231747,
+        "evaluationMs": 21061
+      },
+      {
+        "conditionId": "solo.AF.off",
+        "attempt": 1,
+        "activeMs": 140585,
+        "evaluationMs": 23567
+      },
+      {
+        "conditionId": "solo.AF.on",
+        "attempt": 1,
+        "activeMs": 135512,
+        "evaluationMs": 19342
+      },
+      {
+        "conditionId": "solo.AC.off",
+        "attempt": 1,
+        "activeMs": 162709,
+        "evaluationMs": 23439
+      },
+      {
+        "conditionId": "solo.AC.on",
+        "attempt": 1,
+        "activeMs": 193427,
+        "evaluationMs": 22964
+      },
+      {
+        "conditionId": "pi.CF-CC.off",
+        "attempt": 1,
+        "activeMs": 306311,
+        "evaluationMs": 20944
+      },
+      {
+        "conditionId": "pi.CF-CC.on",
+        "attempt": 1,
+        "activeMs": 334330,
+        "evaluationMs": 21199
+      },
+      {
+        "conditionId": "pi.CF-AC.off",
+        "attempt": 1,
+        "activeMs": 274943,
+        "evaluationMs": 20707
+      },
+      {
+        "conditionId": "pi.CF-AC.on",
+        "attempt": 1,
+        "activeMs": 276037,
+        "evaluationMs": 21011
+      },
+      {
+        "conditionId": "pi.AF-CC.off",
+        "attempt": 1,
+        "activeMs": 260762,
+        "evaluationMs": 22944
+      },
+      {
+        "conditionId": "pi.AF-CC.on",
+        "attempt": 1,
+        "activeMs": 290277,
+        "evaluationMs": 21962
+      },
+      {
+        "conditionId": "pi.AF-AC.off",
+        "attempt": 1,
+        "activeMs": 314520,
+        "evaluationMs": 21918
+      },
+      {
+        "conditionId": "pi.AF-AC.on",
+        "attempt": 1,
+        "activeMs": 243757,
+        "evaluationMs": 21914
+      },
+      {
+        "conditionId": "irf.CC-CF-CC.off",
+        "attempt": 1,
+        "activeMs": 383607,
+        "evaluationMs": 20124
+      },
+      {
+        "conditionId": "irf.CC-CF-CC.on",
+        "attempt": 1,
+        "activeMs": 349584,
+        "evaluationMs": 20914
+      },
+      {
+        "conditionId": "irf.CC-AF-CC.off",
+        "attempt": 1,
+        "activeMs": 346078,
+        "evaluationMs": 21954
+      },
+      {
+        "conditionId": "irf.CC-AF-CC.on",
+        "attempt": 1,
+        "activeMs": 330399,
+        "evaluationMs": 20040
+      },
+      {
+        "conditionId": "irf.AC-CF-AC.off",
+        "attempt": 1,
+        "activeMs": 298888,
+        "evaluationMs": 22110
+      },
+      {
+        "conditionId": "irf.AC-CF-AC.on",
+        "attempt": 1,
+        "activeMs": 348078,
+        "evaluationMs": 20926
+      },
+      {
+        "conditionId": "irf.AC-AF-AC.off",
+        "attempt": 1,
+        "activeMs": 220018,
+        "evaluationMs": 20967
+      },
+      {
+        "conditionId": "irf.AC-AF-AC.on",
+        "attempt": 2,
+        "activeMs": 286015,
+        "evaluationMs": 22763
+      }
+    ]
+  },
+  "pilotEstimateGaps": [],
+  "safeguards": {
+    "required": [
+      "paid-overflow-guard",
+      "quota-pausing",
+      "recovery"
+    ],
+    "file": "records/cohort-03-pilots/safeguards.json",
+    "evidence": []
+  },
+  "hostEvidence": {
+    "dir": "records/cohort-03-pilots/host-evidence",
+    "maxAgeDays": 14,
+    "file": "records/cohort-03-pilots/host-evidence/host-2026-11-24T14-17-43Z.json",
+    "evidence": {
+      "schema": "harness-benchmark/host-evidence@1",
+      "checkedAt": "2026-11-24T14:17:43.784Z",
+      "phase": "after-campaign",
+      "runner": "aws-ec2/ap-southeast-2/t3.medium",
+      "hostId": "9073d9a2d96e7acdfe5e9acce87e8bc009a06e154b675d021381d15737ce0448",
+      "os": {
+        "type": "Linux",
+        "platform": "linux",
+        "release": "7.0.0-1018-aws",
+        "arch": "x64",
+        "distribution": "Ubuntu 24.04.5 LTS"
+      },
+      "node": "v22.23.4",
+      "benchmarkRevision": {
+        "commit": "ec6522eeb406c1500cd878e9cf6b0e4fa6b56076",
+        "source": "bundle"
+      },
+      "preflight": {
+        "codex": {
+          "ok": true,
+          "toolVersion": "0.169.0",
+          "termination": null,
+          "detail": null
+        },
+        "claude": {
+          "ok": true,
+          "toolVersion": "2.1.323",
+          "termination": null,
+          "detail": null
+        }
+      },
+      "isolation": {
+        "sandboxTool": "/usr/bin/bwrap",
+        "mechanism": "bwrap",
+        "toolVersion": "bubblewrap 0.9.0",
+        "kernel": {
+          "maxUserNamespaces": "12495",
+          "apparmorRestrictUnprivilegedUserns": "1",
+          "unprivilegedUsernsClone": "1"
+        }
+      }
+    },
+    "unmet": []
+  },
+  "preflight": {
+    "source": "recorded",
+    "codex": {
+      "ok": true,
+      "termination": null,
+      "pin": "0.169.0",
+      "toolVersion": "0.169.0",
+      "detail": null
+    },
+    "claude": {
+      "ok": true,
+      "termination": null,
+      "pin": "2.1.323",
+      "toolVersion": "2.1.323",
+      "detail": null
+    }
+  },
+  "isolation": {
+    "source": "recorded",
+    "platform": "linux",
+    "sandboxTool": "/usr/bin/bwrap",
+    "mechanism": "bwrap",
+    "requiredForScoring": true
+  },
+  "scheduleReproduces": true,
+  "seed": 20261114,
+  "roles": {
+    "CF": {
+      "toolVersion": "0.169.0",
+      "requestedModel": "gpt-6-astra",
+      "effort": "low"
+    },
+    "CC": {
+      "toolVersion": "0.169.0",
+      "requestedModel": "gpt-6-luna",
+      "effort": "high"
+    },
+    "AF": {
+      "toolVersion": "2.1.323",
+      "requestedModel": "claude-opus-5-5",
+      "effort": "medium"
+    },
+    "AC": {
+      "toolVersion": "2.1.323",
+      "requestedModel": "claude-haiku-5-5",
+      "effort": "medium"
+    }
+  },
+  "usageSemantics": {
+    "codex": "pilot-verified"
+  },
+  "priceSnapshotFiles": [
+    "cost-dev-2026-11-13.csv"
+  ],
+  "environment": {
+    "os": {
+      "type": "Linux",
+      "platform": "linux",
+      "release": "7.0.0-1018-aws",
+      "arch": "x64"
+    },
+    "cpu": {
+      "model": "Intel(R) Xeon(R) Platinum 8259CL CPU @ 2.50GHz",
+      "count": 2
+    },
+    "memoryBytes": 4018356224,
+    "node": "v22.23.4",
+    "hostId": "9073d9a2d96e7acdfe5e9acce87e8bc009a06e154b675d021381d15737ce0448",
+    "benchmarkRevision": {
+      "commit": "ec6522eeb406c1500cd878e9cf6b0e4fa6b56076",
+      "dirty": null,
+      "source": "bundle"
+    }
+  },
+  "artifacts": {
+    "scaffold": {
+      "files": 9,
+      "sha256": "c2ab704b75ac38fbc97582b85068572539ee473d4b36d8c2757cc25cc3b3c4c5"
+    },
+    "checkSuites": {
+      "files": 4,
+      "sha256": "60397e8c1d966e2ab94a17a17ad5c9b4e16247eb2f4f42a81973218cad17a00c"
+    },
+    "references": {
+      "files": 35,
+      "sha256": "19ef5037320a11b50150baa76aab09d8d527cabc738066ae9de4a079367f93ea"
+    },
+    "evaluator": {
+      "files": 13,
+      "sha256": "f727c98ffff8aa5e6f341f598380cfbed7dba1de269f0980e565a7c923b7a2b4"
+    },
+    "runner": {
+      "files": 56,
+      "sha256": "5ac356a9a4fc3945b70b5fbf49f5cd5f59898ab8c8e026dfb39ec148482e5a93"
+    },
+    "prompts": {
+      "files": 10,
+      "sha256": "8e44a2fa4d8f794a39bca0ebd3dc8a63b558b1b7c49ebba4b1ab30ba8c848407"
+    },
+    "config": {
+      "files": 9,
+      "sha256": "092ae0921a06e0b29eb7d998880622176279b87df0a877c3b5f1c39b7a4bf339"
+    },
+    "methodology": {
+      "files": 1,
+      "sha256": "ac8107aa8e120b91b5ade2a91366062a8c8db3bed16a74cd8a18bcaab35a2d67"
+    },
+    "task": {
+      "files": 1,
+      "sha256": "b7f81abc3d96ff2493b4ae80a82ffa2753b5abfe0a8d9bd80ed74d46c29507e8"
+    },
+    "packageLock": {
+      "files": 1,
+      "sha256": "a7abea6f7d6dc9c16218a520c5185d8f665c8d824465e2b361b7ebab95b20cbb"
+    },
+    "priceSnapshot": {
+      "files": 7,
+      "sha256": "898c4b51fe996f91e9297d965c05ce2418ce6a194a829ecb1c38d632d2ddc593"
+    }
+  }
+}

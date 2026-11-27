@@ -1,0 +1,122 @@
+{
+  "stageId": "cohort-03-b01-s09-a1--s2-review",
+  "role": "CF",
+  "provider": "openai",
+  "tool": "codex",
+  "toolVersion": "0.169.0",
+  "mode": "fresh",
+  "requestedModel": "gpt-6-astra",
+  "resolvedModel": "gpt-6-astra",
+  "resolvedModelSource": "session rollout turn_context",
+  "requestedEffort": "low",
+  "appliedEffort": "low",
+  "sessionId": "01a20e36-2228-7ca2-98fe-57f934fb7d32",
+  "termination": "completed",
+  "terminationDetail": null,
+  "exitCode": 0,
+  "signal": null,
+  "startedAt": "2026-11-24T15:39:18.045Z",
+  "endedAt": "2026-11-24T15:40:14.757Z",
+  "durationMs": 56712,
+  "finalMessage": "# Review findings\n\n1. [major] src/store.ts:118 — SQLite TEXT storage corrupts some valid inputs.\n   Evidence: An in-memory test using the source returned `\"a\"` after submitting `\"a\\u0000b\"`, and `\"a�b\"` after submitting `\"a\\ud800b\"`. Both pass validation. This violates exact input preservation and causes the worker to uppercase corrupted text.\n   Fix: Encode input and output losslessly before SQLite storage, for example with JSON.stringify, and decode them when reading. Verify embedded NULs and unpaired surrogates survive submission, processing, and retrieval.\n\n2. [major] src/store.ts:178 — Restart recovery incorrectly subtracts previously started attempts.\n   Evidence: Claiming a job sets `attempts` to 1; `requeueRunning()` reduces it to 0; claiming it again reports 1 despite two attempts having started. `interrupt()` repeats this behavior on graceful shutdown. Restarting during processing therefore undercounts attempts and reuses failure-attempt numbers.\n   Fix: Preserve the attempt count when requeuing interrupted jobs, increment it when processing starts again, and apply the retry limit consistently during recovery. Verify both SIGTERM and SIGKILL recovery paths.",
+  "usage": {
+    "source": "codex exec --json turn.completed.usage",
+    "semantics": "turn.completed usage summed within this invocation; per-turn vs session-cumulative on resume is unverified until the pilot (methodology 9)",
+    "completeness": "complete",
+    "raw": [
+      {
+        "input_tokens": 150642,
+        "cached_input_tokens": 130176,
+        "cache_write_input_tokens": 0,
+        "output_tokens": 1213,
+        "reasoning_output_tokens": 408
+      }
+    ],
+    "supplementary": {
+      "rolloutCumulativeBefore": null,
+      "rolloutCumulativeAfter": {
+        "input_tokens": 150642,
+        "cached_input_tokens": 130176,
+        "cache_write_input_tokens": 0,
+        "output_tokens": 1213,
+        "reasoning_output_tokens": 408,
+        "total_tokens": 151855
+      },
+      "rolloutFound": true,
+      "malformedEventLines": 0,
+      "turnsStarted": 1,
+      "turnsCompleted": 1,
+      "signalsSent": []
+    }
+  },
+  "recordFiles": [
+    "prompt.md",
+    "events.jsonl",
+    "stderr.txt",
+    "last-message.md",
+    "stage.json"
+  ],
+  "settings": {
+    "model": "gpt-6-astra",
+    "model_reasoning_effort": "low",
+    "approval_policy": "never",
+    "sandbox_mode": "read-only",
+    "stage_permission": "read-only",
+    "outer_isolation": "bwrap",
+    "sandbox_workspace_write.network_access": "false",
+    "ignoreUserConfig": true,
+    "ignoreRules": true,
+    "ephemeral": false,
+    "resumeLatest": "never",
+    "fallbackModel": "none (Codex has no fallback option)",
+    "env": [
+      "CODEX_HOME",
+      "HOME",
+      "LANG",
+      "NO_COLOR",
+      "PATH",
+      "TMPDIR",
+      "npm_config_audit",
+      "npm_config_cache",
+      "npm_config_fund",
+      "npm_config_update_notifier"
+    ],
+    "isolation": {
+      "mechanism": "bwrap",
+      "hidden": [
+        ".",
+        "~"
+      ],
+      "writable": [
+        ".runs/campaign/cohort-03/block-01/slot-09-irf.AC-CF-AC.on/attempt-1/homes/s2-review"
+      ],
+      "readable": [
+        "node_modules",
+        "../../node-v22.23.4",
+        ".runs/campaign/cohort-03/block-01/slot-09-irf.AC-CF-AC.on/attempt-1/snapshots/s2-review"
+      ],
+      "network": "shared host network namespace (provider API)"
+    },
+    "argv": [
+      "exec",
+      "--json",
+      "--ignore-user-config",
+      "--ignore-rules",
+      "-m",
+      "gpt-6-astra",
+      "-c",
+      "model_reasoning_effort=\"low\"",
+      "-c",
+      "approval_policy=\"never\"",
+      "-c",
+      "sandbox_workspace_write.network_access=false",
+      "-o",
+      "<capture>/last-message.md",
+      "--sandbox",
+      "read-only",
+      "-C",
+      "<workspace>",
+      "-"
+    ]
+  }
+}

@@ -1,0 +1,3 @@
+Addressed all five findings: crash recovery preserves the three-attempt limit, worker heartbeats refresh during long jobs, validation includes invalid idempotency keys, blank UI fields use API defaults, and idempotency lookups stay within one transaction.
+
+`npm run build` passes. The worker recovery and heartbeat checks pass. HTTP smoke and contract checks remain blocked because this environment denies local port binding (`listen EPERM`).

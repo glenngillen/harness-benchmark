@@ -1,0 +1,129 @@
+{
+  "stageId": "cohort-03-b05-s17-a1--s3-fix",
+  "role": "CC",
+  "provider": "openai",
+  "tool": "codex",
+  "toolVersion": "0.169.0",
+  "mode": "resume",
+  "requestedModel": "gpt-6-luna",
+  "resolvedModel": "gpt-6-luna",
+  "resolvedModelSource": "session rollout turn_context",
+  "requestedEffort": "high",
+  "appliedEffort": "high",
+  "sessionId": "01a21014-08e7-7590-b6f2-bde05bffeb1c",
+  "termination": "completed",
+  "terminationDetail": null,
+  "exitCode": 0,
+  "signal": null,
+  "startedAt": "2026-11-25T00:24:59.745Z",
+  "endedAt": "2026-11-25T00:26:51.574Z",
+  "durationMs": 111829,
+  "finalMessage": "Addressed all six findings: interrupted attempts now count toward the three attempt limit; the server returns JSON for request errors and guards rollback; the worker retries after database errors and requeues active work on shutdown; and missing or invalid content types report both `body` and `Content-Type`.\n\n`npm run build` passes, and the worker starts and shuts down cleanly. The server and supplied checks could not be exercised because this sandbox rejects localhost socket binding with `listen EPERM`.",
+  "usage": {
+    "source": "codex exec --json turn.completed.usage",
+    "semantics": "turn.completed usage summed within this invocation; per-turn vs session-cumulative on resume is unverified until the pilot (methodology 9)",
+    "completeness": "complete",
+    "raw": [
+      {
+        "input_tokens": 902984,
+        "cached_input_tokens": 857600,
+        "cache_write_input_tokens": 0,
+        "output_tokens": 13505,
+        "reasoning_output_tokens": 5364
+      }
+    ],
+    "supplementary": {
+      "rolloutCumulativeBefore": {
+        "input_tokens": 372520,
+        "cached_input_tokens": 346752,
+        "cache_write_input_tokens": 0,
+        "output_tokens": 8371,
+        "reasoning_output_tokens": 2435,
+        "total_tokens": 380891
+      },
+      "rolloutCumulativeAfter": {
+        "input_tokens": 902984,
+        "cached_input_tokens": 857600,
+        "cache_write_input_tokens": 0,
+        "output_tokens": 13505,
+        "reasoning_output_tokens": 5364,
+        "total_tokens": 916489
+      },
+      "rolloutFound": true,
+      "malformedEventLines": 0,
+      "turnsStarted": 1,
+      "turnsCompleted": 1,
+      "signalsSent": []
+    }
+  },
+  "recordFiles": [
+    "prompt.md",
+    "events.jsonl",
+    "stderr.txt",
+    "last-message.md",
+    "stage.json"
+  ],
+  "settings": {
+    "model": "gpt-6-luna",
+    "model_reasoning_effort": "high",
+    "approval_policy": "never",
+    "sandbox_mode": "workspace-write",
+    "stage_permission": "workspace-write",
+    "outer_isolation": "bwrap",
+    "sandbox_workspace_write.network_access": "false",
+    "ignoreUserConfig": true,
+    "ignoreRules": true,
+    "ephemeral": false,
+    "resumeLatest": "never",
+    "fallbackModel": "none (Codex has no fallback option)",
+    "env": [
+      "CODEX_HOME",
+      "HOME",
+      "LANG",
+      "NO_COLOR",
+      "PATH",
+      "TMPDIR",
+      "npm_config_audit",
+      "npm_config_cache",
+      "npm_config_fund",
+      "npm_config_update_notifier"
+    ],
+    "isolation": {
+      "mechanism": "bwrap",
+      "hidden": [
+        ".",
+        "~"
+      ],
+      "writable": [
+        ".runs/campaign/cohort-03/block-05/slot-17-irf.CC-AF-CC.off/attempt-1/homes/s1-implement",
+        ".runs/campaign/cohort-03/block-05/slot-17-irf.CC-AF-CC.off/attempt-1/workspace"
+      ],
+      "readable": [
+        "node_modules",
+        "../../node-v22.23.4"
+      ],
+      "network": "shared host network namespace (provider API)"
+    },
+    "argv": [
+      "exec",
+      "resume",
+      "--json",
+      "--ignore-user-config",
+      "--ignore-rules",
+      "-m",
+      "gpt-6-luna",
+      "-c",
+      "model_reasoning_effort=\"high\"",
+      "-c",
+      "approval_policy=\"never\"",
+      "-c",
+      "sandbox_workspace_write.network_access=false",
+      "-o",
+      "<capture>/last-message.md",
+      "-c",
+      "sandbox_mode=\"workspace-write\"",
+      "01a21014-08e7-7590-b6f2-bde05bffeb1c",
+      "-"
+    ]
+  }
+}

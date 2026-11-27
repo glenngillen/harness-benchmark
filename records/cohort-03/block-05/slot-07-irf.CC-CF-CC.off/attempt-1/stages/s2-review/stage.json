@@ -1,0 +1,122 @@
+{
+  "stageId": "cohort-03-b05-s07-a1--s2-review",
+  "role": "CF",
+  "provider": "openai",
+  "tool": "codex",
+  "toolVersion": "0.169.0",
+  "mode": "fresh",
+  "requestedModel": "gpt-6-astra",
+  "resolvedModel": "gpt-6-astra",
+  "resolvedModelSource": "session rollout turn_context",
+  "requestedEffort": "low",
+  "appliedEffort": "low",
+  "sessionId": "01a20fea-1701-7b80-8788-ab3a493c98b7",
+  "termination": "completed",
+  "terminationDetail": null,
+  "exitCode": 0,
+  "signal": null,
+  "startedAt": "2026-11-24T23:35:28.914Z",
+  "endedAt": "2026-11-24T23:36:33.592Z",
+  "durationMs": 64678,
+  "finalMessage": "# Review findings\n\n1. [major] src/worker.ts:30 — Restarting during the third attempt incorrectly fails a recoverable job.\n   Evidence: Startup requeues running jobs, but the processing loop immediately fails any job with `attempts >= 3`. An in-memory reproduction with `failAttempts: 2`, `attempts: 3`, and partial progress became `failed` with `\"transient failure\"` without processing another step. That third attempt should succeed, and interrupted jobs must be processed again.\n   Fix: Distinguish interrupted attempts from transient failures and replay the unfinished attempt on recovery, including attempt 3. Only terminally fail after the specified transient failure actually occurs.\n\n2. [major] src/db.ts:37 — SQLite text storage does not preserve all accepted JavaScript strings.\n   Evidence: Using the application's database helpers, storing `\"a\\u0000b\"` returned `\"a\"`, and storing `\"a\\ud800b\"` returned `\"a�b\"`. Both inputs pass validation. This violates exact input preservation and also changes the worker's uppercase output.\n   Fix: Store input and output using a lossless encoding, such as JSON-encoded strings, and decode them when constructing job responses and processing input.\n\n3. [minor] ui/index.html:18 — Native form validation prevents invalid values from reaching the API.\n   Evidence: The form lacks `novalidate`, while its fields impose `required`, range, and integer constraints. Submitting empty input, `steps: 21`, or fractional steps therefore prevents the submit handler from running; the API cannot validate these submissions, and `form-error` does not display their offending field names.\n   Fix: Add `novalidate` to the form so submissions reach the existing API validation and error-rendering handler.",
+  "usage": {
+    "source": "codex exec --json turn.completed.usage",
+    "semantics": "turn.completed usage summed within this invocation; per-turn vs session-cumulative on resume is unverified until the pilot (methodology 9)",
+    "completeness": "complete",
+    "raw": [
+      {
+        "input_tokens": 174573,
+        "cached_input_tokens": 156160,
+        "cache_write_input_tokens": 0,
+        "output_tokens": 1834,
+        "reasoning_output_tokens": 440
+      }
+    ],
+    "supplementary": {
+      "rolloutCumulativeBefore": null,
+      "rolloutCumulativeAfter": {
+        "input_tokens": 174573,
+        "cached_input_tokens": 156160,
+        "cache_write_input_tokens": 0,
+        "output_tokens": 1834,
+        "reasoning_output_tokens": 440,
+        "total_tokens": 176407
+      },
+      "rolloutFound": true,
+      "malformedEventLines": 0,
+      "turnsStarted": 1,
+      "turnsCompleted": 1,
+      "signalsSent": []
+    }
+  },
+  "recordFiles": [
+    "prompt.md",
+    "events.jsonl",
+    "stderr.txt",
+    "last-message.md",
+    "stage.json"
+  ],
+  "settings": {
+    "model": "gpt-6-astra",
+    "model_reasoning_effort": "low",
+    "approval_policy": "never",
+    "sandbox_mode": "read-only",
+    "stage_permission": "read-only",
+    "outer_isolation": "bwrap",
+    "sandbox_workspace_write.network_access": "false",
+    "ignoreUserConfig": true,
+    "ignoreRules": true,
+    "ephemeral": false,
+    "resumeLatest": "never",
+    "fallbackModel": "none (Codex has no fallback option)",
+    "env": [
+      "CODEX_HOME",
+      "HOME",
+      "LANG",
+      "NO_COLOR",
+      "PATH",
+      "TMPDIR",
+      "npm_config_audit",
+      "npm_config_cache",
+      "npm_config_fund",
+      "npm_config_update_notifier"
+    ],
+    "isolation": {
+      "mechanism": "bwrap",
+      "hidden": [
+        ".",
+        "~"
+      ],
+      "writable": [
+        ".runs/campaign/cohort-03/block-05/slot-07-irf.CC-CF-CC.off/attempt-1/homes/s2-review"
+      ],
+      "readable": [
+        "node_modules",
+        "../../node-v22.23.4",
+        ".runs/campaign/cohort-03/block-05/slot-07-irf.CC-CF-CC.off/attempt-1/snapshots/s2-review"
+      ],
+      "network": "shared host network namespace (provider API)"
+    },
+    "argv": [
+      "exec",
+      "--json",
+      "--ignore-user-config",
+      "--ignore-rules",
+      "-m",
+      "gpt-6-astra",
+      "-c",
+      "model_reasoning_effort=\"low\"",
+      "-c",
+      "approval_policy=\"never\"",
+      "-c",
+      "sandbox_workspace_write.network_access=false",
+      "-o",
+      "<capture>/last-message.md",
+      "--sandbox",
+      "read-only",
+      "-C",
+      "<workspace>",
+      "-"
+    ]
+  }
+}

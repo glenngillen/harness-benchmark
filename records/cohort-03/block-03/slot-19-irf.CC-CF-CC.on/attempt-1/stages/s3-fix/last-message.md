@@ -1,0 +1,3 @@
+Addressed all three findings: request bodies now decode UTF-8 across chunk boundaries, restart recovery preserves the attempt count and enforces the three-attempt limit, and the form uses `novalidate` so API validation displays errors.
+
+`npm run build` passes, and the worker starts. I couldn’t verify server startup or run the checks that need a local HTTP listener because this environment blocks network binding (`listen EPERM`).

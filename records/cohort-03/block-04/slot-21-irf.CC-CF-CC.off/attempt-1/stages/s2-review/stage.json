@@ -1,0 +1,122 @@
+{
+  "stageId": "cohort-03-b04-s21-a1--s2-review",
+  "role": "CF",
+  "provider": "openai",
+  "tool": "codex",
+  "toolVersion": "0.169.0",
+  "mode": "fresh",
+  "requestedModel": "gpt-6-astra",
+  "resolvedModel": "gpt-6-astra",
+  "resolvedModelSource": "session rollout turn_context",
+  "requestedEffort": "low",
+  "appliedEffort": "low",
+  "sessionId": "01a20fba-6faa-72f0-a277-6ab820acf306",
+  "termination": "completed",
+  "terminationDetail": null,
+  "exitCode": 0,
+  "signal": null,
+  "startedAt": "2026-11-24T22:43:25.885Z",
+  "endedAt": "2026-11-24T22:44:35.153Z",
+  "durationMs": 69268,
+  "finalMessage": "# Review findings\n\n1. [major] src/worker.ts:13 — Restarting the worker can permanently fail a job whose successful attempt was interrupted.\n   Evidence: Startup marks every `running` job with `attempts >= 3` as failed. A job with `failAttempts: 2` that is killed partway through attempt 3 therefore becomes `\"failed\"` on restart, even though that attempt should succeed. The task requires interrupted running jobs to be processed again.\n   Fix: Recover interrupted work without declaring a simulated transient failure. Allow the interrupted final attempt to finish, and reserve terminal `\"transient failure\"` for an actual third failed attempt.\n\n2. [major] src/server.ts:54 — An unknown request path can crash the server instead of returning JSON.\n   Evidence: Invoking the request handler with `GET //[` rejects with `Invalid URL`. `new URL()` interprets the leading `//` as an authority, and its exception escapes the async handler. Node’s HTTP server does not handle that rejected promise, so normal unhandled-rejection behavior terminates the process.\n   Fix: Parse request paths defensively and catch URL parsing errors, returning the required JSON `404 not_found` for unknown paths.\n\n3. [major] src/server.ts:20 — Request decoding corrupts valid Unicode input when a character spans chunks.\n   Evidence: Calling the handler with the UTF-8 bytes for `{\"input\":\"café\",\"steps\":1}` split between the two bytes of `é` returned `201` with stored input `\"caf��\"`. Independently calling `toString()` on each chunk loses incomplete UTF-8 sequences, violating exact input preservation and producing incorrect output.\n   Fix: Use streaming UTF-8 decoding, such as `req.setEncoding('utf8')`, or concatenate buffers and decode once after reading the body.",
+  "usage": {
+    "source": "codex exec --json turn.completed.usage",
+    "semantics": "turn.completed usage summed within this invocation; per-turn vs session-cumulative on resume is unverified until the pilot (methodology 9)",
+    "completeness": "complete",
+    "raw": [
+      {
+        "input_tokens": 137847,
+        "cached_input_tokens": 122496,
+        "cache_write_input_tokens": 0,
+        "output_tokens": 1907,
+        "reasoning_output_tokens": 496
+      }
+    ],
+    "supplementary": {
+      "rolloutCumulativeBefore": null,
+      "rolloutCumulativeAfter": {
+        "input_tokens": 137847,
+        "cached_input_tokens": 122496,
+        "cache_write_input_tokens": 0,
+        "output_tokens": 1907,
+        "reasoning_output_tokens": 496,
+        "total_tokens": 139754
+      },
+      "rolloutFound": true,
+      "malformedEventLines": 0,
+      "turnsStarted": 1,
+      "turnsCompleted": 1,
+      "signalsSent": []
+    }
+  },
+  "recordFiles": [
+    "prompt.md",
+    "events.jsonl",
+    "stderr.txt",
+    "last-message.md",
+    "stage.json"
+  ],
+  "settings": {
+    "model": "gpt-6-astra",
+    "model_reasoning_effort": "low",
+    "approval_policy": "never",
+    "sandbox_mode": "read-only",
+    "stage_permission": "read-only",
+    "outer_isolation": "bwrap",
+    "sandbox_workspace_write.network_access": "false",
+    "ignoreUserConfig": true,
+    "ignoreRules": true,
+    "ephemeral": false,
+    "resumeLatest": "never",
+    "fallbackModel": "none (Codex has no fallback option)",
+    "env": [
+      "CODEX_HOME",
+      "HOME",
+      "LANG",
+      "NO_COLOR",
+      "PATH",
+      "TMPDIR",
+      "npm_config_audit",
+      "npm_config_cache",
+      "npm_config_fund",
+      "npm_config_update_notifier"
+    ],
+    "isolation": {
+      "mechanism": "bwrap",
+      "hidden": [
+        ".",
+        "~"
+      ],
+      "writable": [
+        ".runs/campaign/cohort-03/block-04/slot-21-irf.CC-CF-CC.off/attempt-1/homes/s2-review"
+      ],
+      "readable": [
+        "node_modules",
+        "../../node-v22.23.4",
+        ".runs/campaign/cohort-03/block-04/slot-21-irf.CC-CF-CC.off/attempt-1/snapshots/s2-review"
+      ],
+      "network": "shared host network namespace (provider API)"
+    },
+    "argv": [
+      "exec",
+      "--json",
+      "--ignore-user-config",
+      "--ignore-rules",
+      "-m",
+      "gpt-6-astra",
+      "-c",
+      "model_reasoning_effort=\"low\"",
+      "-c",
+      "approval_policy=\"never\"",
+      "-c",
+      "sandbox_workspace_write.network_access=false",
+      "-o",
+      "<capture>/last-message.md",
+      "--sandbox",
+      "read-only",
+      "-C",
+      "<workspace>",
+      "-"
+    ]
+  }
+}

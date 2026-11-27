@@ -1,0 +1,3 @@
+Addressed all six findings: invalid form submissions now reach the API, blank numeric fields use server defaults, interrupted jobs resume without exceeding three logical attempts, and server errors, shutdown, and heartbeat failures are handled.
+
+`npm run build` passes, and the worker starts. I couldn’t start the server or run the smoke and contract checks because this environment rejects socket binding with `listen EPERM`.

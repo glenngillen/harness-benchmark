@@ -1,0 +1,3 @@
+Addressed all three findings: interrupted attempts resume without incrementing `attempts`, explicit `null` numeric fields are rejected, and request chunks are decoded only after concatenation.
+
+The build passes, and a recovery check confirmed a third failed attempt ends as `failed` with `attempts: 3`. The worker starts. The smoke and contract checks—and the server startup attempt—remain blocked by this environment’s `listen EPERM` error.

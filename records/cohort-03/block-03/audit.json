@@ -1,0 +1,25 @@
+{
+  "schema": "harness-benchmark/quota-audit@1",
+  "label": "cohort-03",
+  "block": 3,
+  "patterns": {
+    "file": "config/quota-audit.json",
+    "sha256": "ba41ade397c28c2d094d7d5fd5a88a0552a49994ec4d38feb68d0116e0c15a4f"
+  },
+  "generatedAt": "2026-11-25T13:07:50.774Z",
+  "scope": "scored-failure",
+  "scanned": [
+    {
+      "slot": 20,
+      "attempt": 1,
+      "conditionId": "irf.AC-AF-AC.off",
+      "termination": "stage-timeout",
+      "sources": 6,
+      "flags": 0
+    }
+  ],
+  "flags": [],
+  "status": "complete",
+  "pendingFlags": 0,
+  "reclassified": []
+}

@@ -1,0 +1,281 @@
+{
+  "stageId": "cohort-03-b01-s19-a1--s2-review",
+  "role": "AF",
+  "provider": "anthropic",
+  "tool": "claude-code",
+  "toolVersion": "2.1.323",
+  "mode": "fresh",
+  "requestedModel": "claude-opus-5-5",
+  "requestedEffort": "medium",
+  "appliedEffort": null,
+  "resolvedModel": "claude-opus-5-5",
+  "resolvedModelSource": "stream-json assistant message.model",
+  "sessionId": "7cd0f0e1-8e43-4826-bd67-88a75778752e",
+  "termination": "completed",
+  "terminationDetail": null,
+  "exitCode": 0,
+  "signal": null,
+  "startedAt": "2026-11-24T16:24:54.179Z",
+  "endedAt": "2026-11-24T16:25:31.037Z",
+  "durationMs": 36858,
+  "finalMessage": "# Review findings\n\n1. [major] ui/index.html:19-21 — The browser's built-in form validation stops many bad submissions before they reach the API, so `form-error` stays empty. The fields have `required`, `maxlength=\"1000\"`, `min`/`max` and `step` attributes, and the form has no `novalidate`. The task says form submissions go to `POST /api/jobs` \"so the API's validation applies\", and that `form-error` shows the API's rejection with each offending field's name.\n   Evidence: With steps = 50, failAttempts = 9, steps = 1.5 or an empty input, the browser blocks the `submit` event. No request is sent and nothing appears in `[data-testid=\"form-error\"]`. `maxlength` also makes it impossible to type more than 1000 characters, so that rejection can never be shown either.\n   Fix: Add `novalidate` to the `<form>`, or remove `required`, `maxlength`, `min`, `max` and `step`. Then every submission reaches the API and its 400 `fields` are shown. Also check that an empty steps box is sent as a value the API rejects or defaults sensibly. Right now `Number('')` becomes `0`, which is rejected; that is acceptable.\n\n2. [minor] src/worker.ts:7,22,31 — Jobs recovered after a crash can exceed the 3-attempt cap. On restart, `running` rows go back to `queued` with `attempts` unchanged, and `claim()` always does `attempts+1`. The failure check is also `attempts >= 3`, not `== 3`.\n   Evidence: If the worker is killed during attempt 3 (for example, `failAttempts: 2`, or a long `steps: 20` job on its third try), the job is reclaimed as attempt 4. The task says \"up to 3 attempts in total\". If the job then fails, it reports `attempts: 4`, but the task requires `attempts` = 3.\n   Fix: When claiming, if `attempts >= 3`, mark the job `failed` with `error='transient failure'` instead of starting another attempt. Alternatively, when recovering, decide whether the abandoned attempt counts toward the cap. Either way, keep a final `failed` job at `attempts` = 3.\n\n3. [minor] src/server.ts:33-84 — The request handler is an `async` function with no try/catch. Any exception from SQLite (for example `SQLITE_BUSY` after the 5 s busy timeout, or a UNIQUE violation) becomes an unhandled promise rejection. On Node 22 that crashes the server process, and the request gets no response.\n   Evidence: Line 73 rethrows after `ROLLBACK`. Lines 38 and 43 call `db.prepare(...)` unguarded. Line 64 only returns when `getJob` finds the job. If the idempotency row exists but the job row is missing, execution falls through to the insert, and the `INSERT INTO idempotency` on line 70 throws a primary-key error that kills the server.\n   Fix: Wrap the handler body in try/catch and return `500 {\"error\":{\"code\":\"internal_error\",...}}`. Make the \"prior key but missing job\" case return an error instead of falling through to the insert.\n\n4. [minor] src/server.ts:52-55 — The `Idempotency-Key` header is only checked after the body passes validation. When both the body and the key are invalid, the key is not reported, but the task says \"each offending field listed in `fields`\".\n   Evidence: Sending `{\"steps\":\"3\"}` with the header `Idempotency-Key: bad key!` returns fields for `input` and `steps` only, with no `Idempotency-Key` entry.\n   Fix: Validate the header first and merge its field error into the same `fields` array as the body validation, so all problems are returned in one 400.\n\n5. [minor] src/worker.ts:46-56 — An exception in `claim()` or `processJob()` (for example a busy or locked database) leaves the loop through `finally` and the worker process exits. Health then reports `down` and queued jobs stop being processed.\n   Evidence: `processJob` and `claim` have no error handling inside the loop. `claim` only rolls back and rethrows.\n   Fix: Inside the loop, catch errors per iteration, log them, sleep briefly and continue. Only exit when `stopping` is set.",
+  "usage": {
+    "source": "claude -p --output-format stream-json: assistant message.usage, result.model_usage_since_last_result, result.modelUsage",
+    "semantics": "requests: assistant message usage per API request (deduplicated by message id); sinceLastResult: result.model_usage_since_last_result per model, incremental, summed across results; cumulative: result.modelUsage per model, session-cumulative (continues across resume), never summed",
+    "completeness": "complete",
+    "raw": [
+      {
+        "kind": "request",
+        "messageId": "msg_011ChN4fnQYR7QC3iYkGT9rN",
+        "model": "claude-opus-5-5",
+        "usage": {
+          "input_tokens": 2,
+          "cache_creation_input_tokens": 352,
+          "cache_read_input_tokens": 7245,
+          "cache_creation": {
+            "ephemeral_5m_input_tokens": 0,
+            "ephemeral_1h_input_tokens": 352
+          },
+          "output_tokens": 5,
+          "service_tier": "standard",
+          "inference_geo": "global",
+          "speed": "standard"
+        }
+      },
+      {
+        "kind": "request",
+        "messageId": "msg_011ChN4g8Df38j5ESPA1NEpf",
+        "model": "claude-opus-5-5",
+        "usage": {
+          "input_tokens": 2,
+          "cache_creation_input_tokens": 7600,
+          "cache_read_input_tokens": 7597,
+          "cache_creation": {
+            "ephemeral_5m_input_tokens": 0,
+            "ephemeral_1h_input_tokens": 7600
+          },
+          "output_tokens": 4,
+          "service_tier": "standard",
+          "inference_geo": "global",
+          "speed": "standard"
+        }
+      },
+      {
+        "kind": "request",
+        "messageId": "msg_011ChN4h1fnrdfTzCTyQnVWQ",
+        "model": "claude-opus-5-5",
+        "usage": {
+          "input_tokens": 2,
+          "cache_creation_input_tokens": 1710,
+          "cache_read_input_tokens": 15197,
+          "cache_creation": {
+            "ephemeral_5m_input_tokens": 0,
+            "ephemeral_1h_input_tokens": 1710
+          },
+          "output_tokens": 8,
+          "service_tier": "standard",
+          "inference_geo": "global",
+          "speed": "standard"
+        }
+      },
+      {
+        "kind": "result",
+        "index": 0,
+        "usage": {
+          "input_tokens": 6,
+          "cache_creation_input_tokens": 9662,
+          "cache_read_input_tokens": 30039,
+          "output_tokens": 3356,
+          "output_tokens_details": {
+            "thinking_tokens": 1253
+          },
+          "server_tool_use": {
+            "web_search_requests": 0,
+            "web_fetch_requests": 0
+          },
+          "service_tier": "standard",
+          "cache_creation": {
+            "ephemeral_1h_input_tokens": 9662,
+            "ephemeral_5m_input_tokens": 0
+          },
+          "inference_geo": "global",
+          "iterations": [],
+          "speed": "standard",
+          "fallback_credit": null
+        },
+        "sinceLastResult": {
+          "claude-opus-5-5": {
+            "inputTokens": 6,
+            "outputTokens": 3356,
+            "cacheReadInputTokens": 30039,
+            "cacheCreationInputTokens": 9662,
+            "webSearchRequests": 0,
+            "costUSD": 0.1504478,
+            "contextWindow": 1000000,
+            "maxOutputTokens": 128000,
+            "thinkingTokens": 1253,
+            "cacheCreationEphemeral5mInputTokens": 0,
+            "cacheCreationEphemeral1hInputTokens": 9662,
+            "canonicalModel": "claude-opus-5-5",
+            "provider": "firstParty",
+            "costBasis": "list"
+          }
+        },
+        "modelUsage": {
+          "claude-opus-5-5": {
+            "inputTokens": 6,
+            "outputTokens": 3356,
+            "cacheReadInputTokens": 30039,
+            "cacheCreationInputTokens": 9662,
+            "webSearchRequests": 0,
+            "costUSD": 0.1504478,
+            "contextWindow": 1000000,
+            "maxOutputTokens": 128000,
+            "thinkingTokens": 1253,
+            "cacheCreationEphemeral5mInputTokens": 0,
+            "cacheCreationEphemeral1hInputTokens": 9662,
+            "canonicalModel": "claude-opus-5-5",
+            "provider": "firstParty",
+            "costBasis": "list"
+          }
+        },
+        "nativeCostEstimateUsd": 0.1504478
+      }
+    ],
+    "supplementary": {
+      "cumulativeBefore": null,
+      "cumulativeAfter": {
+        "claude-opus-5-5": {
+          "inputTokens": 6,
+          "outputTokens": 3356,
+          "cacheReadInputTokens": 30039,
+          "cacheCreationInputTokens": 9662,
+          "webSearchRequests": 0,
+          "costUSD": 0.1504478,
+          "contextWindow": 1000000,
+          "maxOutputTokens": 128000,
+          "thinkingTokens": 1253,
+          "cacheCreationEphemeral5mInputTokens": 0,
+          "cacheCreationEphemeral1hInputTokens": 9662,
+          "canonicalModel": "claude-opus-5-5",
+          "provider": "firstParty",
+          "costBasis": "list"
+        }
+      },
+      "auxiliaryModels": [],
+      "resultCount": 1,
+      "resultsMissingSinceLastResult": 0,
+      "numTurns": 7,
+      "permissionDenials": 0,
+      "apiRetries": 0,
+      "malformedEventLines": 0,
+      "signalsSent": [],
+      "init": {
+        "model": "claude-opus-5-5",
+        "apiKeySource": "none",
+        "tools": [
+          "Glob",
+          "Grep",
+          "Read"
+        ],
+        "permissionMode": "default",
+        "version": "2.1.323",
+        "mcpServers": []
+      }
+    }
+  },
+  "recordFiles": [
+    "prompt.md",
+    "events.jsonl",
+    "stderr.txt",
+    "last-message.md",
+    "stage.json"
+  ],
+  "settings": {
+    "model": "claude-opus-5-5",
+    "effort": "medium",
+    "tools": [
+      "Read",
+      "Grep",
+      "Glob"
+    ],
+    "allowedTools": [
+      "Read",
+      "Grep",
+      "Glob"
+    ],
+    "disallowedTools": [
+      "mcp__*"
+    ],
+    "permissionMode": "default",
+    "permissionPrompts": "none",
+    "settingSources": "none",
+    "promptSuggestions": false,
+    "slashCommands": "disabled",
+    "fallbackModel": "unset",
+    "bare": false,
+    "sessionPersistence": true,
+    "env": [
+      "CLAUDE_CODE_DISABLE_AUTO_MEMORY",
+      "CLAUDE_CODE_DISABLE_NONESSENTIAL_TRAFFIC",
+      "CLAUDE_CODE_OAUTH_TOKEN",
+      "CLAUDE_CODE_SUBPROCESS_ENV_SCRUB",
+      "CLAUDE_CONFIG_DIR",
+      "DISABLE_AUTOUPDATER",
+      "HOME",
+      "LANG",
+      "NO_COLOR",
+      "PATH",
+      "TMPDIR",
+      "npm_config_audit",
+      "npm_config_cache",
+      "npm_config_fund",
+      "npm_config_update_notifier"
+    ],
+    "tmpdir": "/tmp (private tmpfs of the stage sandbox)",
+    "managedPolicy": [],
+    "isolation": {
+      "mechanism": "bwrap",
+      "hidden": [
+        ".",
+        "~"
+      ],
+      "writable": [
+        ".runs/campaign/cohort-03/block-01/slot-19-irf.CC-AF-CC.on/attempt-1/homes/s2-review"
+      ],
+      "readable": [
+        "node_modules",
+        "../../node-v22.23.4",
+        ".runs/campaign/cohort-03/block-01/slot-19-irf.CC-AF-CC.on/attempt-1/snapshots/s2-review"
+      ],
+      "network": "shared host network namespace (provider API)"
+    },
+    "argv": [
+      "-p",
+      "--output-format",
+      "stream-json",
+      "--verbose",
+      "--model",
+      "claude-opus-5-5",
+      "--effort",
+      "medium",
+      "--setting-sources",
+      "",
+      "--prompt-suggestions",
+      "false",
+      "--disable-slash-commands",
+      "--permission-prompts",
+      "none",
+      "--permission-mode",
+      "default",
+      "--tools",
+      "Read,Grep,Glob",
+      "--allowedTools",
+      "Read,Grep,Glob",
+      "--disallowedTools",
+      "mcp__*",
+      "--session-id",
+      "7cd0f0e1-8e43-4826-bd67-88a75778752e"
+    ]
+  }
+}

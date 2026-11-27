@@ -1,0 +1,3 @@
+Implemented the SQLite-backed job API and worker, including validation, durable idempotency, retries, recovery, heartbeat health, graceful shutdown, and the polling browser UI.
+
+`npm run build` passes, and the worker starts with a fresh nested database path. Both check runners stop before reaching the app because this sandbox rejects localhost binding with `listen EPERM`; I couldn’t verify server startup here.

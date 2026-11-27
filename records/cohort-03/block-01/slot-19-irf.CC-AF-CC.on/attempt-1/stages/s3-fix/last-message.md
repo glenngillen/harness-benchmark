@@ -1,0 +1,3 @@
+Addressed all five findings. The form now sends invalid values to the API; validation combines body and idempotency key errors; server exceptions return JSON; crash recovery resumes the counted attempt; and the worker retries after loop errors.
+
+`npm run build` passes, and the worker starts and shuts down cleanly. I couldn’t verify the HTTP server or smoke checks because this environment rejects local network binds with `listen EPERM`.

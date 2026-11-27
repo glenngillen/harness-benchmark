@@ -1,0 +1,3 @@
+Addressed all eight findings: validation now combines invalid key and request errors; interrupted attempts are replayed without consuming an extra attempt; server request failures return JSON 500s; and the worker refreshes its heartbeat, checks claims, and recovers from loop errors. Request bodies are decoded from collected bytes, and `//` paths no longer resolve to the UI.
+
+`npm run build` passes, and the worker starts. The server and bundled checks remain unverified because this environment blocks localhost listeners with `EPERM`.

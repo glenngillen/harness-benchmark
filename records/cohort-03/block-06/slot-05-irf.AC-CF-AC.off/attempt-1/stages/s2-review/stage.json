@@ -1,0 +1,122 @@
+{
+  "stageId": "cohort-03-b06-s05-a1--s2-review",
+  "role": "CF",
+  "provider": "openai",
+  "tool": "codex",
+  "toolVersion": "0.169.0",
+  "mode": "fresh",
+  "requestedModel": "gpt-6-astra",
+  "resolvedModel": "gpt-6-astra",
+  "resolvedModelSource": "session rollout turn_context",
+  "requestedEffort": "low",
+  "appliedEffort": "low",
+  "sessionId": "01a21051-f198-7d62-be24-909fc1442cc8",
+  "termination": "completed",
+  "terminationDetail": null,
+  "exitCode": 0,
+  "signal": null,
+  "startedAt": "2026-11-25T01:28:55.059Z",
+  "endedAt": "2026-11-25T01:29:48.756Z",
+  "durationMs": 53697,
+  "finalMessage": "# Review findings\n\n1. [major] src/store.ts:109 — Restart recovery bypasses the three-attempt limit and can turn a failing job into a success.\n   Evidence: Reproduced using the store with an in-memory database: a `failAttempts: 3` job interrupted during attempt 3 is requeued by `recoverInterrupted()`, then claimed as attempt 4. The worker’s failure condition is now false, so it completes instead of becoming `failed` with `\"transient failure\"` and `attempts: 3`.\n   Fix: Make recovery enforce the retry limit and preserve the required failure outcome. Add coverage for restarting during the third attempt.\n\n2. [major] src/store.ts:122 — SQLite string round-tripping corrupts valid input.\n   Evidence: On the supplied Node 22 runtime, creating a job with `\"a\\u0000b\"` returns `input: \"a\"`; an unpaired surrogate `\"\\ud800\"` returns `\"�\"`. Both inputs pass validation. The worker reads this altered input, so its output also violates the required JavaScript `toUpperCase()` behavior.\n   Fix: Store input and output using a lossless representation, such as JSON-encoded strings, and decode them when constructing job responses and claiming work. Verify embedded NULs and unpaired surrogates round-trip exactly.\n\n3. [minor] src/store.ts:155 — Attempt-start and recovery updates produce invalid `updatedAt` timestamps.\n   Evidence: `claimNext()` and `recoverInterrupted()` bind epoch milliseconds directly into `updated_at`. The reproduced running job returned `\"updatedAt\": \"1795570156073.0\"` rather than an ISO 8601 timestamp. Recovery produces the same defect until another update replaces it.\n   Fix: Convert these timestamp values with `new Date(now).toISOString()` before writing `updated_at`; retain numeric milliseconds for scheduling comparisons.",
+  "usage": {
+    "source": "codex exec --json turn.completed.usage",
+    "semantics": "turn.completed usage summed within this invocation; per-turn vs session-cumulative on resume is unverified until the pilot (methodology 9)",
+    "completeness": "complete",
+    "raw": [
+      {
+        "input_tokens": 175578,
+        "cached_input_tokens": 151936,
+        "cache_write_input_tokens": 0,
+        "output_tokens": 1365,
+        "reasoning_output_tokens": 265
+      }
+    ],
+    "supplementary": {
+      "rolloutCumulativeBefore": null,
+      "rolloutCumulativeAfter": {
+        "input_tokens": 175578,
+        "cached_input_tokens": 151936,
+        "cache_write_input_tokens": 0,
+        "output_tokens": 1365,
+        "reasoning_output_tokens": 265,
+        "total_tokens": 176943
+      },
+      "rolloutFound": true,
+      "malformedEventLines": 0,
+      "turnsStarted": 1,
+      "turnsCompleted": 1,
+      "signalsSent": []
+    }
+  },
+  "recordFiles": [
+    "prompt.md",
+    "events.jsonl",
+    "stderr.txt",
+    "last-message.md",
+    "stage.json"
+  ],
+  "settings": {
+    "model": "gpt-6-astra",
+    "model_reasoning_effort": "low",
+    "approval_policy": "never",
+    "sandbox_mode": "read-only",
+    "stage_permission": "read-only",
+    "outer_isolation": "bwrap",
+    "sandbox_workspace_write.network_access": "false",
+    "ignoreUserConfig": true,
+    "ignoreRules": true,
+    "ephemeral": false,
+    "resumeLatest": "never",
+    "fallbackModel": "none (Codex has no fallback option)",
+    "env": [
+      "CODEX_HOME",
+      "HOME",
+      "LANG",
+      "NO_COLOR",
+      "PATH",
+      "TMPDIR",
+      "npm_config_audit",
+      "npm_config_cache",
+      "npm_config_fund",
+      "npm_config_update_notifier"
+    ],
+    "isolation": {
+      "mechanism": "bwrap",
+      "hidden": [
+        ".",
+        "~"
+      ],
+      "writable": [
+        ".runs/campaign/cohort-03/block-06/slot-05-irf.AC-CF-AC.off/attempt-1/homes/s2-review"
+      ],
+      "readable": [
+        "node_modules",
+        "../../node-v22.23.4",
+        ".runs/campaign/cohort-03/block-06/slot-05-irf.AC-CF-AC.off/attempt-1/snapshots/s2-review"
+      ],
+      "network": "shared host network namespace (provider API)"
+    },
+    "argv": [
+      "exec",
+      "--json",
+      "--ignore-user-config",
+      "--ignore-rules",
+      "-m",
+      "gpt-6-astra",
+      "-c",
+      "model_reasoning_effort=\"low\"",
+      "-c",
+      "approval_policy=\"never\"",
+      "-c",
+      "sandbox_workspace_write.network_access=false",
+      "-o",
+      "<capture>/last-message.md",
+      "--sandbox",
+      "read-only",
+      "-C",
+      "<workspace>",
+      "-"
+    ]
+  }
+}

@@ -1,0 +1,10 @@
+2026-11-24T16:26:26.216075Z ERROR codex_core::tools::router: error=apply_patch verification failed: Failed to find expected lines in /opt/harness/work/.runs/campaign/cohort-03/block-01/slot-19-irf.CC-AF-CC.on/attempt-1/workspace/src/server.ts:
+    if (!/^application\/json(?:\s*;|\s*$)/i.test(req.headers['content-type'] ?? '')) return error(res, 400, 'invalid_request', 'Content-Type must be application/json.', [{field:'Content-Type',message:'Must be application/json.'}]);
+    let raw: string;
+    try { raw = await readBody(req); } catch { return error(res, 400, 'invalid_request', 'Request body is too large.', [{field:'body',message:'Request body is too large.'}]); }
+    let parsed: unknown;
+    try { parsed = JSON.parse(raw); } catch { return error(res, 400, 'invalid_request', 'Malformed JSON.', [{field:'body',message:'Malformed JSON.'}]); }
+    const checked = validation(parsed);
+    if ('fields' in checked) return error(res, 400, 'invalid_request', 'Request validation failed.', checked.fields);
+    const key = req.headers['idempotency-key'];
+    if (Array.isArray(key) || (key !== undefined && !/^[A-Za-z0-9_-]{1,128}$/.test(key))) return error(res, 400, 'invalid_request', 'Invalid Idempotency-Key.', [{field:'Idempotency-Key',message:'Must match ^[A-Za-z0-9_-]{1,128}$. '}]);

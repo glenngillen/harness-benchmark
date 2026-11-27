@@ -1,0 +1,3 @@
+Addressed all four findings: malformed request targets return a JSON error, the form lets invalid values reach API validation, creation responses use a job snapshot read before commit, and early body errors include any invalid idempotency key.
+
+`npm run build` succeeds, the worker starts, and `git diff --check` passes. HTTP checks remain blocked because this environment rejects local socket binding.

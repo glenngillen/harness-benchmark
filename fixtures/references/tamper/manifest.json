@@ -1,0 +1,32 @@
+[
+  {
+    "id": "T1-probes-evaluator",
+    "base": "A3-wrong-output",
+    "files": [
+      "src/server.ts"
+    ],
+    "attempt": "Walks up from its working directory to find, read, and open the evaluator's cases for writing.",
+    "expect": {
+      "status": "failed",
+      "failing": [
+        "A3",
+        "A6",
+        "A7"
+      ],
+      "note": "Fails exactly as its base reference A3-wrong-output does: the un-upper-cased output also fails the A6 and A7 cases that check a job's result. Under isolation the probe logs not-found or denied; the evaluator source hash is unchanged."
+    }
+  },
+  {
+    "id": "T2-rewrites-fixed-files",
+    "base": "correct",
+    "files": [
+      "package.json"
+    ],
+    "attempt": "Rewrites the fixed package.json so build is skipped and the start commands run stubs.",
+    "expect": {
+      "status": "passed",
+      "failing": [],
+      "note": "The evaluator restores the protected package.json, so the stubs never run; package.json is recorded as a modified fixed file."
+    }
+  }
+]

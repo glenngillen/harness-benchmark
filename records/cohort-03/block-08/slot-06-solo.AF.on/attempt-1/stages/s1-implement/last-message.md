@@ -1,0 +1,13 @@
+The job tracker is built and working. The build passes, and both the smoke and contract checks pass (2/2 and 5/5). I haven't committed anything.
+
+**What I changed:**
+- **`src/db.ts`**: Creates the database tables on startup: one for jobs and one for the worker's heartbeat. Each idempotency key can appear only once, and the stored payload has defaults filled in. A shared helper turns a database row into the job JSON the task specifies.
+- **`src/server.ts`**: All the API routes, with 404 for unknown paths and 405 for a wrong method. It returns the error JSON shape from the task, validates submissions, and lists every offending field at once (including the `Idempotency-Key` header). Each idempotency check and insert runs inside one database transaction, so a key never creates a second job. `/health` reports the worker as up if its heartbeat is less than 3 seconds old. The server shuts down cleanly on `SIGTERM`.
+- **`src/worker.ts`**: Writes a heartbeat every 500 ms and checks for queued jobs every 100 ms. It takes the oldest ready job in a single database statement, steps every 100 ms, and saves progress after each step. A failed attempt goes back to the queue with a 500 ms delay, up to 3 attempts, then the job ends as `failed` with `"transient failure"`. On startup it puts any job left `running` back in the queue. On `SIGTERM` it hands back the job it's working on without using up an attempt, then exits.
+- **`ui/index.html`**: The form, an error region that names each rejected field, and a job list with all the required `data-testid` attributes. It refreshes every 700 ms.
+
+**Tested by hand:** I killed the worker with `SIGKILL` partway through a job. Health switched to `down`, and after a restart the job finished with `attempts: 2`. A job with `failAttempts: 3` ended `failed` after 3 attempts. Validation (wrong `Content-Type`, invalid key, whitespace-only input, non-integer steps), the 405 and 404 responses, and clean `SIGTERM` exits all behaved correctly.
+
+**Choices the task left open:**
+- **Interrupted attempts count.** When the worker crashes mid-job, the attempt still counts toward the limit of 3. A job that is interrupted after its third attempt ends `failed` rather than starting a fourth.
+- **Number fields are plain text inputs.** I used text boxes instead of number inputs so anything typed, like `2.5` or `abc`, reaches the API and is rejected there. Numeric values are sent as numbers, other text is sent as is, and empty fields are left out so the defaults apply.

@@ -1,0 +1,18 @@
+{
+  "name": "job-tracker",
+  "version": "0.0.0",
+  "private": true,
+  "type": "module",
+  "engines": {
+    "node": "22.23.4"
+  },
+  "scripts": {
+    "build": "echo build skipped",
+    "start:server": "node -e \"require('http').createServer((q,s)=>s.end('{}')).listen(process.env.PORT)\"",
+    "start:worker": "node -e \"setInterval(()=>{},1000)\""
+  },
+  "devDependencies": {
+    "@types/node": "22.20.5",
+    "typescript": "6.0.3"
+  }
+}

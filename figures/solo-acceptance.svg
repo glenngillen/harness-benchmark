@@ -1,0 +1,45 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 760 334" width="760" height="334" role="img" aria-labelledby="solo-acceptance-title solo-acceptance-desc" font-family="system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif" font-size="12">
+<title id="solo-acceptance-title">Solo: accepted workflows</title>
+<desc id="solo-acceptance-desc">Share of scored workflows accepted by the independent evaluator, per assignment and check condition, with 95% Wilson intervals. Labels give accepted over scored. Data table: solo-acceptance.csv.</desc>
+<style>
+  .bg { fill: #fcfcfb; }
+  .t1 { fill: #0b0b0b; } .t2 { fill: #52514e; } .t3 { fill: #6f6e69; }
+  .grid { stroke: #e4e3de; stroke-width: 1; } .axis { stroke: #b9b8b2; stroke-width: 1; }
+  .ref { stroke: #6f6e69; stroke-width: 1.5; stroke-dasharray: 4 3; }
+  .off { fill: #2a78d6; stroke: #2a78d6; } .on { fill: #eb6834; stroke: #eb6834; }
+  .hollow { fill: #fcfcfb; stroke-width: 2; }
+  .ci { stroke-width: 2; fill: none; stroke-linecap: round; }
+  .med { stroke: #0b0b0b; stroke-width: 2; }
+  .k1 { fill: #2a78d6; } .k2 { fill: #eb6834; } .k3 { fill: #1baf7a; } .k4 { fill: #eda100; }
+  .seg { stroke: #fcfcfb; stroke-width: 2; }
+  .band { fill: #f3f2ee; }
+  @media (prefers-color-scheme: dark) {
+    .bg { fill: #1a1a19; } .hollow { fill: #1a1a19; } .seg { stroke: #1a1a19; }
+    .t1 { fill: #f0efec; } .t2 { fill: #c3c2b7; } .t3 { fill: #9d9c94; }
+    .grid { stroke: #33332f; } .axis { stroke: #5a5953; } .ref { stroke: #9d9c94; }
+    .off { fill: #3987e5; stroke: #3987e5; } .on { fill: #d95926; stroke: #d95926; }
+    .med { stroke: #f0efec; } .band { fill: #232321; }
+    .k1 { fill: #3987e5; } .k2 { fill: #d95926; } .k3 { fill: #199e70; } .k4 { fill: #c98500; }
+  }</style>
+<rect class="bg" width="760" height="334"/>
+<text class="t1" x="16" y="26" font-size="16" font-weight="600">Solo: accepted workflows</text>
+<text class="t2" x="16" y="46">cohort-03 · 240 scored workflows · cost.dev prices 2026-11-13</text>
+<g transform="translate(0 0)"><g><title>Checks off: native loop only</title><rect x="269" y="61" width="18" height="18" fill="transparent"/><circle class="off" cx="278" cy="70" r="5"/></g><text class="t2" x="288" y="74">checks off</text><g><title>Checks on: added deterministic build-time checks</title><rect x="367" y="61" width="18" height="18" fill="transparent"/><path class="on" d="M376 64L382 70L376 76L370 70Z"/></g><text class="t2" x="386" y="74">checks on</text><text class="t2" x="648" y="74">accepted/scored</text></g>
+<rect class="band" x="8" y="116" width="744" height="40" rx="3"/><rect class="band" x="8" y="196" width="744" height="40" rx="3"/>
+<line class="grid" x1="272" x2="272" y1="92" y2="286"/><text class="t2" x="272" y="302" text-anchor="middle">0%</text><line class="grid" x1="363" x2="363" y1="92" y2="286"/><text class="t2" x="363" y="302" text-anchor="middle">25%</text><line class="grid" x1="454" x2="454" y1="92" y2="286"/><text class="t2" x="454" y="302" text-anchor="middle">50%</text><line class="grid" x1="545" x2="545" y1="92" y2="286"/><text class="t2" x="545" y="302" text-anchor="middle">75%</text><line class="grid" x1="636" x2="636" y1="92" y2="286"/><text class="t2" x="636" y="302" text-anchor="middle">100%</text><line class="axis" x1="272" x2="272" y1="92" y2="286"/>
+
+<text class="t1" x="16" y="107" font-weight="600">Solo</text>
+<text class="t1" x="16" y="134">GPT-6 Astra</text>
+<text class="t3" x="16" y="148" font-size="11">effort low</text>
+<line class="ci off" x1="292.63" x2="457.58" y1="128" y2="128"/><g><title>Codex frontier (effort low), checks off: 2 of 10 accepted (20%; 95% Wilson 6–51%)</title><rect x="335.8" y="119" width="18" height="18" fill="transparent"/><circle class="off" cx="344.8" cy="128" r="5"/></g><text class="t1" x="648" y="132">2/10</text><line class="ci on" x1="333.22" x2="522.19" y1="144" y2="144"/><g><title>Codex frontier (effort low), checks on: 4 of 10 accepted (40%; 95% Wilson 17–69%)</title><rect x="408.6" y="135" width="18" height="18" fill="transparent"/><path class="on" d="M417.6 138L423.6 144L417.6 150L411.6 144Z"/></g><text class="t1" x="648" y="148">4/10</text>
+<text class="t1" x="16" y="174">GPT-6 Luna</text>
+<text class="t3" x="16" y="188" font-size="11">effort high</text>
+<line class="ci off" x1="488.89" x2="629.49" y1="168" y2="168"/><g><title>Codex cheaper (effort high), checks off: 9 of 10 accepted (90%; 95% Wilson 60–98%)</title><rect x="590.6" y="159" width="18" height="18" fill="transparent"/><circle class="off" cx="599.6" cy="168" r="5"/></g><text class="t1" x="648" y="172">9/10</text><line class="ci on" x1="534.98" x2="636" y1="184" y2="184"/><g><title>Codex cheaper (effort high), checks on: 10 of 10 accepted (100%; 95% Wilson 72–100%)</title><rect x="627" y="175" width="18" height="18" fill="transparent"/><path class="on" d="M636 178L642 184L636 190L630 184Z"/></g><text class="t1" x="648" y="188">10/10</text>
+<text class="t1" x="16" y="214">Opus 5.5</text>
+<text class="t3" x="16" y="228" font-size="11">effort medium</text>
+<line class="ci off" x1="385.81" x2="574.78" y1="208" y2="208"/><g><title>Claude frontier (effort medium), checks off: 6 of 10 accepted (60%; 95% Wilson 31–83%)</title><rect x="481.4" y="199" width="18" height="18" fill="transparent"/><circle class="off" cx="490.4" cy="208" r="5"/></g><text class="t1" x="648" y="212">6/10</text><line class="ci on" x1="385.81" x2="574.78" y1="224" y2="224"/><g><title>Claude frontier (effort medium), checks on: 6 of 10 accepted (60%; 95% Wilson 31–83%)</title><rect x="481.4" y="215" width="18" height="18" fill="transparent"/><path class="on" d="M490.4 218L496.4 224L490.4 230L484.4 224Z"/></g><text class="t1" x="648" y="228">6/10</text>
+<text class="t1" x="16" y="254">Haiku 5.5</text>
+<text class="t3" x="16" y="268" font-size="11">effort medium</text>
+<line class="ci off" x1="534.98" x2="636" y1="248" y2="248"/><g><title>Claude cheaper (effort medium), checks off: 10 of 10 accepted (100%; 95% Wilson 72–100%)</title><rect x="627" y="239" width="18" height="18" fill="transparent"/><circle class="off" cx="636" cy="248" r="5"/></g><text class="t1" x="648" y="252">10/10</text><line class="ci on" x1="488.89" x2="629.49" y1="264" y2="264"/><g><title>Claude cheaper (effort medium), checks on: 9 of 10 accepted (90%; 95% Wilson 60–98%)</title><rect x="590.6" y="255" width="18" height="18" fill="transparent"/><path class="on" d="M599.6 258L605.6 264L599.6 270L593.6 264Z"/></g><text class="t1" x="648" y="268">9/10</text>
+<text class="t2" x="454" y="322" text-anchor="middle">Accepted share (dot) with 95% Wilson interval (line)</text>
+</svg>

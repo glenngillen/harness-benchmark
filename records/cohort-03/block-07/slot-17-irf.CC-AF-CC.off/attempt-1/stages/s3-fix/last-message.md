@@ -1,0 +1,3 @@
+Addressed all six findings: disabled browser-side form validation, preserved job elements during polling, added request error handling, refreshed worker heartbeats while busy, and added worker-loop recovery. Crash recovery now requeues interrupted jobs without counting them as transient failures.
+
+`npm run build` succeeds, and the worker starts and shuts down cleanly. The server could not be verified in this sandbox because binding a port returns `EPERM`; the smoke and contract checks hit the same restriction.

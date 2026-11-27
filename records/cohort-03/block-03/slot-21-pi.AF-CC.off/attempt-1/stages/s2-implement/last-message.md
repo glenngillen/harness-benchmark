@@ -1,0 +1,5 @@
+Implemented the SQLite schema and helpers, HTTP API, separate worker with retries and crash recovery, and polling browser UI.
+
+`npm run build` passes. I verified the worker completes jobs, handles retries, and exits on `SIGTERM`. The smoke and contract checks could not run: this environment rejects localhost binding with `listen EPERM`, including when starting the server.
+
+Changed [src/db.ts](/opt/harness/work/.runs/campaign/cohort-03/block-03/slot-21-pi.AF-CC.off/attempt-1/workspace/src/db.ts), [src/server.ts](/opt/harness/work/.runs/campaign/cohort-03/block-03/slot-21-pi.AF-CC.off/attempt-1/workspace/src/server.ts), [src/worker.ts](/opt/harness/work/.runs/campaign/cohort-03/block-03/slot-21-pi.AF-CC.off/attempt-1/workspace/src/worker.ts), and [ui/index.html](/opt/harness/work/.runs/campaign/cohort-03/block-03/slot-21-pi.AF-CC.off/attempt-1/workspace/ui/index.html).

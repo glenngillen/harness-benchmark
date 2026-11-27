@@ -1,0 +1,8 @@
+#!/bin/bash
+# Show the runner's state over SSM: installed revision, whether a campaign is running, the last
+# campaign result (exit 75 = paused), attempt counts, last records sync, disk, and the log tail.
+#
+#   runner/aws/bin/status
+source "$(dirname "$0")/_common.sh"
+load_target
+ssm_run 120 "/usr/local/sbin/harness-bootstrap status"

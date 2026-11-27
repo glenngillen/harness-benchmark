@@ -1,0 +1,5 @@
+Implemented the SQLite-backed job API, durable idempotency and retry handling, worker recovery and heartbeats, and the polling browser UI.
+
+`npm run build` passes, and the worker starts against a new database path. Both supplied check runners were blocked because this sandbox rejects local socket binding (`listen EPERM`).
+
+Changed [db.ts](/opt/harness/work/.runs/campaign/cohort-03/block-05/slot-13-pi.CF-CC.on/attempt-1/workspace/src/db.ts), [jobs.ts](/opt/harness/work/.runs/campaign/cohort-03/block-05/slot-13-pi.CF-CC.on/attempt-1/workspace/src/jobs.ts), [server.ts](/opt/harness/work/.runs/campaign/cohort-03/block-05/slot-13-pi.CF-CC.on/attempt-1/workspace/src/server.ts), [worker.ts](/opt/harness/work/.runs/campaign/cohort-03/block-05/slot-13-pi.CF-CC.on/attempt-1/workspace/src/worker.ts), and [index.html](/opt/harness/work/.runs/campaign/cohort-03/block-05/slot-13-pi.CF-CC.on/attempt-1/workspace/ui/index.html).

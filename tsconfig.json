@@ -1,0 +1,24 @@
+{
+  "compilerOptions": {
+    "target": "es2023",
+    "module": "nodenext",
+    "moduleResolution": "nodenext",
+    "strict": true,
+    "noEmit": true,
+    "allowImportingTsExtensions": true,
+    "verbatimModuleSyntax": true,
+    "skipLibCheck": true,
+    "types": [
+      "node"
+    ]
+  },
+  "include": [
+    "src/**/*.ts",
+    "tests/**/*.ts",
+    "post/**/*.ts",
+    "fixtures/references/correct/src/**/*.ts",
+    "fixtures/scaffold/checks/**/*.ts",
+    "vitest.config.ts",
+    "playwright.config.ts"
+  ]
+}

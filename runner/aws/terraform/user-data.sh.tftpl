@@ -1,0 +1,15 @@
+#!/bin/bash
+# First-boot system setup for the harness benchmark runner. The full script is
+# runner/aws/remote/bootstrap.sh; it is embedded here so the instance can
+# prepare itself before any source bundle exists. Output: /var/log/harness-bootstrap.log.
+set -euo pipefail
+install -d -m 0755 /etc/harness
+cat > /etc/harness/runner.env <<'ENV'
+HARNESS_BUCKET=${bucket}
+HARNESS_REGION=${region}
+HARNESS_NODE_VERSION=${node_version}
+ENV
+chmod 0644 /etc/harness/runner.env
+echo '${bootstrap_gz_b64}' | base64 -d | gunzip > /usr/local/sbin/harness-bootstrap
+chmod 0755 /usr/local/sbin/harness-bootstrap
+/usr/local/sbin/harness-bootstrap system >> /var/log/harness-bootstrap.log 2>&1

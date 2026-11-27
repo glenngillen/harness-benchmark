@@ -1,0 +1,3 @@
+Addressed all four findings: interrupted attempts now recover without exceeding the three-attempt limit, request bodies preserve split UTF-8 characters, the form sends invalid values to API validation, and validation errors include both header and body fields.
+
+The build passes, and the worker starts and shuts down cleanly. I couldn’t verify the server listener here: this environment rejects socket binds with `EPERM`.

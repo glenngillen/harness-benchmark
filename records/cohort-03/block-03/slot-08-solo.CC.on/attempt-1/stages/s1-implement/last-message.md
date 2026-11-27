@@ -1,0 +1,3 @@
+Implemented the SQLite-backed job tracker: HTTP API with validation and idempotency, a separate worker with progress, retries and restart recovery, and a browser page that polls for updates.
+
+`npm run build` passes. The worker starts and shuts down on `SIGTERM`. The smoke and contract checks, and an HTTP server startup attempt, could not run because this environment rejects localhost binding with `listen EPERM`.

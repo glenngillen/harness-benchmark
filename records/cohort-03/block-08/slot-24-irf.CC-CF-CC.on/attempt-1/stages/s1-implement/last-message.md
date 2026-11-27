@@ -1,0 +1,3 @@
+Implemented the SQLite-backed HTTP API and worker, including durable jobs, idempotency, retries, restart recovery, and worker health checks. Added the browser form and polling job list in [ui/index.html](/opt/harness/work/.runs/campaign/cohort-03/block-08/slot-24-irf.CC-CF-CC.on/attempt-1/workspace/ui/index.html).
+
+`npm run build` passes. The smoke and contract checks could not run because the sandbox rejected their localhost bind with `listen EPERM`.
