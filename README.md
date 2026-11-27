@@ -99,21 +99,51 @@ Take any condition in `results/cohort-03-solo-workflows.csv` (or `-pi-`, `-irf-`
 
 ## 3. Run fresh workflows (subscriptions required)
 
-The recorded runs used the AWS runner kit. Follow `runner/aws/README.md`; in outline, from the repository root:
+Fresh runs go into a **new cohort in a Git checkout**. Cohort-03 is finished: its records are the published evidence, and the runner skips every slot that already has a result, so pointing it at cohort-03 would run nothing and could mix your results with mine. Don't use the step 1 copy either: it has no `.git`, and the runner only ever installs committed revisions (`bin/publish` archives a commit, `bin/blocks` runs the commit that wrote the freeze manifest).
+
+### Start a new cohort
+
+In a clone of this repository (not the step 1 copy):
+
+```sh
+git switch -c cohort-04
+sed -i.bak 's/"cohort": "cohort-03"/"cohort": "cohort-04"/' config/*.json && rm config/*.json.bak
+npm ci
+npm run schedule              # rewrites config/schedule.json for the new label (same seed)
+npm run schedule -- --check   # config/schedule.json reproduces from the seed
+npm test
+npm run freeze                # exit 3: nothing for cohort-04 exists yet, which is expected
+git commit -am "Start cohort-04"
+```
+
+Use any unused `cohort-NN` label. Every `config/*.json` that has a `cohort` field must carry the new one (`config/quota-audit.json` has none). Record why you started the cohort in `methodology.md` sections 14 and 15. New records go to `records/cohort-04/`, pilots and host evidence to `records/cohort-04-pilots/`, and the manifest to `records/freeze/cohort-04.json`, beside cohort-03's, which stay untouched. `npm run freeze` only ever judges the cohort named in `config/`, so cohort-03's pilots and safeguards never count towards yours.
+
+Before the freeze you need your own `records/cohort-04-pilots/safeguards.json`, with the paid-overflow guard attested by you for your accounts, and the quota-pausing and recovery entries pointing at your own records (`methodology.md` section 14 lists what each needs; `records/cohort-03-pilots/safeguards.json` is a worked example, not evidence for your cohort).
+
+### Run it
+
+The recorded runs used the AWS runner kit. Follow `runner/aws/README.md`; in outline, from the root of that checkout, committing as you go so the runner installs what you mean:
 
 ```sh
 terraform -chdir=runner/aws/terraform init
 terraform -chdir=runner/aws/terraform apply
-runner/aws/bin/login                 # installs HEAD on the runner, creates both isolated logins, offers to start pilots
+runner/aws/bin/login                 # installs the committed HEAD on the runner, creates both isolated logins, offers to start pilots
 runner/aws/bin/start --pilots        # unscored: one workflow per configuration (24)
 runner/aws/bin/start --pilots --retry-unexercised   # only if a pilot ended before exercising every stage
 runner/aws/bin/status
-runner/aws/bin/fetch                 # copies allowed record files into records/
+runner/aws/bin/fetch                 # copies allowed record files into records/cohort-04-pilots/
+# add records/cohort-04-pilots/safeguards.json, then commit the pilot records
 npm run freeze -- --write            # only when the gate passes
-runner/aws/bin/blocks start          # the ten scored blocks, unattended, at the frozen revision
+git add records/freeze/cohort-04.json && git commit -m "Freeze cohort-04"
+runner/aws/bin/blocks start          # the ten scored blocks, unattended, at the commit that wrote the manifest
 runner/aws/bin/fetch
+git add records/cohort-04 && git commit -m "cohort-04 records"
 runner/aws/bin/teardown              # after the records are committed
+npm run analyse  -- --label cohort-04
+npm run diagnose -- --label cohort-04
 ```
+
+Only the new-cohort setup above was re-run for this guide (label switch, schedule, tests and the freeze report on 2026-11-28); the AWS steps were not repeated.
 
 What a run costs in time: the 25 pilot attempts (one per configuration, plus one rerun of a configuration whose first pilot ran out its stage time before reaching review) took 1.99 h of active time (median 4.6 minutes per workflow, longest 15.0) plus a median of 21 s of evaluation each, between 10:35 and 14:17 UTC on 2026-11-24. The 240 scored workflows took 18.73 h active plus 1.48 h of evaluation and ran from 14:53 UTC on 2026-11-24 to 11:14 UTC on 2026-11-25, with no quota pause. Your subscription's limits decide whether you can do the same; neither figure is an entitlement.
 
@@ -132,7 +162,7 @@ Rerun the same command. Finished slots are skipped. An interrupted attempt is ke
 Never delete or overwrite `records/`. To start over:
 
 - **A fresh copy** for analysis or experiments: repeat step 1 into a new directory.
-- **A new cohort** for new runs: set the `cohort` field in every `config/*.json` to a new label (for example `cohort-04`), run `npm run schedule` and `npm run schedule -- --check`, and record the reason in `methodology.md` sections 14 and 15. New records then go to `records/cohort-04/` and its pilots to `records/cohort-04-pilots/`, beside the existing ones. This was not re-executed for this guide.
+- **Another set of runs**: start another new cohort as above (`cohort-05`, …) in a Git checkout.
 - Every model stage and evaluation already runs in its own fresh workspace under `.runs/` (gitignored).
 
 ## 4. Adapt it to your own task
@@ -140,7 +170,7 @@ Never delete or overwrite `records/`. To start over:
 1. Replace `task.md` and `fixtures/scaffold/` with one representative task from your codebase.
 2. Rewrite the evaluator cases in `src/evaluator/cases.ts` as black-box checks the models can't see, and add broken references under `fixtures/references/` that each fail a different case. Run the discrimination suite (`scripts/run-discrimination.sh` with Docker, or `npm run test:integration` on Linux with `bubblewrap`) to prove the evaluator tells them apart.
 3. Decide what the build-time checks in `fixtures/scaffold/checks/` should cover, including the failures you actually see in review.
-4. Pin your models and efforts in `config/models.json`, run the pilots, and don't score anything until `npm run freeze` passes, including the shell condition.
+4. Start a new cohort in a Git checkout (section 3), pin your models and efforts in `config/models.json`, run the pilots, and don't score anything until `npm run freeze` passes, including the shell condition.
 5. Run the solo matrix first, then compare cost per accepted result and read every rejection with `npm run diagnose`.
 
 ## Tests
